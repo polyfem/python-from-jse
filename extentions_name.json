@@ -1,0 +1,262 @@
+[
+    {
+        "pointer": "/tests/time_steps",
+        "default": 1,
+        "type": "int",
+        "min": 1,
+        "doc": "Number of time steps to test."
+    },
+    {
+        "pointer": "/geometry/*/mesh_sequence",
+        "type": "string",
+        "doc": "Directory (or GLOB) of meshes for the mesh sequence."
+    },
+    {
+        "pointer": "/geometry/*/mesh_sequence",
+        "type": "list",
+        "doc": "List of mesh files for the mesh sequence."
+    },
+    {
+        "pointer": "/geometry/*/mesh_sequence/*",
+        "type": "file",
+        "extensions": [
+            ".obj",
+            ".msh",
+            ".stl",
+            ".ply",
+            ".mesh"
+        ],
+        "doc": "Path of the mesh file to load."
+    },
+    {
+        "pointer": "/time",
+        "type": "object",
+        "required": [
+            "time_steps",
+            "dt"
+        ],
+        "optional": [
+            "t0",
+            "integrator",
+            "quasistatic"
+        ],
+        "doc": "The time parameters: start time `t0`, time step `dt`, number of time steps."
+    },
+    {
+        "pointer": "/time",
+        "type": "object",
+        "required": [
+            "time_steps",
+            "tend"
+        ],
+        "optional": [
+            "t0",
+            "integrator",
+            "quasistatic"
+        ],
+        "doc": "The time parameters: start time `t0`, end time `tend`, number of time steps."
+    },
+    {
+        "pointer": "/time/t0",
+        "type": "float",
+        "min": 0,
+        "default": 0,
+        "doc": "Startning time"
+    },
+    {
+        "pointer": "/time/tend",
+        "type": "float",
+        "min": 0,
+        "doc": "Ending time"
+    },
+    {
+        "pointer": "/time/dt",
+        "type": "float",
+        "min": 0,
+        "doc": "Time step size $\\Delta t$"
+    },
+    {
+        "pointer": "/time/time_steps",
+        "type": "int",
+        "min": 0,
+        "doc": "Number of time steps"
+    },
+    {
+        "pointer": "/time/integrator",
+        "type": "string",
+        "default": "ImplicitEuler",
+        "options": [
+            "ImplicitEuler",
+            "BDF1",
+            "BDF2",
+            "BDF3",
+            "BDF4",
+            "BDF5",
+            "BDF6",
+            "ImplicitNewmark"
+        ],
+        "doc": "Time integrator"
+    },
+    {
+        "pointer": "/time/integrator",
+        "type": "object",
+        "type_name": "ImplicitEuler",
+        "required": [
+            "type"
+        ],
+        "doc": "Implicit Euler time integration"
+    },
+    {
+        "pointer": "/time/integrator",
+        "type": "object",
+        "type_name": "BDF",
+        "required": [
+            "type"
+        ],
+        "optional": [
+            "steps"
+        ],
+        "doc": "Backwards differentiation formula time integration"
+    },
+    {
+        "pointer": "/time/integrator",
+        "type": "object",
+        "type_name": "ImplicitNewmark",
+        "required": [
+            "type"
+        ],
+        "optional": [
+            "gamma",
+            "beta"
+        ],
+        "doc": "Implicit Newmark time integration"
+    },
+    {
+        "pointer": "/boundary_conditions/pressure_boundary/*/dimension",
+        "type": "list",
+        "default": [
+            true,
+            true,
+            true
+        ],
+        "doc": "List of 2 (2D) or 3 (3D) boolean values indicating if the Pressure boundary condition is applied for a particular dimension."
+    },
+    {
+        "pointer": "/boundary_conditions/pressure_boundary/*/dimension/*",
+        "type": "bool",
+        "default": true,
+        "doc": "value"
+    },
+    {
+        "pointer": "/boundary_conditions/rhs",
+        "type": "include",
+        "spec_file": "value-no.json",
+        "doc": "Right-hand side of the system being solved, value."
+    },
+    {
+        "pointer": "/boundary_conditions/rhs",
+        "default": [],
+        "type": "list",
+        "doc": "Right-hand side of the system being solved for vector-valued PDEs."
+    },
+    {
+        "pointer": "/boundary_conditions/rhs/*",
+        "type": "include",
+        "spec_file": "value0.json",
+        "default": 0,
+        "doc": "Right-hand side of the system being solved, value."
+    },
+    {
+        "pointer": "/time/integrator/gamma",
+        "type": "float",
+        "default": 0.5,
+        "min": 0,
+        "max": 1,
+        "doc": "Newmark gamma"
+    },
+    {
+        "pointer": "/boundary_conditions/pressure_boundary/*/id",
+        "type": "int",
+        "min": 0,
+        "max": 2147483646,
+        "doc": "ID for the pressure Neumann boundary condition"
+    },
+    {
+        "pointer": "/boundary_conditions/periodic_boundary/linear_displacement_offset",
+        "type": "list",
+        "default": [],
+        "doc": ""
+    },
+    {
+        "pointer": "/boundary_conditions/periodic_boundary/linear_displacement_offset/*",
+        "type": "list",
+        "doc": ""
+    },
+    {
+        "pointer": "/boundary_conditions/periodic_boundary/linear_displacement_offset/*/*",
+        "type": "float",
+        "doc": ""
+    },
+    {
+        "pointer": "/boundary_conditions/periodic_boundary/linear_displacement_offset/*/*",
+        "type": "string",
+        "doc": ""
+    },
+    {
+        "pointer": "/initial_conditions/velocity/*/value",
+        "type": "list",
+        "min": 2,
+        "max": 3,
+        "doc": "value od the initial velocity"
+    },
+    {
+        "pointer": "/initial_conditions/velocity/*/value/*",
+        "type": "include",
+        "spec_file": "value-no.json",
+        "doc": "value"
+    },
+    {
+        "pointer": "/output/data",
+        "default": null,
+        "type": "object",
+        "optional": [
+            "solution",
+            "full_mat",
+            "stiffness_mat",
+            "stress_mat",
+            "state",
+            "rest_mesh",
+            "mises",
+            "nodes",
+            "advanced"
+        ],
+        "doc": "File names to write output data to."
+    },
+    {
+        "pointer": "/preset_problem",
+        "type_name": "FrankeOld",
+        "type": "object",
+        "required": [
+            "type"
+        ],
+        "doc": "TODO"
+    },
+    {
+        "pointer": "/preset_problem",
+        "type_name": "GenericScalarExact",
+        "type": "object",
+        "required": [
+            "type"
+        ],
+        "optional": [
+            "func"
+        ],
+        "doc": "TODO"
+    },
+    {
+        "pointer": "/preset_problem/func",
+        "type": "int",
+        "default": 0,
+        "doc": "TODO"
+    }
+]

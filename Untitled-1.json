@@ -1,0 +1,231 @@
+[
+    {
+        "pointer": "/",
+        "type": "object",
+        "required": ["string1", "time"],
+        "optional":["geometry","other", "materials"],
+        "doc": "parametric location of the refinement"
+    },
+    {
+        "pointer": "/time",
+        "type": "int",
+        "default": 0,
+        "doc": "Time is int"
+    },
+    {
+        "pointer": "/time",
+        "type": "float",
+        "default": 0,
+        "doc": "Time is int"
+    },
+    {
+        "pointer": "/time",
+        "default": "skip",
+        "type": "object",
+        "required": [
+            "tend",
+            "dt"
+        ],
+        "optional": [
+            "t0"
+        ],
+        "doc": "The time parameters: start time `t0`, end time `tend`, time step `dt`."
+    },
+    {
+        "pointer": "/time",
+        "type": "object",
+        "required": [
+            "time_steps",
+            "dt"
+        ],
+        "optional": [
+            "t0"
+        ],
+        "doc": "The time parameters: start time `t0`, time step `dt`, number of time steps."
+    },
+    {
+        "pointer": "/time",
+        "type": "object",
+        "required": [
+            "time_steps",
+            "tend"
+        ],
+        "optional": [
+            "t0"
+        ],
+        "doc": "The time parameters: start time `t0`, end time `tend`, number of time steps."
+    },
+    {
+        "pointer": "/time/time_steps",
+        "type": "int",
+        "min": 0,
+        "doc": "Number of time steps"
+    },
+    {
+        "pointer": "/time/t0",
+        "type": "float",
+        "min": 0,
+        "default": 0,
+        "doc": "Startning time"
+    },
+    {
+        "pointer": "/time/tend",
+        "type": "float",
+        "min": 0,
+        "doc": "Ending time"
+    },
+    {
+        "pointer": "/time/dt",
+        "type": "float",
+        "min": 0,
+        "doc": "Time step size $\\Delta t$"
+    },
+    {
+        "pointer": "/string1",
+        "type": "string"
+    },
+    {
+        "pointer": "/geometry",
+        "type": "object",
+        "default": null,
+        "optional": ["nested", "volume_selection", "normalize_mesh", "mesh_sequence"],
+        "doc": "Size of the minumum component for collision"
+    },
+    {
+        "pointer": "/geometry/mesh_sequence",
+        "type": "file",
+        "extensions": [
+            ".obj",
+            ".msh",
+            ".stl",
+            ".ply",
+            ".mesh"
+        ],
+        "doc": "Path of the mesh file to load."
+    },
+    {
+        "pointer": "/geometry/normalize_mesh",
+        "type": "bool",
+        "default": false,
+        "doc": "Rescale the mesh to it fits in the biunit cube"
+    },
+    {
+        "pointer": "/geometry/nested",
+        "type": "int",
+        "default": 3
+    },
+    {
+        "pointer": "/geometry/volume_selection",
+        "type": "object",
+        "optional": [
+            "id_offset"
+        ],
+        "#type_name": "id_offset",
+        "default": null,
+        "doc": "Offsets the volume IDs loaded from the mesh."
+    },
+    {
+        "pointer": "/geometry/volume_selection/id_offset",
+        "type": "int",
+        "default": 0,
+        "doc": "Offsets the volume IDs loaded from the mesh."
+    },
+    {
+        "pointer": "/other",
+        "type": "object",
+        "optional": ["nested", "time_steps"],
+        "default": null
+    },
+    {
+        "pointer": "/other/time_steps",
+        "type": "string",
+        "options": [
+            "all",
+            "static"
+        ],
+        "doc": "Number of time steps to test."
+    },
+    {
+        "pointer": "/other/nested",
+        "type": "int",
+        "default": 3
+    },
+    {
+        "pointer": "/materials",
+        "type": "list",
+        "doc": "Material Parameters lists including ID pointing to volume selection, Young's modulus ($E$), Poisson's ratio ($\\nu$), Density ($\\rho$), or Lamé constants ($\\lambda$ and $\\mu$)."
+    },
+    {
+        "pointer": "/materials/*",
+        "type": "object",
+        "type_name": "NeoHookean",
+        "required": [
+            "type",
+            "E"
+        ],
+        "optional": [
+            "id",
+            "elasticity_tensor"
+        ],
+        "doc": "Material Parameters including ID, Young's modulus ($E$), Poisson's ratio ($\\nu$), density ($\\rho$)"
+    },
+    {
+        "pointer": "/materials/*",
+        "type": "object",
+        "type_name": "MooneyRivlin",
+        "required": [
+            "type",
+            "c1"
+        ],
+        "optional": [
+            "id",
+            "elasticity_tensor"
+        ],
+        "doc": "Material Parameters including ID, for Mooney-Rivlin"
+    },
+    {
+        "pointer": "/materials/*/type",
+        "type": "string",
+        "doc": "Type of material"
+    },
+    {
+        "pointer": "/materials/*/id",
+        "type": "list",
+        "doc": "Volume selection IDs"
+    },
+    {
+        "pointer": "/materials/*/id/*",
+        "type": "int",
+        "doc": "Volume selection ID"
+    },
+    {
+        "pointer": "/materials/*/E",
+        "type": "int",
+        "spec_file": "value-no.json",
+        "doc": "Young's modulus"
+    },
+    {
+        "pointer": "/materials/*/c1",
+        "type": "int",
+        "spec_file": "value-no.json",
+        "doc": "First Parameter for Mooney-Rivlin"
+    },
+    {
+        "pointer": "/materials/*/elasticity_tensor",
+        "type": "list",
+        "doc": "Symmetric elasticity tensor"
+    },
+    {
+        "pointer": "/materials/*/elasticity_tensor/*",
+        "type": "object",
+        "required": [
+            "input"
+        ],
+        "doc": "Entries of elasticity tensor"
+    },
+    {
+        "pointer": "/materials/*/elasticity_tensor/*/input",
+        "default": 1,
+        "type": "int"
+    }
+]
