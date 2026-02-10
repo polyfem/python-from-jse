@@ -130,13 +130,17 @@ class ClassGenerator(object):
             )
         #For other types (string, int and float)
         else :
-            #default = variable.default if variable.default else None
             self._init_input.append(
-                f'{variable.name}: {type} = {float(variable.default) if type == "float" and variable.default is not None else variable.default}'
-            )
-            self._init_body.append(
-                f'self._{variable.name} = type_check({variable.name}, {type}) if {variable.name} is not None else None'
-            )
+                    f'{variable.name}: {type} = {float(variable.default) if type == "float" and variable.default is not None else variable.default}'
+                )
+            if variable.min is not None or variable.max is not None:
+                self._init_body.append(
+                    f'self._{variable.name} = range_check(type_check({variable.name}, {type}), {variable.min}, {variable.max}) if {variable.name} is not None else None'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{variable.name} = type_check({variable.name}, {type}) if {variable.name} is not None else None'
+                )
             self._as_dict.append(
                 f'"{variable.name}": self._{variable.name},'
             )
@@ -227,7 +231,10 @@ class ClassGenerator(object):
             inside_setter = f"self._{variable.name} = extension_check(value, {variable.extensions})"
         #for other types
         else:
-            inside_setter = f"self._{variable.name} = type_check(value, {type_check})"
+            if variable.min is not None or variable.max is not None:
+                inside_setter = f"self._{variable.name} = range_check(type_check(value, {type_check}), {variable.min}, {variable.max})"
+            else:
+                inside_setter = f"self._{variable.name} = type_check(value, {type_check})"
         
         self._property_setter.append(
             f""" 
@@ -300,6 +307,8 @@ class JsonToTreeClass(object):
         self._optional = {}
         self.doc = "There is no definition"
         self.extensions = []
+        self.min = None
+        self.max = None
         # self.camera: str = 'you'
 
     def __str__(self):
@@ -329,6 +338,12 @@ class JsonToTreeClass(object):
 
     def set_type(self, value):
         self.type = value
+
+    def set_min(self, value):
+        self.min = value
+
+    def set_max(self, value):
+        self.max = value
 
     def set_extensions(self, value):
         self.extensions = value
@@ -546,6 +561,9 @@ for entry in schema:
     extensions = entry.get('extensions')
     path.set_extensions(extensions)
 
+    path.set_min(entry.get('min'))
+    path.set_max(entry.get('max'))
+
     if (len(parts) > 1 and parts[-2] == '*') or parent.type == "polymorphic":
         for child in parent._optional.values():
             child.find_var_replace(parts[-1], path)
@@ -604,6 +622,15 @@ def enum_check(value, enum):
             f"Invalid value for time_steps: {value!r}. "
             f"Allowed values are: {allowed}"
         ) from None
+
+def range_check(value, min, max):
+    if (value >= min if min is not None else True) and (value <= max if max is not None else True):
+        return value
+    else:
+        min_text = f" {min} ≤" if min is not None else ""
+        max_text = f" ≤ {max}" if max is not None else ""
+
+        raise TypeError(f"Value {value} is out of range. Expected{min_text} value{max_text}.")
 
 def type_check(variable, tp):
     if not isinstance(variable, tp):

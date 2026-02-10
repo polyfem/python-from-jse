@@ -10,6 +10,16 @@ def drop_none(d):
     #print(type(d))
     return {k: v for k, v in d.items() if v is not None}
 
+def range_check(value, min, max):
+    if (value >= min if min is not None else True) and (value <= max if max is not None else True):
+        return value
+    else:
+        min_text = f" {min} ≤" if min is not None else ""
+        max_text = f" ≤ {max}" if max is not None else ""
+
+        raise TypeError(f"Value {value} is out of range. Expected{min_text} value{max_text}.")
+
+
 def class_check(value, allowed):
     #allowed = (Time.Object1, Time.Object2)
     if not isinstance(value, allowed):
@@ -175,8 +185,10 @@ class Root(object):
         class Nested(object):
             def __init__(self, default : int = 3):
                 self._default = type_check(int, default)
-        def __init__(self, nested : int = 3):
+        def __init__(self, nested : int = 3, gamma: float = 0.5):
             self._nested = type_check(int, nested)
+            self._gamma = range_check(type_check(float, gamma), min = 0, max = 1) if gamma is not None else None
+            
 
         @property
         def nested(self):
@@ -187,8 +199,17 @@ class Root(object):
             '''The comment you want to appear when hovering goes here'''
             self._nested = type_check(int, nested)
 
+        @property
+        def gamma(self):
+            return self._gamma
+
+        @gamma.setter
+        def gamma(self, gamma : float = .5):
+            '''The comment you want to appear when hovering goes here'''
+            self._gamma = range_check(type_check(float, gamma), min = 0, max = 1)
+
         def as_dict(self):
-            return {"nested": self._nested}
+            return {"nested": self._nested, "gamma": self._gamma,}
         
     class Materials(object):
         def __init__(self, items : list = None):
@@ -323,7 +344,7 @@ root.string1 = "hello"
 print(root.string1)
 print(root.geometry.nested)
 
-root.geometry = Root.Geometry(5)
+#root.geometry = Root.Geometry(5)
 
 #root.geometry = root.Geometry(root.geometry.Nested(1))
 
@@ -338,7 +359,7 @@ root.geometry.nested = 8
 print(root.geometry.nested)
 Root()
 
-geometry = Root.Geometry(6)
+#geometry = Root.Geometry(6)
 
 Neohookean = root.materials.Neohookean("ali")
 Neohookean.id = 1
@@ -366,6 +387,8 @@ root.time.value = root.time.Object3()
 root.time.value.time_steps = 2 """
 #root.time.value = "2.5"
 #root.geometry.mesh_sequence = "path.obj"
+
+root.geometry.gamma = 2.0
 
 json_str = json.dumps(root.as_dict())
 print(json_str)

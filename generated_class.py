@@ -40,6 +40,15 @@ def enum_check(value, enum):
             f"Allowed values are: {allowed}"
         ) from None
 
+def range_check(value, min, max):
+    if (value >= min if min is not None else True) and (value <= max if max is not None else True):
+        return value
+    else:
+        min_text = f" {min} ≤" if min is not None else ""
+        max_text = f" ≤ {max}" if max is not None else ""
+
+        raise TypeError(f"Value {value} is out of range. Expected{min_text} value{max_text}.")
+
 def type_check(variable, tp):
     if not isinstance(variable, tp):
         raise TypeError(f"Expected type '{tp.__name__}', but got '{type(variable).__name__}'")
@@ -149,9 +158,9 @@ class Root(object):
                 dt: float = None,
                 t0: float = 0.0
             ):
-                self._tend = type_check(tend, float) if tend is not None else None
-                self._dt = type_check(dt, float) if dt is not None else None
-                self._t0 = type_check(t0, float) if t0 is not None else None
+                self._tend = range_check(type_check(tend, float), 0, None) if tend is not None else None
+                self._dt = range_check(type_check(dt, float), 0, None) if dt is not None else None
+                self._t0 = range_check(type_check(t0, float), 0, None) if t0 is not None else None
 
             @property
             def tend(self):
@@ -162,7 +171,7 @@ class Root(object):
                 ''' 
                 Ending time
                 '''
-                self._tend = type_check(value, float) 
+                self._tend = range_check(type_check(value, float), 0, None) 
 
             @property
             def dt(self):
@@ -173,7 +182,7 @@ class Root(object):
                 ''' 
                 Time step size $\Delta t$
                 '''
-                self._dt = type_check(value, float) 
+                self._dt = range_check(type_check(value, float), 0, None) 
 
             @property
             def t0(self):
@@ -184,7 +193,7 @@ class Root(object):
                 ''' 
                 Startning time
                 '''
-                self._t0 = type_check(value, float) 
+                self._t0 = range_check(type_check(value, float), 0, None) 
 
             def as_dict(self):
                 return drop_none({"tend": self._tend,"dt": self._dt,"t0": self._t0,})
@@ -198,9 +207,9 @@ class Root(object):
                 dt: float = None,
                 t0: float = 0.0
             ):
-                self._time_steps = type_check(time_steps, int) if time_steps is not None else None
-                self._dt = type_check(dt, float) if dt is not None else None
-                self._t0 = type_check(t0, float) if t0 is not None else None
+                self._time_steps = range_check(type_check(time_steps, int), 0, None) if time_steps is not None else None
+                self._dt = range_check(type_check(dt, float), 0, None) if dt is not None else None
+                self._t0 = range_check(type_check(t0, float), 0, None) if t0 is not None else None
 
             @property
             def time_steps(self):
@@ -211,7 +220,7 @@ class Root(object):
                 ''' 
                 Number of time steps
                 '''
-                self._time_steps = type_check(value, int) 
+                self._time_steps = range_check(type_check(value, int), 0, None) 
 
             @property
             def dt(self):
@@ -222,7 +231,7 @@ class Root(object):
                 ''' 
                 Time step size $\Delta t$
                 '''
-                self._dt = type_check(value, float) 
+                self._dt = range_check(type_check(value, float), 0, None) 
 
             @property
             def t0(self):
@@ -233,7 +242,7 @@ class Root(object):
                 ''' 
                 Startning time
                 '''
-                self._t0 = type_check(value, float) 
+                self._t0 = range_check(type_check(value, float), 0, None) 
 
             def as_dict(self):
                 return drop_none({"time_steps": self._time_steps,"dt": self._dt,"t0": self._t0,})
@@ -247,9 +256,9 @@ class Root(object):
                 tend: float = None,
                 t0: float = 0.0
             ):
-                self._time_steps = type_check(time_steps, int) if time_steps is not None else None
-                self._tend = type_check(tend, float) if tend is not None else None
-                self._t0 = type_check(t0, float) if t0 is not None else None
+                self._time_steps = range_check(type_check(time_steps, int), 0, None) if time_steps is not None else None
+                self._tend = range_check(type_check(tend, float), 0, None) if tend is not None else None
+                self._t0 = range_check(type_check(t0, float), 0, None) if t0 is not None else None
 
             @property
             def time_steps(self):
@@ -260,7 +269,7 @@ class Root(object):
                 ''' 
                 Number of time steps
                 '''
-                self._time_steps = type_check(value, int) 
+                self._time_steps = range_check(type_check(value, int), 0, None) 
 
             @property
             def tend(self):
@@ -271,7 +280,7 @@ class Root(object):
                 ''' 
                 Ending time
                 '''
-                self._tend = type_check(value, float) 
+                self._tend = range_check(type_check(value, float), 0, None) 
 
             @property
             def t0(self):
@@ -282,7 +291,7 @@ class Root(object):
                 ''' 
                 Startning time
                 '''
-                self._t0 = type_check(value, float) 
+                self._t0 = range_check(type_check(value, float), 0, None) 
 
             def as_dict(self):
                 return drop_none({"time_steps": self._time_steps,"tend": self._tend,"t0": self._t0,})
@@ -293,15 +302,55 @@ class Root(object):
         '''Size of the minumum component for collision'''
         def __init__(
             self,
+            gamma: float = 0.5,
+            linear_displacement_offset: Optional[Iterable[str]] = None,
             nested: int = 3,
             volume_selection: Optional["Root.Geometry.Volume_selection"] = None,
             normalize_mesh: bool = False,
             mesh_sequence: str = None
         ):
+            self._gamma = range_check(type_check(gamma, float), 0, 1) if gamma is not None else None
+            self._linear_displacement_offset = [] if linear_displacement_offset is None else [type_check(i, str) for i in linear_displacement_offset]
             self._nested = type_check(nested, int) if nested is not None else None
             self._volume_selection = volume_selection if volume_selection else Root.Geometry.Volume_selection()
             self._normalize_mesh = type_check(normalize_mesh, bool) if normalize_mesh is not None else None
             self._mesh_sequence = extension_check(mesh_sequence, ['.obj', '.msh', '.stl', '.ply', '.mesh']) if mesh_sequence is not None else None
+
+        @property
+        def gamma(self):
+            return self._gamma
+
+        @gamma.setter
+        def gamma(self, value):
+            ''' 
+            Newmark gamma
+            '''
+            self._gamma = range_check(type_check(value, float), 0, 1) 
+
+        @property
+        def linear_displacement_offset(self):
+            return self._linear_displacement_offset
+
+        @linear_displacement_offset.setter
+        def linear_displacement_offset(self, value):
+            ''' 
+            There is no definition
+            '''
+            self._linear_displacement_offset.append(type_check(value, str))
+
+        def clear(self):
+            '''Clear list (make empty)'''
+            self._linear_displacement_offset.clear()
+
+        def pop(self, index=-1):
+            '''Remove by index from list'''
+            return self._linear_displacement_offset.pop(index)
+
+        def remove(self, item):
+            '''Safe remove specific item from list'''
+            if item in self._list:
+                self._linear_displacement_offset.remove(item)
+
 
         @property
         def nested(self):
@@ -348,7 +397,7 @@ class Root(object):
             self._mesh_sequence = extension_check(value, ['.obj', '.msh', '.stl', '.ply', '.mesh']) 
 
         def as_dict(self):
-            return drop_none({"nested": self._nested,"volume_selection": self._volume_selection.as_dict(),"normalize_mesh": self._normalize_mesh,"mesh_sequence": self._mesh_sequence,})
+            return drop_none({"gamma": self._gamma,"linear_displacement_offset": self._linear_displacement_offset,"nested": self._nested,"volume_selection": self._volume_selection.as_dict(),"normalize_mesh": self._normalize_mesh,"mesh_sequence": self._mesh_sequence,})
 
         class Volume_selection(object):
             '''Offsets the volume IDs loaded from the mesh.'''
