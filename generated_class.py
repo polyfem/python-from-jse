@@ -55,7 +55,9 @@ def type_check(variable, tp):
     return variable
 
 class Root(object):
-    '''parametric location of the refinement'''
+    '''Root of the configuration file.
+    \nRequired: ['string1', 'time']
+    \nOptional: ['geometry', 'other', 'materials']'''
     def __init__(
         self,
         string1: str = None,
@@ -65,10 +67,10 @@ class Root(object):
         materials: Optional["Root.Materials"] = None
     ):
         self._string1 = type_check(string1, str) if string1 is not None else None
-        self._time = time if time else Root.Time()
-        self._geometry = geometry if geometry else Root.Geometry()
-        self._other = other if other else Root.Other()
-        self._materials = materials if materials else Root.Materials()
+        self._time = type_check(time, self.Time) if time else self.Time()
+        self._geometry = type_check(geometry, self.Geometry) if geometry else self.Geometry()
+        self._other = type_check(other, self.Other) if other else self.Other()
+        self._materials = type_check(materials, self.Materials) if materials else self.Materials()
  
     @property
     def string1(self):
@@ -89,6 +91,8 @@ class Root(object):
     def time(self, value):
         ''' 
         This is a polymorphic variable, assign an object from its classes to the value
+        \nRequired: []
+        \nOptional: ['int', 'float', 'object3', 'object4', 'object5']
         '''
         self._time = type_check(value, self.Time) 
  
@@ -100,6 +104,8 @@ class Root(object):
     def geometry(self, value):
         ''' 
         Size of the minumum component for collision
+        \nRequired: ['gamma', 'linear_displacement_offset']
+        \nOptional: ['nested', 'volume_selection', 'normalize_mesh', 'mesh_sequence']
         '''
         self._geometry = type_check(value, self.Geometry) 
  
@@ -111,6 +117,8 @@ class Root(object):
     def other(self, value):
         ''' 
         There is no definition
+        \nRequired: []
+        \nOptional: ['nested', 'time_steps']
         '''
         self._other = type_check(value, self.Other) 
  
@@ -122,14 +130,25 @@ class Root(object):
     def materials(self, value):
         ''' 
         Material Parameters lists including ID pointing to volume selection, Young's modulus ($E$), Poisson's ratio ($\nu$), Density ($\rho$), or Lamé constants ($\lambda$ and $\mu$).
+        \nRequired: []
+        \nOptional: ['NeoHookean', 'MooneyRivlin']
         '''
         self._materials = type_check(value, self.Materials) 
+
+    def check_required(self):
+        
+        if self.string1 is None:
+            print("Requiered variable Root.string1 does not have value")
+        self.time.check_required()
+        return
 
     def as_dict(self):
         return drop_none({"string1": self._string1,"time": self._time.as_dict(),"geometry": self._geometry.as_dict(),"other": self._other.as_dict(),"materials": self._materials.as_dict(),})
 
     class Time(object):
-        '''This is a polymorphic variable, assign an object from its classes to the value'''
+        '''This is a polymorphic variable, assign an object from its classes to the value
+        \nRequired: []
+        \nOptional: ['int', 'float', 'object3', 'object4', 'object5']'''
         def __init__(
             self,
             value : object = None
@@ -147,11 +166,22 @@ class Root(object):
             '''
             self._value = class_check(value, [int, float, self.Object3, self.Object4, self.Object5]) 
 
+        def check_required(self):
+
+            if self.value is None:
+                print("Requiered variable Root.Time.value does not have value")
+            else:
+                if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                    self.value.check_required()
+            return
+
         def as_dict(self):
             return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.Object4, self.Object5])) else self._value)
 
         class Object3(object):
-            '''The time parameters: start time `t0`, end time `tend`, time step `dt`.'''
+            '''The time parameters: start time `t0`, end time `tend`, time step `dt`.
+            \nRequired: ['tend', 'dt']
+            \nOptional: ['t0']'''
             def __init__(
                 self,
                 tend: float = None,
@@ -194,13 +224,24 @@ class Root(object):
                 Startning time
                 '''
                 self._t0 = range_check(type_check(value, float), 0, None) 
+
+            def check_required(self):
+
+                if self.tend is None:
+                    print("Requiered variable Root.Time.Object3.tend does not have value")
+
+                if self.dt is None:
+                    print("Requiered variable Root.Time.Object3.dt does not have value")
+                return
 
             def as_dict(self):
                 return drop_none({"tend": self._tend,"dt": self._dt,"t0": self._t0,})
 
 
         class Object4(object):
-            '''The time parameters: start time `t0`, time step `dt`, number of time steps.'''
+            '''The time parameters: start time `t0`, time step `dt`, number of time steps.
+            \nRequired: ['time_steps', 'dt']
+            \nOptional: ['t0']'''
             def __init__(
                 self,
                 time_steps: int = None,
@@ -244,12 +285,23 @@ class Root(object):
                 '''
                 self._t0 = range_check(type_check(value, float), 0, None) 
 
+            def check_required(self):
+
+                if self.time_steps is None:
+                    print("Requiered variable Root.Time.Object4.time_steps does not have value")
+
+                if self.dt is None:
+                    print("Requiered variable Root.Time.Object4.dt does not have value")
+                return
+
             def as_dict(self):
                 return drop_none({"time_steps": self._time_steps,"dt": self._dt,"t0": self._t0,})
 
 
         class Object5(object):
-            '''The time parameters: start time `t0`, end time `tend`, number of time steps.'''
+            '''The time parameters: start time `t0`, end time `tend`, number of time steps.
+            \nRequired: ['time_steps', 'tend']
+            \nOptional: ['t0']'''
             def __init__(
                 self,
                 time_steps: int = None,
@@ -292,6 +344,15 @@ class Root(object):
                 Startning time
                 '''
                 self._t0 = range_check(type_check(value, float), 0, None) 
+
+            def check_required(self):
+
+                if self.time_steps is None:
+                    print("Requiered variable Root.Time.Object5.time_steps does not have value")
+
+                if self.tend is None:
+                    print("Requiered variable Root.Time.Object5.tend does not have value")
+                return
 
             def as_dict(self):
                 return drop_none({"time_steps": self._time_steps,"tend": self._tend,"t0": self._t0,})
@@ -299,7 +360,9 @@ class Root(object):
 
 
     class Geometry(object):
-        '''Size of the minumum component for collision'''
+        '''Size of the minumum component for collision
+        \nRequired: ['gamma', 'linear_displacement_offset']
+        \nOptional: ['nested', 'volume_selection', 'normalize_mesh', 'mesh_sequence']'''
         def __init__(
             self,
             gamma: float = 0.5,
@@ -312,9 +375,9 @@ class Root(object):
             self._gamma = range_check(type_check(gamma, float), 0, 1) if gamma is not None else None
             self._linear_displacement_offset = [] if linear_displacement_offset is None else [type_check(i, str) for i in linear_displacement_offset]
             self._nested = type_check(nested, int) if nested is not None else None
-            self._volume_selection = volume_selection if volume_selection else Root.Geometry.Volume_selection()
+            self._volume_selection = type_check(volume_selection, self.Volume_selection) if volume_selection else self.Volume_selection()
             self._normalize_mesh = type_check(normalize_mesh, bool) if normalize_mesh is not None else None
-            self._mesh_sequence = extension_check(mesh_sequence, ['.obj', '.msh', '.stl', '.ply', '.mesh']) if mesh_sequence is not None else None
+            self._mesh_sequence = extension_check(type_check(mesh_sequence, str), ['.obj', '.msh', '.stl', '.ply', '.mesh']) if mesh_sequence is not None else None
 
         @property
         def gamma(self):
@@ -335,18 +398,24 @@ class Root(object):
         def linear_displacement_offset(self, value):
             ''' 
             There is no definition
+            \nRequired: []
+            \nOptional: ['value']
             '''
+            self._linear_displacement_offset = [type_check(i, str) for i in (type_check(value, list) if value else [])]
+
+        def linear_displacement_offset_add(self, value):
+            '''Add to list '''
             self._linear_displacement_offset.append(type_check(value, str))
 
-        def clear(self):
+        def linear_displacement_offset_clear(self):
             '''Clear list (make empty)'''
             self._linear_displacement_offset.clear()
 
-        def pop(self, index=-1):
+        def linear_displacement_offset_pop(self, index=-1):
             '''Remove by index from list'''
             return self._linear_displacement_offset.pop(index)
 
-        def remove(self, item):
+        def linear_displacement_offset_remove(self, item):
             '''Safe remove specific item from list'''
             if item in self._list:
                 self._linear_displacement_offset.remove(item)
@@ -371,6 +440,8 @@ class Root(object):
         def volume_selection(self, value):
             ''' 
             Offsets the volume IDs loaded from the mesh.
+            \nRequired: []
+            \nOptional: ['id_offset']
             '''
             self._volume_selection = type_check(value, self.Volume_selection) 
 
@@ -394,13 +465,24 @@ class Root(object):
             ''' 
             Path of the mesh file to load.
             '''
-            self._mesh_sequence = extension_check(value, ['.obj', '.msh', '.stl', '.ply', '.mesh']) 
+            self._mesh_sequence = extension_check(type_check(value, str), ['.obj', '.msh', '.stl', '.ply', '.mesh']) 
+
+        def check_required(self):
+
+            if self.gamma is None:
+                print("Requiered variable Root.Geometry.gamma does not have value")
+
+            if self.linear_displacement_offset:
+                print("Requiered variable Root.Geometry.linear_displacement_offset does not have value")
+            return
 
         def as_dict(self):
             return drop_none({"gamma": self._gamma,"linear_displacement_offset": self._linear_displacement_offset,"nested": self._nested,"volume_selection": self._volume_selection.as_dict(),"normalize_mesh": self._normalize_mesh,"mesh_sequence": self._mesh_sequence,})
 
         class Volume_selection(object):
-            '''Offsets the volume IDs loaded from the mesh.'''
+            '''Offsets the volume IDs loaded from the mesh.
+            \nRequired: []
+            \nOptional: ['id_offset']'''
             def __init__(
                 self,
                 id_offset: int = 0
@@ -418,13 +500,19 @@ class Root(object):
                 '''
                 self._id_offset = type_check(value, int) 
 
+            def check_required(self):
+
+                return
+
             def as_dict(self):
                 return drop_none({"id_offset": self._id_offset,})
 
 
 
     class Other(object):
-        '''There is no definition'''
+        '''There is no definition
+        \nRequired: []
+        \nOptional: ['nested', 'time_steps']'''
         class Time_steps(str, Enum):
             ALL = "all",
             STATIC = "static"
@@ -459,12 +547,18 @@ class Root(object):
             '''
             self._time_steps = enum_check(value, self.Time_steps) 
 
+        def check_required(self):
+
+            return
+
         def as_dict(self):
             return drop_none({"nested": self._nested,"time_steps": self._time_steps.value if self._time_steps is not None else None,})
 
 
     class Materials(object):
-        '''Material Parameters lists including ID pointing to volume selection, Young's modulus ($E$), Poisson's ratio ($\nu$), Density ($\rho$), or Lamé constants ($\lambda$ and $\mu$).'''
+        '''Material Parameters lists including ID pointing to volume selection, Young's modulus ($E$), Poisson's ratio ($\nu$), Density ($\rho$), or Lamé constants ($\lambda$ and $\mu$).
+        \nRequired: []
+        \nOptional: ['NeoHookean', 'MooneyRivlin']'''
         def __init__(
             self,
             items : list = None
@@ -476,11 +570,14 @@ class Root(object):
             return self._items
 
         @items.setter
-        def items(self, item : object):
+        def items(self, items : list):
+            ''' Replace the list '''
+            self._items = [class_check(i, [self.Neohookean, self.Mooneyrivlin]) for i in (type_check(items, list) if items else [])]
+
+        def add(self, item : object):
             ''' Add to the list '''
             self._items.append(class_check(item, [self.Neohookean, self.Mooneyrivlin]))
 
-        # CLEAR (make empty)
         def clear(self):
             '''Clear list (make empty)'''
             self._items.clear()
@@ -494,11 +591,23 @@ class Root(object):
             if item in self._items:
                 self._items.remove(item) 
 
+        def check_required(self):
+
+            if self.items:
+                for item in self.items:
+                    if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        item.check_required()
+            else:
+                print("Requiered variable Root.Materials.items does not have value")
+            return
+
         def as_dict(self):
-            return drop_none([i.as_dict() for i in self._items])
+            return drop_none([i.as_dict() if isinstance(i, tuple([self.Neohookean, self.Mooneyrivlin])) else i for i in self._items])
 
         class Neohookean(object):
-            '''Material Parameters including ID, Young's modulus ($E$), Poisson's ratio ($\nu$), density ($\rho$)'''
+            '''Material Parameters including ID, Young's modulus ($E$), Poisson's ratio ($\nu$), density ($\rho$)
+            \nRequired: ['type', 'E']
+            \nOptional: ['id', 'elasticity_tensor']'''
             def __init__(
                 self,
                 type: str = None,
@@ -509,7 +618,7 @@ class Root(object):
                 self._type = type_check(type, str) if type is not None else None
                 self._E = type_check(E, int) if E is not None else None
                 self._id = [] if id is None else [type_check(i, int) for i in id]
-                self._elasticity_tensor = elasticity_tensor if elasticity_tensor else Root.Materials.Neohookean.Elasticity_tensor()
+                self._elasticity_tensor = type_check(elasticity_tensor, self.Elasticity_tensor) if elasticity_tensor else self.Elasticity_tensor()
 
             @property
             def type(self):
@@ -541,18 +650,24 @@ class Root(object):
             def id(self, value):
                 ''' 
                 Volume selection IDs
+                \nRequired: []
+                \nOptional: ['value']
                 '''
+                self._id = [type_check(i, int) for i in (type_check(value, list) if value else [])]
+
+            def id_add(self, value):
+                '''Add to list '''
                 self._id.append(type_check(value, int))
 
-            def clear(self):
+            def id_clear(self):
                 '''Clear list (make empty)'''
                 self._id.clear()
 
-            def pop(self, index=-1):
+            def id_pop(self, index=-1):
                 '''Remove by index from list'''
                 return self._id.pop(index)
 
-            def remove(self, item):
+            def id_remove(self, item):
                 '''Safe remove specific item from list'''
                 if item in self._list:
                     self._id.remove(item)
@@ -566,14 +681,27 @@ class Root(object):
             def elasticity_tensor(self, value):
                 ''' 
                 Symmetric elasticity tensor
+                \nRequired: []
+                \nOptional: ['value']
                 '''
                 self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
+
+            def check_required(self):
+
+                if self.type is None:
+                    print("Requiered variable Root.Materials.Neohookean.type does not have value")
+
+                if self.E is None:
+                    print("Requiered variable Root.Materials.Neohookean.E does not have value")
+                return
 
             def as_dict(self):
                 return drop_none({"type": self._type,"E": self._E,"id": self._id,"elasticity_tensor": self._elasticity_tensor.as_dict(),})
 
             class Elasticity_tensor(object):
-                '''Symmetric elasticity tensor'''
+                '''Symmetric elasticity tensor
+                \nRequired: []
+                \nOptional: ['value']'''
                 def __init__(
                     self,
                     items : list = None
@@ -585,11 +713,14 @@ class Root(object):
                     return self._items
 
                 @items.setter
-                def items(self, item : object):
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [class_check(i, [self.Value]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
                     ''' Add to the list '''
                     self._items.append(class_check(item, [self.Value]))
 
-                # CLEAR (make empty)
                 def clear(self):
                     '''Clear list (make empty)'''
                     self._items.clear()
@@ -603,11 +734,23 @@ class Root(object):
                     if item in self._items:
                         self._items.remove(item) 
 
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.Neohookean.Elasticity_tensor.items does not have value")
+                    return
+
                 def as_dict(self):
-                    return drop_none([i.as_dict() for i in self._items])
+                    return drop_none([i.as_dict() if isinstance(i, tuple([self.Value])) else i for i in self._items])
 
                 class Value(object):
-                    '''Entries of elasticity tensor'''
+                    '''Entries of elasticity tensor
+                    \nRequired: ['input']
+                    \nOptional: []'''
                     def __init__(
                         self,
                         input: int = 1
@@ -625,6 +768,12 @@ class Root(object):
                         '''
                         self._input = type_check(value, int) 
 
+                    def check_required(self):
+
+                        if self.input is None:
+                            print("Requiered variable Root.Materials.Neohookean.Elasticity_tensor.Value.input does not have value")
+                        return
+
                     def as_dict(self):
                         return drop_none({"input": self._input,})
 
@@ -632,7 +781,9 @@ class Root(object):
 
 
         class Mooneyrivlin(object):
-            '''Material Parameters including ID, for Mooney-Rivlin'''
+            '''Material Parameters including ID, for Mooney-Rivlin
+            \nRequired: ['type', 'c1']
+            \nOptional: ['id', 'elasticity_tensor']'''
             def __init__(
                 self,
                 type: str = None,
@@ -643,7 +794,7 @@ class Root(object):
                 self._type = type_check(type, str) if type is not None else None
                 self._c1 = type_check(c1, int) if c1 is not None else None
                 self._id = [] if id is None else [type_check(i, int) for i in id]
-                self._elasticity_tensor = elasticity_tensor if elasticity_tensor else Root.Materials.Mooneyrivlin.Elasticity_tensor()
+                self._elasticity_tensor = type_check(elasticity_tensor, self.Elasticity_tensor) if elasticity_tensor else self.Elasticity_tensor()
 
             @property
             def type(self):
@@ -675,18 +826,24 @@ class Root(object):
             def id(self, value):
                 ''' 
                 Volume selection IDs
+                \nRequired: []
+                \nOptional: ['value']
                 '''
+                self._id = [type_check(i, int) for i in (type_check(value, list) if value else [])]
+
+            def id_add(self, value):
+                '''Add to list '''
                 self._id.append(type_check(value, int))
 
-            def clear(self):
+            def id_clear(self):
                 '''Clear list (make empty)'''
                 self._id.clear()
 
-            def pop(self, index=-1):
+            def id_pop(self, index=-1):
                 '''Remove by index from list'''
                 return self._id.pop(index)
 
-            def remove(self, item):
+            def id_remove(self, item):
                 '''Safe remove specific item from list'''
                 if item in self._list:
                     self._id.remove(item)
@@ -700,14 +857,27 @@ class Root(object):
             def elasticity_tensor(self, value):
                 ''' 
                 Symmetric elasticity tensor
+                \nRequired: []
+                \nOptional: ['value']
                 '''
                 self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
+
+            def check_required(self):
+
+                if self.type is None:
+                    print("Requiered variable Root.Materials.Mooneyrivlin.type does not have value")
+
+                if self.c1 is None:
+                    print("Requiered variable Root.Materials.Mooneyrivlin.c1 does not have value")
+                return
 
             def as_dict(self):
                 return drop_none({"type": self._type,"c1": self._c1,"id": self._id,"elasticity_tensor": self._elasticity_tensor.as_dict(),})
 
             class Elasticity_tensor(object):
-                '''Symmetric elasticity tensor'''
+                '''Symmetric elasticity tensor
+                \nRequired: []
+                \nOptional: ['value']'''
                 def __init__(
                     self,
                     items : list = None
@@ -719,11 +889,14 @@ class Root(object):
                     return self._items
 
                 @items.setter
-                def items(self, item : object):
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [class_check(i, [self.Value]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
                     ''' Add to the list '''
                     self._items.append(class_check(item, [self.Value]))
 
-                # CLEAR (make empty)
                 def clear(self):
                     '''Clear list (make empty)'''
                     self._items.clear()
@@ -737,11 +910,23 @@ class Root(object):
                     if item in self._items:
                         self._items.remove(item) 
 
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.Mooneyrivlin.Elasticity_tensor.items does not have value")
+                    return
+
                 def as_dict(self):
-                    return drop_none([i.as_dict() for i in self._items])
+                    return drop_none([i.as_dict() if isinstance(i, tuple([self.Value])) else i for i in self._items])
 
                 class Value(object):
-                    '''Entries of elasticity tensor'''
+                    '''Entries of elasticity tensor
+                    \nRequired: ['input']
+                    \nOptional: []'''
                     def __init__(
                         self,
                         input: int = 1
@@ -758,6 +943,12 @@ class Root(object):
                         There is no definition
                         '''
                         self._input = type_check(value, int) 
+
+                    def check_required(self):
+
+                        if self.input is None:
+                            print("Requiered variable Root.Materials.Mooneyrivlin.Elasticity_tensor.Value.input does not have value")
+                        return
 
                     def as_dict(self):
                         return drop_none({"input": self._input,})

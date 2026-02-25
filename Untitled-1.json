@@ -4,19 +4,19 @@
         "type": "object",
         "required": ["string1", "time"],
         "optional":["geometry","other", "materials"],
-        "doc": "parametric location of the refinement"
+        "doc": "Root of the configuration file."
     },
     {
         "pointer": "/time",
         "type": "int",
         "default": 0,
-        "doc": "Time is int"
+        "doc": "Time is an integer."
     },
     {
         "pointer": "/time",
         "type": "float",
         "default": 0,
-        "doc": "Time is int"
+        "doc": "Time is a float."
     },
     {
         "pointer": "/time",

@@ -136,12 +136,46 @@ class Root(object):
         #print("Other = " + str(value))
         self._other = type_check(self.Materials ,value)
 
+    @property
+    def time(self):
+        return self._time
+
+    @time.setter
+    def time(self, value):
+        """ Optional: nested """
+        #print("Other = " + str(value))
+        self._other = type_check(self.Time ,value)
+
+    def check_required(self):
+        result = []
+        if self.string1 is None:
+            result.append(
+                f"Requiered variable root.string1 does not have value"
+            )
+        result.append(self.time.check_required())
+        result = ("\n").join(
+            p for p in result
+        )
+        return result
+
+
     def as_dict(self):
         return {"string1": self._string1, "geometry": self._geometry.as_dict(), "other": self._other.as_dict(), "materials": self._materials.as_dict()}
     
     class Time(object):
         def __init__(self, value = None):
             self._value = value
+
+        def check_required(self):
+            result = []
+            if self._value is None:
+                result.append(
+                    f"Requiered variable root.time.value does not have value"
+                )
+            result = ("\n").join(
+                p for p in result
+            )
+            return result
 
         class Object1(object):
             def __init__(self, dt = None):
@@ -326,7 +360,7 @@ class Root(object):
             def as_dict(self):
                 return drop_none({"type": self._type, "c1": self._c1})
 
-root = Root("2")
+root = Root()
 
 print(root.as_dict())
 
@@ -340,7 +374,7 @@ print(root.as_dict())
 print("string1 = " + str(root._string1))
 
 #root.geometry.Nested()
-root.string1 = "hello"
+#root.string1 = "hello"
 print(root.string1)
 print(root.geometry.nested)
 
@@ -388,7 +422,10 @@ root.time.value.time_steps = 2 """
 #root.time.value = "2.5"
 #root.geometry.mesh_sequence = "path.obj"
 
-root.geometry.gamma = 2.0
+root.geometry.gamma = 1.0
+
+print (root.check_required())
 
 json_str = json.dumps(root.as_dict())
 print(json_str)
+

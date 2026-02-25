@@ -2,19 +2,22 @@ import json
 import textwrap
 
 class ClassGenerator(object):
-    def __init__(self, class_name : str, doc : str):
+    def __init__(self, class_name : str, doc : str, required, optional):
         self._class_name = class_name.capitalize()
-        self._doc = doc
+        self._doc = f"""{doc}
+    \\nRequired: {required}
+    \\nOptional: {optional}"""
         self._init_input = []
         self._init_body = []
         self._property_setter = []
         self._as_dict = []
         self._inner_classes = []
+        self._check_required = []
         self._enum = ""
 
-    def set_enum(self, variable):
+    def set_enum(self, node):
         enum = []
-        for option in variable._optional:
+        for option in node._optional:
             enum.append(
                 f'{option.upper()} = "{option}"'
             )
@@ -25,16 +28,26 @@ class ClassGenerator(object):
         )
 
         result = f"""
-    class {variable.name.capitalize()}(str, Enum):
+    class {node.name.capitalize()}(str, Enum):
 {enum_body}
     """
         self._enum = result
 
-    def set_init_list(self, variable):
-        #type = variable.type if variable.type != "string" else "str"
+    def set_init_list(self, node):
+        #type = node.type if node.type != "string" else "str"
         if not self._init_input:
-            allowed_classes =  ["self." + k.capitalize() for k in variable._optional]
+            allowed_classes = []
+            dict_condition = []
+            for k in node._optional:
+                if k == "str" or k == "int" or k == "float" or k == "bool":
+                    allowed_classes.append(k)
+                else:
+                    allowed_classes.append("self." + k.capitalize())
+                    dict_condition.append("self." + k.capitalize())
+                    
+
             allowed_classes = ", ".join(allowed_classes)
+            dict_condition = ", ".join(dict_condition)
 
             self._init_input.append(
                 'items : list = None'
@@ -43,18 +56,18 @@ class ClassGenerator(object):
                 f'self._items = [class_check(i, [{allowed_classes}]) for i in (type_check(items, list) if items else [])]'
             )
             self._as_dict.append(
-                f'[i.as_dict() for i in self._items]'
+                f'[i.as_dict() if isinstance(i, tuple([{dict_condition}])) else i for i in self._items]'
             )
 
         """ def __init__(self, items=None):
             self._list = list(items) if items else [] """
         """ [i.as_dict() for i in self._list] """
 
-    def set_init_polymorphic(self, variable, path):
+    def set_init_polymorphic(self, node, path):
         if not self._init_input:
             allowed_classes = []
             dict_condition = []
-            for k in variable._optional:
+            for k in node._optional:
                 if k[-1].isdigit():
                     allowed_classes.append("self." + k.capitalize())
                     dict_condition.append("self." + k.capitalize())
@@ -74,80 +87,130 @@ class ClassGenerator(object):
                 f'self._value.as_dict() if isinstance(self._value, tuple([{dict_condition}])) else self._value'
             )
     
-    def set_init(self, variable, path):
-        type = variable.type if variable.type != "string" else "str"
-        child = variable
-        for value in variable._optional.values():
+    def set_init(self, node, path):
+        type = node.type if node.type != "string" else "str"
+        child = node
+        for value in node._optional.values():
             child = value
         #for objects and lists with polymorphism
-        if variable.type == "object" or (variable.type == "list" and (len(variable._optional) > 1 or child.type == "object") or variable.type == "polymorphic"):
+        if node.type == "object" or (node.type == "list" and (len(node._optional) > 1 or child.type == "object") or node.type == "polymorphic"):
             self._init_input.append(
-                f'{variable.name}: Optional["{path}"] = None'
+                f'{node.name}: Optional["{path}"] = None'
             )
             self._init_body.append(
-                f'self._{variable.name} = {variable.name} if {variable.name} else {path}()'
+                f'self._{node.name} = type_check({node.name}, self.{node.name.capitalize()}) if {node.name} else self.{node.name.capitalize()}()'
             )
             self._as_dict.append(
-                f'"{variable.name}": self._{variable.name}.as_dict(),'
+                f'"{node.name}": self._{node.name}.as_dict(),'
             )
         #for lists without polymorphism
-        elif variable.type == "list" and len(variable._optional) == 1:
-            #default = variable.default if variable.default else None
-            #(child,) = variable._optional.values()
+        elif node.type == "list" and len(node._optional) == 1:
+            #default = node.default if node.default else None
+            #(child,) = node._optional.values()
             child_type = child.type if child.type != "string" else "str"
             self._init_input.append(
-                f'{variable.name}: Optional[Iterable[{child_type}]] = None'
+                f'{node.name}: Optional[Iterable[{child_type}]] = None'
             )
             self._init_body.append(
-                f'self._{variable.name} = [] if {variable.name} is None else [type_check(i, {child_type}) for i in {variable.name}]'
+                f'self._{node.name} = [] if {node.name} is None else [type_check(i, {child_type}) for i in {node.name}]'
             )
             self._as_dict.append(
-                f'"{variable.name}": self._{variable.name},'
+                f'"{node.name}": self._{node.name},'
             )
         #For string with options
-        elif variable.type == "string" and len(variable._optional) > 0:
-            self.set_enum(variable)
+        elif node.type == "string" and len(node._optional) > 0:
+            self.set_enum(node)
             self._init_input.append(
-                f'{variable.name}: {variable.name.capitalize()} = {variable.default}'
+                f'{node.name}: {node.name.capitalize()} = {node.default}'
             )
             self._init_body.append(
-                f'self._{variable.name} = enum_check({variable.name}, self.{variable.name.capitalize()})'
+                f'self._{node.name} = enum_check({node.name}, self.{node.name.capitalize()})'
             )
             self._as_dict.append(
-                f'"{variable.name}": self._{variable.name}.value if self._{variable.name} is not None else None,'
+                f'"{node.name}": self._{node.name}.value if self._{node.name} is not None else None,'
             )
         #For file types with extensions limit
-        elif variable.type == "string" and variable.extensions:
+        elif node.type == "string" and node.extensions:
             type = "str"
             self._init_input.append(
-                f'{variable.name}: {type} = {variable.default}'
+                f'{node.name}: {type} = {node.default}'
             )
             self._init_body.append(
-                f'self._{variable.name} = extension_check({variable.name}, {variable.extensions}) if {variable.name} is not None else None'
+                f'self._{node.name} = extension_check(type_check({node.name}, str), {node.extensions}) if {node.name} is not None else None'
             )
             self._as_dict.append(
-                f'"{variable.name}": self._{variable.name},'
+                f'"{node.name}": self._{node.name},'
             )
         #For other types (string, int and float)
         else :
             self._init_input.append(
-                    f'{variable.name}: {type} = {float(variable.default) if type == "float" and variable.default is not None else variable.default}'
+                    f'{node.name}: {type} = {float(node.default) if type == "float" and node.default is not None else node.default}'
                 )
-            if variable.min is not None or variable.max is not None:
+            if node.min is not None or node.max is not None:
                 self._init_body.append(
-                    f'self._{variable.name} = range_check(type_check({variable.name}, {type}), {variable.min}, {variable.max}) if {variable.name} is not None else None'
+                    f'self._{node.name} = range_check(type_check({node.name}, {type}), {node.min}, {node.max}) if {node.name} is not None else None'
                 )
             else:
                 self._init_body.append(
-                    f'self._{variable.name} = type_check({variable.name}, {type}) if {variable.name} is not None else None'
+                    f'self._{node.name} = type_check({node.name}, {type}) if {node.name} is not None else None'
                 )
             self._as_dict.append(
-                f'"{variable.name}": self._{variable.name},'
+                f'"{node.name}": self._{node.name},'
             )
     
-    def set_property_setter_list(self, variable):
+    def set_check_required_polymorphic(self, path):
+        if not self._check_required:
+            type_list = ["int", "float", "list", "str", "bool"]
+
+            self._check_required.append(
+                    f"""
+        if self.value is None:
+            print("Requiered variable {path}.value does not have value")
+        else:
+            if type(self.value) not in [{type_list}]:
+                self.value.check_required()"""
+                )
+
+    def set_check_required_list(self, path):
+        if not self._check_required:
+            type_list = ["int", "float", "list", "str", "bool"]
+            
+            self._check_required.append(
+                    f"""
+        if self.items:
+            for item in self.items:
+                if type(item) not in [{type_list}]:
+                    item.check_required()
+        else:
+            print("Requiered variable {path}.items does not have value")"""
+                    )
+
+    def set_check_required(self, node, path):
+        child = node
+        for value in node._optional.values():
+            child = value
+        #for objects and lists with polymorphism
+        if node.type == "object" or (node.type == "list" and (len(node._optional) > 1 or child.type == "object") or node.type == "polymorphic"):
+            self._check_required.append(
+                f"self.{node.name}.check_required()"
+            )
+        #for lists without polymorphism
+        elif node.type == "list" and len(node._optional) == 1:
+            self._check_required.append(
+                f"""
+        if self.{node.name}:
+            print("Requiered variable {path} does not have value")"""
+                )
+        else :
+            self._check_required.append(
+                f"""
+        if self.{node.name} is None:
+            print("Requiered variable {path} does not have value")"""
+                )
+
+    def set_property_setter_list(self, node):
         if not self._property_setter:
-            allowed_classes =  ["self." + k.capitalize() for k in variable._optional]
+            allowed_classes =  ["self." + k.capitalize() for k in node._optional]
             allowed_classes = ", ".join(allowed_classes)
 
             self._property_setter.append(
@@ -157,11 +220,14 @@ class ClassGenerator(object):
         return self._items
 
     @items.setter
-    def items(self, item : object):
+    def items(self, items : list):
+        ''' Replace the list '''
+        self._items = [class_check(i, [{allowed_classes}]) for i in (type_check(items, list) if items else [])]
+
+    def add(self, item : object):
         ''' Add to the list '''
         self._items.append(class_check(item, [{allowed_classes}]))
 
-    # CLEAR (make empty)
     def clear(self):
         '''Clear list (make empty)'''
         self._items.clear()
@@ -176,9 +242,9 @@ class ClassGenerator(object):
             self._items.remove(item) """
             )
     
-    def set_property_setter_polymorphic(self, variable):
+    def set_property_setter_polymorphic(self, node):
         if not self._property_setter:
-            allowed_classes =  [("self." + k.capitalize() if k[-1].isdigit() else k) for k in variable._optional]
+            allowed_classes =  [("self." + k.capitalize() if k[-1].isdigit() else k) for k in node._optional]
             allowed_classes = ", ".join(allowed_classes)
             inside_setter = f"self._value = class_check(value, [{allowed_classes}])"
             self._property_setter.append(
@@ -190,62 +256,70 @@ class ClassGenerator(object):
     @value.setter
     def value(self, value):
         ''' 
-        {variable.doc}
+        {node.doc}
         '''
         {inside_setter} """
         )
 
-    def set_property_setter(self, variable):
-        type = variable.type if variable.type != "string" else "str"
-        child = variable
-        for value in variable._optional.values():
+    def set_property_setter(self, node):
+        type = node.type if node.type != "string" else "str"
+        child = node
+        required_optional = ""
+        for value in node._optional.values():
             child = value
 
         if type == "object" or type == "polymorphic" or type == "list":
-            type_check = f'self.{variable.name.capitalize()}'
+            type_check = f'self.{node.name.capitalize()}'
+            required_optional = f"""
+        \\nRequired: {list(node._required)}
+        \\nOptional: {list(node._optional)}"""
         else:
             type_check = type
 
-        if variable.type == "list" and len(variable._optional) == 1 and child.type != "object":
+        if node.type == "list" and len(node._optional) == 1 and child.type != "object":
             child_type = child.type if child.type != "string" else "str"
-            inside_setter = f"""self._{variable.name}.append(type_check(value, {child_type}))
+            inside_setter = f"""self._{node.name} = [type_check(i, {child_type}) for i in (type_check(value, list) if value else [])]
 
-    def clear(self):
+    def {node.name}_add(self, value):
+        '''Add to list '''
+        self._{node.name}.append(type_check(value, {child_type}))
+            
+    def {node.name}_clear(self):
         '''Clear list (make empty)'''
-        self._{variable.name}.clear()
+        self._{node.name}.clear()
 
-    def pop(self, index=-1):
+    def {node.name}_pop(self, index=-1):
         '''Remove by index from list'''
-        return self._{variable.name}.pop(index)
+        return self._{node.name}.pop(index)
 
-    def remove(self, item):
+    def {node.name}_remove(self, item):
         '''Safe remove specific item from list'''
         if item in self._list:
-            self._{variable.name}.remove(item)
+            self._{node.name}.remove(item)
         """
         #for strings with options
-        elif variable.type == "string" and len(variable._optional) > 0:
-            inside_setter = f"self._{variable.name} = enum_check(value, self.{variable.name.capitalize()})"
+        elif node.type == "string" and len(node._optional) > 0:
+            inside_setter = f"self._{node.name} = enum_check(value, self.{node.name.capitalize()})"
         #for file names with extensions limit
-        elif variable.type == "string" and variable.extensions:
-            inside_setter = f"self._{variable.name} = extension_check(value, {variable.extensions})"
+        elif node.type == "string" and node.extensions:
+            inside_setter = f"self._{node.name} = extension_check(type_check(value, str), {node.extensions})"
         #for other types
         else:
-            if variable.min is not None or variable.max is not None:
-                inside_setter = f"self._{variable.name} = range_check(type_check(value, {type_check}), {variable.min}, {variable.max})"
+            if node.min is not None or node.max is not None:
+                inside_setter = f"self._{node.name} = range_check(type_check(value, {type_check}), {node.min}, {node.max})"
             else:
-                inside_setter = f"self._{variable.name} = type_check(value, {type_check})"
+                inside_setter = f"self._{node.name} = type_check(value, {type_check})"
         
         self._property_setter.append(
             f""" 
     @property
-    def {variable.name}(self):
-        return self._{variable.name}
+    def {node.name}(self):
+        return self._{node.name}
 
-    @{variable.name}.setter
-    def {variable.name}(self, value):
+    @{node.name}.setter
+    def {node.name}(self, value):
         ''' 
-        {variable.doc}
+        {node.doc}{required_optional}
         '''
         {inside_setter} """
         )
@@ -256,13 +330,17 @@ class ClassGenerator(object):
         )
 
     def generate(self, type):
-        INDENT = " " * 8
+        INDENT = "    "
         init_input = (",\n").join(
-            INDENT + p for p in self._init_input
+            INDENT * 2 + p for p in self._init_input
         )
 
         init_body = ("\n").join(
-            INDENT + p for p in self._init_body
+            INDENT * 2 + p for p in self._init_body
+        )
+
+        check_required = ("\n").join(
+            INDENT * 2 + p for p in self._check_required
         )
 
         property_setter = ("\n").join(
@@ -288,6 +366,10 @@ class {self._class_name}(object):
     ):
 {init_body}
 {property_setter}
+
+    def check_required(self):
+{check_required}
+        return
 
     def as_dict(self):
         return drop_none({as_dict})
@@ -423,42 +505,52 @@ class JsonToTreeClass(object):
             node, parent = optional.find_var(parts[1:])
             return node, parent or self
 
+        if len(parts) > 0 and parts[-1] != "*":
+            raise ValueError(
+                "Specification file does not conform to the required hierarchy.\n"
+                f'Variable "{parts[-1]}" defined before its parent.'
+            )
+
         return self, None
 
     def class_generator(self, path = "Root"):
-        class_builder = ClassGenerator(self.name, self.doc)
+        class_builder = ClassGenerator(self.name, self.doc, list(self._required), list(self._optional))
         for required in self._required.values():
             #print(self.name)
-            inner_path = path + "." + required.name.capitalize()
-            class_builder.set_init(required, inner_path)
+            inner_path_capitalize = path + "." + required.name.capitalize()
+            inner_path = path + "." + required.name
+            class_builder.set_init(required, inner_path_capitalize)
+            class_builder.set_check_required(required, inner_path)
             class_builder.set_property_setter(required)
                 
             for value in required._optional.values():
                 child = value
 
             if required.type == "object" or (required.type == "list" and (len(required._optional) > 1 or child.type == "object")) or required.type == "polymorphic":
-                inner_class = required.class_generator(inner_path)
+                inner_class = required.class_generator(inner_path_capitalize)
                 inner_class = self.indent(inner_class)
                 class_builder.set_inner_classes(inner_class)
 
         for optional in self._optional.values():
             #print(self.name)
-            inner_path = path + "." + optional.name.capitalize()
+            inner_path_capitalize = path + "." + optional.name.capitalize()
             if self.type == "list":
                 class_builder.set_init_list(self)
                 class_builder.set_property_setter_list(self)
+                class_builder.set_check_required_list(path)
             elif self.type == "polymorphic":
                 class_builder.set_init_polymorphic(self, path)
                 class_builder.set_property_setter_polymorphic(self)
+                class_builder.set_check_required_polymorphic(path)
             else:
-                class_builder.set_init(optional, inner_path)
+                class_builder.set_init(optional, inner_path_capitalize)
                 class_builder.set_property_setter(optional)
 
             for value in optional._optional.values():
                 child = value
 
             if optional.type == "object" or (optional.type == "list" and (len(optional._optional) > 1 or child.type == "object")) or optional.type == "polymorphic":
-                inner_class = optional.class_generator(inner_path)
+                inner_class = optional.class_generator(inner_path_capitalize)
                 inner_class = self.indent(inner_class)
                 class_builder.set_inner_classes(inner_class)
 
@@ -489,8 +581,13 @@ schema_file = "Untitled-1.json"
 with open(schema_file) as f:
     schema = json.load(f)
 
+type_list = ["object", "int", "float", "list", "string", "bool", "file"]
 """ setting value of json to the class """
 for entry in schema:
+    type = entry.get('type')
+    if type not in type_list:
+        raise ValueError(f'Type "{type}" is not supported by the system. \nAcceptable types: {type_list}')
+
     name = "root" if entry['pointer'] == "/" else entry['pointer']
     #print(name)
     parts = [name] if name == 'root' else name.strip('/').split('/')
@@ -576,7 +673,7 @@ for entry in schema:
         if entry.get('optional'):
             print(entry['optional']) 
 """
-print(root.get_optional("geometry").get_optional("nested").name)
+#print(root.get_optional("geometry").get_optional("nested").name)
 
 
 generated_class = root.class_generator()
@@ -643,7 +740,7 @@ with open("generated_class.py", "w", encoding="utf-8") as f:
 
 print(root)
 
-print(root.get_optional("geometry").get_optional("nested").default)
+#print(root.get_optional("geometry").get_optional("nested").default)
 
 print(root.get_optional("materials").get_optional("MooneyRivlin").get_optional("id").type)
 
@@ -654,7 +751,7 @@ id = root.get_optional("materials").get_optional("MooneyRivlin").get_optional("i
 (x,) = id._optional.values()
 print (x)
 
-print(root.get_optional("geometry").get_optional("mesh_sequence").extensions)
+#print(root.get_optional("geometry").get_optional("mesh_sequence").extensions)
 
 #print(root.get_required("time").get_optional("int3").type)
 #print(root._optional["ali"])
