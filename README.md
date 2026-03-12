@@ -19,7 +19,7 @@ Validation occurs during assignment through generated setters and helper utiliti
 
 ---
 
-**Files**
+# Files
 
 - **Untitled-1.json**  
   Example JSON specification used as input to the generator.
