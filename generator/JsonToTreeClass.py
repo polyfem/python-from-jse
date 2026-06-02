@@ -473,6 +473,11 @@ class JsonToTreeClass(object):
         )
 
     def add_required(self, var_name):
+        if var_name in self._required:
+            return
+        if var_name in self._optional:
+            self._required[var_name] = self._optional.pop(var_name)
+            return
         var_obj = JsonToTreeClass(var_name)
         self._required[var_name] = var_obj
 
@@ -480,6 +485,10 @@ class JsonToTreeClass(object):
         return self._required.get(var_name)
     
     def add_optional(self, var_name):
+        if var_name in self._required:
+            return
+        if var_name in self._optional:
+            return
         var_obj = JsonToTreeClass(var_name)
         self._optional[var_name] = var_obj
 
@@ -522,11 +531,11 @@ class JsonToTreeClass(object):
 
                 if required is not None:
                     node, parent = required.find_var(parts[2:])
-                    return node, self
+                    return node, parent or self
 
                 if optional is not None:
                     node, parent = optional.find_var(parts[2:])
-                    return node, self
+                    return node, parent or self
 
             if len(parts) == 2 and self._optional:
                 first_node = None
@@ -631,17 +640,61 @@ output_file = PROJECT_ROOT / "generated" / "generated_class.py"
 with open(schema_file, encoding="utf-8") as f:
     schema = json.load(f)
 
+SKIP_POINTER_PREFIXES = ("/preset_problem", "/tests")
+
+def pointer_parts(pointer):
+    return [] if pointer == "/" else pointer.strip("/").split("/")
+
+def child_pointer(parent_pointer, child_name):
+    if parent_pointer == "/":
+        return f"/{child_name}"
+    return f'{parent_pointer.rstrip("/")}/{child_name}'
+
+def should_skip_pointer(pointer):
+    return any(pointer == prefix or pointer.startswith(f"{prefix}/") for prefix in SKIP_POINTER_PREFIXES)
+
+def filtered_entry(entry):
+    entry = dict(entry)
+    pointer = entry.get("pointer", "/")
+
+    for key in ("required", "optional", "options"):
+        values = entry.get(key)
+        if values:
+            entry[key] = [
+                value for value in values
+                if not should_skip_pointer(child_pointer(pointer, value))
+            ]
+
+    return entry
+
 def pointer_depth(entry):
     pointer = entry.get("pointer", "/")
     return 0 if pointer == "/" else len(pointer.strip("/").split("/"))
 
 schema = [
-    entry
-    for _, entry in sorted(
-        enumerate(schema),
-        key=lambda item: (pointer_depth(item[1]), item[0])
-    )
+    filtered_entry(entry)
+    for entry in schema
+    if not should_skip_pointer(entry.get("pointer", "/"))
 ]
+
+def ensure_pointer(root_node, pointer):
+    if pointer == "/":
+        return root_node
+
+    node = root_node
+    for part in pointer_parts(pointer):
+        if part == "*":
+            node.add_optional("value")
+            node = node.get_optional("value")
+        else:
+            node.add_optional(part)
+            node = node.get_optional(part)
+
+    return node
+
+for entry in schema:
+    ensure_pointer(root, entry.get("pointer", "/"))
+
 local_definition_pointers = {
     entry["pointer"]
     for entry in schema
