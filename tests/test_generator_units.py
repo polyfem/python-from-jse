@@ -138,6 +138,123 @@ class GeneratorUnitTests(unittest.TestCase):
         self.assertEqual("MooneyRivlin", type_node.default)
         self.assertEqual(["MooneyRivlin"], list(type_node._optional))
 
+    def test_child_pointer_before_parent_entry_stays_under_parent(self):
+        generator = import_generator("json_to_tree_child_before_parent")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["solver"],
+            },
+            {
+                "pointer": "/solver/contact/friction_iterations",
+                "type": "int",
+                "default": 5,
+            },
+            {
+                "pointer": "/solver",
+                "type": "object",
+                "optional": ["contact"],
+            },
+            {
+                "pointer": "/solver/contact",
+                "type": "object",
+                "optional": ["friction_iterations", "enabled"],
+            },
+            {
+                "pointer": "/solver/contact/enabled",
+                "type": "bool",
+                "default": True,
+            },
+        ])
+
+        solver = root.get_optional("solver")
+        contact = solver.get_optional("contact")
+        friction_iterations = contact.get_optional("friction_iterations")
+
+        self.assertEqual("object", solver.type)
+        self.assertEqual("object", contact.type)
+        self.assertEqual("int", friction_iterations.type)
+        self.assertEqual(5, friction_iterations.default)
+
+        generated = generator.generated_class_text(root)
+        generated_module = module_from_generated_text(generated)
+        contact_config = generated_module.Root.Solver.Contact(
+            friction_iterations=7,
+            enabled=False,
+        )
+
+        self.assertEqual(
+            {"friction_iterations": 7, "enabled": False},
+            contact_config.as_dict(),
+        )
+
+    def test_duplicate_pointer_object_variants_are_preserved(self):
+        generator = import_generator("json_to_tree_duplicate_pointer_variants")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["time"],
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "required": ["tend", "dt"],
+                "optional": ["t0"],
+                "doc": "Time with end time and time step.",
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "required": ["time_steps", "dt"],
+                "optional": ["t0"],
+                "doc": "Time with number of time steps and time step.",
+            },
+            {
+                "pointer": "/time/t0",
+                "type": "float",
+                "default": 0.0,
+            },
+            {
+                "pointer": "/time/tend",
+                "type": "float",
+            },
+            {
+                "pointer": "/time/dt",
+                "type": "float",
+            },
+            {
+                "pointer": "/time/time_steps",
+                "type": "int",
+            },
+        ])
+
+        time = root.get_optional("time")
+
+        self.assertEqual("polymorphic", time.type)
+        self.assertEqual(["object1", "object2"], list(time._optional))
+        self.assertEqual(["tend", "dt"], list(time.get_optional("object1")._required))
+        self.assertEqual(
+            ["time_steps", "dt"],
+            list(time.get_optional("object2")._required),
+        )
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("class Object1(object):", generated)
+        self.assertIn("class Object2(object):", generated)
+        self.assertIn("class_check(value, [self.Object1, self.Object2])", generated)
+
+        generated_module = module_from_generated_text(generated)
+        time_by_end = generated_module.Root.Time.Object1(tend=1.0, dt=0.1)
+        time_by_steps = generated_module.Root.Time.Object2(time_steps=10, dt=0.1)
+
+        self.assertEqual({"tend": 1.0, "dt": 0.1, "t0": 0.0}, time_by_end.as_dict())
+        self.assertEqual(
+            {"time_steps": 10, "dt": 0.1, "t0": 0.0},
+            time_by_steps.as_dict(),
+        )
+
     def test_parameter_unions_are_inlined_in_variant_classes(self):
         generator = import_generator("json_to_tree_inline_parameters")
         root = generator.build_tree([
