@@ -35,6 +35,7 @@ PRIMITIVE_TYPE_EXPRESSIONS = {
 }
 
 INLINE_PRIMITIVE_TYPES = set(PRIMITIVE_TYPE_EXPRESSIONS)
+LIST_ITEM_NAME = "item"
 
 def is_value_with_unit_node(node):
     return (
@@ -52,15 +53,30 @@ def is_inline_polymorphic(node):
         return False
 
     for child in node._optional.values():
-        if child.type in INLINE_PRIMITIVE_TYPES:
+        if child.type == "list" and not is_structured_list_node(child):
             continue
         if child.type == "list":
+            return False
+        if child.type in INLINE_PRIMITIVE_TYPES:
             continue
         if is_value_with_unit_node(child):
             continue
         return False
 
     return True
+
+def is_structured_list_node(node):
+    if node.type != "list":
+        return False
+
+    if len(node._optional) > 1:
+        return True
+
+    child = None
+    for value in node._optional.values():
+        child = value
+
+    return child is not None and child.type in ("object", "polymorphic")
 
 class ClassGenerator(object):
     def __init__(self, class_name : str, doc : str, required, optional):
@@ -179,9 +195,14 @@ class ClassGenerator(object):
         if not self._init_input:
             allowed_classes = []
             dict_condition = []
-            for k in node._optional:
+            for k, child in node._optional.items():
                 if k in PRIMITIVE_TYPE_EXPRESSIONS:
                     allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[k])
+                    if k == "list" and is_structured_list_node(child):
+                        allowed_classes.append("self." + py_class_name(k))
+                        dict_condition.append("self." + py_class_name(k))
+                elif child.type in PRIMITIVE_TYPE_EXPRESSIONS:
+                    allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[child.type])
                 else:
                     allowed_classes.append("self." + py_class_name(k))
                     dict_condition.append("self." + py_class_name(k))
@@ -208,9 +229,14 @@ class ClassGenerator(object):
         if not self._init_input:
             allowed_classes = []
             dict_condition = []
-            for k in node._optional:
+            for k, child in node._optional.items():
                 if k in PRIMITIVE_TYPE_EXPRESSIONS:
                     allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[k])
+                    if k == "list" and is_structured_list_node(child):
+                        allowed_classes.append("self." + py_class_name(k))
+                        dict_condition.append("self." + py_class_name(k))
+                elif child.type in PRIMITIVE_TYPE_EXPRESSIONS:
+                    allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[child.type])
                 else:
                     allowed_classes.append("self." + py_class_name(k))
                     dict_condition.append("self." + py_class_name(k))
@@ -419,9 +445,16 @@ class ClassGenerator(object):
     def set_property_setter_polymorphic(self, node):
         if not self._property_setter:
             allowed_classes =  [
-                PRIMITIVE_TYPE_EXPRESSIONS[k] if k in PRIMITIVE_TYPE_EXPRESSIONS else "self." + py_class_name(k)
-                for k in node._optional
+                PRIMITIVE_TYPE_EXPRESSIONS[k]
+                if k in PRIMITIVE_TYPE_EXPRESSIONS
+                else PRIMITIVE_TYPE_EXPRESSIONS[child.type]
+                if child.type in PRIMITIVE_TYPE_EXPRESSIONS
+                else "self." + py_class_name(k)
+                for k, child in node._optional.items()
             ]
+            for k, child in node._optional.items():
+                if k == "list" and is_structured_list_node(child):
+                    allowed_classes.append("self." + py_class_name(k))
             allowed_classes = ", ".join(allowed_classes)
             inside_setter = f"self._value = class_check(value, [{allowed_classes}])"
             doc = self.doc_text(node.doc)
@@ -711,6 +744,15 @@ class JsonToTreeClass(object):
         if self.type == "polymorphic" and len(parts) > 0 and parts[0] != "*":
             parts = ["*"] + parts
 
+        if self.type == "polymorphic" and parts[0] == "*":
+            list_variant = self.get_optional("list")
+            if list_variant is not None:
+                try:
+                    node, parent = list_variant.find_var(parts)
+                    return node, parent or list_variant
+                except ValueError:
+                    pass
+
         if parts[0] == "*" and len(parts) > 1:
             if parts[1] == "*":
                 for child in self._optional.values():
@@ -989,8 +1031,8 @@ def build_tree(schema_entries):
         node = root_node
         for part in pointer_parts(pointer):
             if part == "*":
-                node.add_optional("value")
-                node = node.get_optional("value")
+                node.add_optional(LIST_ITEM_NAME)
+                node = node.get_optional(LIST_ITEM_NAME)
             else:
                 node.add_optional(part)
                 node = node.get_optional(part)
@@ -1030,7 +1072,7 @@ def build_tree(schema_entries):
             if type_name:
                 used_list_type_name = True
                 if path.get_optional(type_name) is None:
-                    placeholder = path.get_optional("value")
+                    placeholder = path.get_optional(LIST_ITEM_NAME)
                     if placeholder is not None:
                         path._optional[type_name] = placeholder.clone(type_name)
                     else:
@@ -1038,8 +1080,8 @@ def build_tree(schema_entries):
                 path = path.get_optional(type_name)
                 path.type_name = type_name
             else: 
-                path.add_optional("value")
-                path = path.get_optional("value")
+                path.add_optional(LIST_ITEM_NAME)
+                path = path.get_optional(LIST_ITEM_NAME)
 
         if type_name and not used_list_type_name and entry.get('type') == "object" and path.type is None:
             placeholder = path.clone(type_name)

@@ -220,6 +220,81 @@ class GeneratorUnitTests(unittest.TestCase):
             material.as_dict(),
         )
 
+    def test_polymorphic_list_item_object_stays_inside_list_variant(self):
+        generator = import_generator("json_to_tree_list_item_variant")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["space"],
+            },
+            {
+                "pointer": "/space",
+                "type": "object",
+                "optional": ["discr_order"],
+            },
+            {
+                "pointer": "/space/discr_order",
+                "type": "int",
+            },
+            {
+                "pointer": "/space/discr_order",
+                "type": "file",
+            },
+            {
+                "pointer": "/space/discr_order",
+                "type": "list",
+            },
+            {
+                "pointer": "/space/discr_order/*",
+                "type": "object",
+                "required": ["id", "order"],
+            },
+            {
+                "pointer": "/space/discr_order/*/id",
+                "type": "int",
+            },
+            {
+                "pointer": "/space/discr_order/*/id",
+                "type": "list",
+            },
+            {
+                "pointer": "/space/discr_order/*/id/*",
+                "type": "int",
+            },
+            {
+                "pointer": "/space/discr_order/*/order",
+                "type": "int",
+            },
+        ])
+
+        discr_order = root.get_optional("space").get_optional("discr_order")
+        list_variant = discr_order.get_optional("list")
+
+        self.assertNotIn("object4", discr_order._optional)
+        self.assertIn("item", list_variant._optional)
+
+        generated = generator.generated_class_text(root)
+        self.assertNotIn("class Object4(object):", generated)
+        self.assertIn("class List(object):", generated)
+        self.assertIn("class Item(object):", generated)
+        self.assertIn("class_check(value, [int, str, list, self.List])", generated)
+
+        generated_module = module_from_generated_text(generated)
+        entry = generated_module.Root.Space.Discr_order.List.Item(id=[1, 2], order=3)
+        space = generated_module.Root.Space(
+            discr_order=generated_module.Root.Space.Discr_order.List(items=[entry])
+        )
+
+        self.assertEqual(
+            {
+                "discr_order": [
+                    {"id": [1, 2], "order": 3},
+                ],
+            },
+            space.as_dict(),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
