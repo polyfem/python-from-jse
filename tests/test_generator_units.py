@@ -295,6 +295,232 @@ class GeneratorUnitTests(unittest.TestCase):
             space.as_dict(),
         )
 
+    def test_list_item_object_and_primitive_variants_stay_at_list_level(self):
+        generator = import_generator("json_to_tree_boundary_item_variants")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["boundary_conditions"],
+            },
+            {
+                "pointer": "/boundary_conditions",
+                "type": "object",
+                "optional": ["dirichlet_boundary"],
+            },
+            {
+                "pointer": "/boundary_conditions/dirichlet_boundary",
+                "type": "include",
+                "spec_file": "boundary-condition.json",
+            },
+            {
+                "pointer": "/boundary_conditions/dirichlet_boundary/*",
+                "type": "object",
+                "required": ["id", "value"],
+                "optional": ["time_reference"],
+                "doc": "Dirichlet boundary condition.",
+            },
+            {
+                "pointer": "/boundary_conditions/dirichlet_boundary/*",
+                "type": "string",
+                "doc": "Dirichlet boundary condition loaded from a file",
+            },
+        ])
+
+        dirichlet = root.get_optional("boundary_conditions").get_optional(
+            "dirichlet_boundary"
+        )
+        item = dirichlet.get_optional("item")
+
+        self.assertEqual("list", dirichlet.type)
+        self.assertEqual("object", item.type)
+        self.assertIn("string", dirichlet._optional)
+        self.assertNotIn("object3", item._optional)
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("class_check(i, [self.Item, str])", generated)
+        self.assertNotIn("Dirichlet_boundary.Item.Object3", generated)
+
+    def test_list_item_object_entries_merge_with_included_item_fields(self):
+        generator = import_generator("json_to_tree_boundary_item_merge")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["boundary_conditions"],
+            },
+            {
+                "pointer": "/boundary_conditions",
+                "type": "object",
+                "optional": ["neumann_boundary"],
+            },
+            {
+                "pointer": "/boundary_conditions/neumann_boundary",
+                "type": "include",
+                "spec_file": "boundary-condition.json",
+            },
+            {
+                "pointer": "/boundary_conditions/neumann_boundary/*",
+                "type": "object",
+                "required": ["id", "value"],
+                "optional": ["interpolation"],
+                "doc": "Neumann boundary condition",
+            },
+        ])
+
+        neumann = root.get_optional("boundary_conditions").get_optional(
+            "neumann_boundary"
+        )
+        item = neumann.get_optional("item")
+
+        self.assertEqual("list", neumann.type)
+        self.assertEqual("object", item.type)
+        self.assertEqual(["id", "value"], list(item._required))
+        self.assertEqual(["interpolation"], list(item._optional))
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("class_check(i, [self.Item])", generated)
+        self.assertNotIn("Neumann_boundary.Item.Object3", generated)
+
+    def test_anonymous_object_list_item_variants_stay_at_list_level(self):
+        generator = import_generator("json_to_tree_rayleigh_item_variants")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["solver"],
+            },
+            {
+                "pointer": "/solver",
+                "type": "object",
+                "optional": ["rayleigh_damping"],
+            },
+            {
+                "pointer": "/solver/rayleigh_damping",
+                "type": "list",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*",
+                "type": "object",
+                "required": ["form", "stiffness_ratio"],
+                "optional": ["lagging_iterations"],
+                "doc": "Rayleigh damping with stiffness ratio.",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*",
+                "type": "object",
+                "required": ["form", "stiffness"],
+                "optional": ["lagging_iterations"],
+                "doc": "Rayleigh damping with stiffness.",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/form",
+                "type": "string",
+                "options": ["elasticity", "contact"],
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/stiffness_ratio",
+                "type": "float",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/stiffness",
+                "type": "float",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/lagging_iterations",
+                "type": "int",
+                "default": 1,
+            },
+        ])
+
+        rayleigh = root.get_optional("solver").get_optional("rayleigh_damping")
+
+        self.assertEqual("list", rayleigh.type)
+        self.assertEqual(["item", "object2"], list(rayleigh._optional))
+        self.assertEqual("object", rayleigh.get_optional("item").type)
+        self.assertEqual("object", rayleigh.get_optional("object2").type)
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("class_check(i, [self.Item, self.Object2])", generated)
+        self.assertNotIn("Rayleigh_damping.Item.Object2", generated)
+
+        generated_module = module_from_generated_text(generated)
+        ratio = generated_module.Root.Solver.Rayleigh_damping.Item(
+            form="elasticity",
+            stiffness_ratio=0.25,
+        )
+        stiffness = generated_module.Root.Solver.Rayleigh_damping.Object2(
+            form="contact",
+            stiffness=2.0,
+        )
+        rayleigh = generated_module.Root.Solver.Rayleigh_damping(
+            items=[ratio, stiffness]
+        )
+
+        self.assertEqual(
+            [
+                {
+                    "form": "elasticity",
+                    "stiffness_ratio": 0.25,
+                    "lagging_iterations": 1,
+                },
+                {
+                    "form": "contact",
+                    "stiffness": 2.0,
+                    "lagging_iterations": 1,
+                },
+            ],
+            rayleigh.as_dict(),
+        )
+
+    def test_included_value_list_items_expand_inline_variants(self):
+        generator = import_generator("json_to_tree_value_list_items")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["rhs"],
+            },
+            {
+                "pointer": "/rhs",
+                "type": "list",
+            },
+            {
+                "pointer": "/rhs/*",
+                "type": "include",
+                "spec_file": "value-no.json",
+            },
+        ])
+
+        rhs = root.get_optional("rhs")
+
+        self.assertEqual("list", rhs.type)
+        self.assertEqual(["item", "string"], list(rhs._optional))
+        self.assertEqual("polymorphic", rhs.get_optional("item").type)
+        self.assertEqual("string", rhs.get_optional("string").type)
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("inline_check(i, [float, str], [", generated)
+        self.assertNotIn("self.Item", generated)
+        self.assertNotIn("class Object3(object):", generated)
+
+        generated_module = module_from_generated_text(generated)
+        rhs = generated_module.Root.Rhs(
+            items=[1.0, "x + y", {"value": 2.0, "unit": "N"}]
+        )
+        rhs.add({"value": "load_expr", "unit": "N"})
+        rhs.check_required()
+
+        self.assertEqual(
+            [
+                1.0,
+                "x + y",
+                {"value": 2.0, "unit": "N"},
+                {"value": "load_expr", "unit": "N"},
+            ],
+            rhs.as_dict(),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

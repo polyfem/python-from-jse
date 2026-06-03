@@ -150,7 +150,7 @@ class ClassGenerator(object):
             "}"
         )
 
-    def inline_allowed_expr(self, node):
+    def inline_allowed_components(self, node):
         allowed = []
         schemas = []
 
@@ -167,6 +167,10 @@ class ClassGenerator(object):
             elif is_value_with_unit_node(child):
                 schemas.append(self.inline_schema_expr(child))
 
+        return allowed, schemas
+
+    def inline_allowed_expr(self, node):
+        allowed, schemas = self.inline_allowed_components(node)
         allowed_expr = "[" + ", ".join(allowed) + "]"
         schemas_expr = "[" + ", ".join(schemas) + "]"
         return allowed_expr, schemas_expr
@@ -195,8 +199,15 @@ class ClassGenerator(object):
         if not self._init_input:
             allowed_classes = []
             dict_condition = []
+            object_schemas = []
+            uses_inline_check = False
             for k, child in node._optional.items():
-                if k in PRIMITIVE_TYPE_EXPRESSIONS:
+                if is_inline_polymorphic(child):
+                    uses_inline_check = True
+                    inline_allowed, inline_schemas = self.inline_allowed_components(child)
+                    allowed_classes.extend(inline_allowed)
+                    object_schemas.extend(inline_schemas)
+                elif k in PRIMITIVE_TYPE_EXPRESSIONS:
                     allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[k])
                     if k == "list" and is_structured_list_node(child):
                         allowed_classes.append("self." + py_class_name(k))
@@ -210,16 +221,25 @@ class ClassGenerator(object):
 
             allowed_classes = ", ".join(allowed_classes)
             dict_condition = ", ".join(dict_condition)
+            object_schemas = ", ".join(object_schemas)
 
             self._init_input.append(
                 'items : list = None'
             )
-            self._init_body.append(
-                f'self._items = [class_check(i, [{allowed_classes}]) for i in (type_check(items, list) if items else [])]'
-            )
-            self._as_dict.append(
-                f'[i.as_dict() if isinstance(i, tuple([{dict_condition}])) else i for i in self._items]'
-            )
+            if uses_inline_check:
+                self._init_body.append(
+                    f'self._items = [inline_check(i, [{allowed_classes}], [{object_schemas}]) for i in (type_check(items, list) if items else [])]'
+                )
+                self._as_dict.append(
+                    '[inline_as_dict(i) for i in self._items]'
+                )
+            else:
+                self._init_body.append(
+                    f'self._items = [class_check(i, [{allowed_classes}]) for i in (type_check(items, list) if items else [])]'
+                )
+                self._as_dict.append(
+                    f'[i.as_dict() if isinstance(i, tuple([{dict_condition}])) else i for i in self._items]'
+                )
 
         """ def __init__(self, items=None):
             self._list = list(items) if items else [] """
@@ -350,7 +370,7 @@ class ClassGenerator(object):
     
     def set_check_required_polymorphic(self, path):
         if not self._check_required:
-            type_list = ["int", "float", "list", "str", "bool"]
+            type_list = "int, float, list, str, bool, dict"
 
             self._check_required.append(
                     f"""
@@ -363,7 +383,7 @@ class ClassGenerator(object):
 
     def set_check_required_list(self, path):
         if not self._check_required:
-            type_list = ["int", "float", "list", "str", "bool"]
+            type_list = "int, float, list, str, bool, dict"
             
             self._check_required.append(
                     f"""
@@ -407,11 +427,35 @@ class ClassGenerator(object):
 
     def set_property_setter_list(self, node):
         if not self._property_setter:
-            allowed_classes =  [
-                PRIMITIVE_TYPE_EXPRESSIONS[k] if k in PRIMITIVE_TYPE_EXPRESSIONS else "self." + py_class_name(k)
-                for k in node._optional
-            ]
+            allowed_classes = []
+            object_schemas = []
+            uses_inline_check = False
+            for k, child in node._optional.items():
+                if is_inline_polymorphic(child):
+                    uses_inline_check = True
+                    inline_allowed, inline_schemas = self.inline_allowed_components(child)
+                    allowed_classes.extend(inline_allowed)
+                    object_schemas.extend(inline_schemas)
+                elif k in PRIMITIVE_TYPE_EXPRESSIONS:
+                    allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[k])
+                    if k == "list" and is_structured_list_node(child):
+                        allowed_classes.append("self." + py_class_name(k))
+                elif child.type in PRIMITIVE_TYPE_EXPRESSIONS:
+                    allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[child.type])
+                else:
+                    allowed_classes.append("self." + py_class_name(k))
             allowed_classes = ", ".join(allowed_classes)
+            object_schemas = ", ".join(object_schemas)
+            item_check = (
+                f"inline_check(i, [{allowed_classes}], [{object_schemas}])"
+                if uses_inline_check
+                else f"class_check(i, [{allowed_classes}])"
+            )
+            add_check = (
+                f"inline_check(item, [{allowed_classes}], [{object_schemas}])"
+                if uses_inline_check
+                else f"class_check(item, [{allowed_classes}])"
+            )
 
             self._property_setter.append(
             f""" 
@@ -422,11 +466,11 @@ class ClassGenerator(object):
     @items.setter
     def items(self, items : list):
         ''' Replace the list '''
-        self._items = [class_check(i, [{allowed_classes}]) for i in (type_check(items, list) if items else [])]
+        self._items = [{item_check} for i in (type_check(items, list) if items else [])]
 
     def add(self, item : object):
         ''' Add to the list '''
-        self._items.append(class_check(item, [{allowed_classes}]))
+        self._items.append({add_check})
 
     def clear(self):
         '''Clear list (make empty)'''
@@ -768,11 +812,11 @@ class JsonToTreeClass(object):
 
                 if required is not None:
                     node, parent = required.find_var(parts[2:])
-                    return node, parent or self if len(parts) > 2 else self
+                    return node, (parent or required) if len(parts) > 2 else self
 
                 if optional is not None:
                     node, parent = optional.find_var(parts[2:])
-                    return node, parent or self if len(parts) > 2 else self
+                    return node, (parent or optional) if len(parts) > 2 else self
 
             for child in self._optional.values():
                 if child.type == "polymorphic":
@@ -1069,6 +1113,7 @@ def build_tree(schema_entries):
 
         #handling list variables
         if path.type == "list" and parts[-1] == '*':
+            parent = path
             if type_name:
                 used_list_type_name = True
                 if path.get_optional(type_name) is None:
@@ -1082,6 +1127,26 @@ def build_tree(schema_entries):
             else: 
                 path.add_optional(LIST_ITEM_NAME)
                 path = path.get_optional(LIST_ITEM_NAME)
+
+        if (
+            parts[-1] == "*"
+            and parent is not None
+            and parent.type == "list"
+            and path.name == LIST_ITEM_NAME
+            and path.type is not None
+            and not type_name
+            and (entry.get("type") != "object" or path.type == "object")
+        ):
+            entry_type = entry.get("type")
+            routing = (
+                f"object{len(parent._optional) + 1}"
+                if entry_type == "object"
+                else "string"
+                if entry_type == "file"
+                else entry_type
+            )
+            parent.add_optional(routing)
+            path = parent.get_optional(routing)
 
         if type_name and not used_list_type_name and entry.get('type') == "object" and path.type is None:
             placeholder = path.clone(type_name)

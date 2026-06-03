@@ -363,7 +363,7 @@ class Root(object):
 
             if self.items:
                 for item in self.items:
-                    if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                    if type(item) not in [int, float, list, str, bool, dict]:
                         item.check_required()
             else:
                 print("Requiered variable Root.Geometry.items does not have value")
@@ -748,7 +748,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Geometry.Mesh.Volume_selection.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -1313,7 +1313,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Geometry.Mesh.Surface_selection.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -1862,7 +1862,7 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.List.items does not have value")
@@ -1962,7 +1962,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Geometry.Mesh.Point_selection.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -2009,7 +2009,7 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Geometry.Mesh.Point_selection.List.items does not have value")
@@ -3107,7 +3107,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -3672,7 +3672,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -4221,7 +4221,7 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.List.items does not have value")
@@ -4321,7 +4321,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Geometry.Mesh_array.Point_selection.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -4368,7 +4368,7 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.items does not have value")
@@ -5614,7 +5614,7 @@ class Root(object):
 
             if self.items:
                 for item in self.items:
-                    if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                    if type(item) not in [int, float, list, str, bool, dict]:
                         item.check_required()
             else:
                 print("Requiered variable Root.Materials.items does not have value")
@@ -6356,15 +6356,15 @@ class Root(object):
                 self,
                 type: "Type" = 'UnconstrainedOgden',
                 alphas: object = None,
-                mus: Optional[Iterable[float]] = None,
-                Ds: Optional[Iterable[float]] = None,
+                mus: Optional["Root.Materials.UnconstrainedOgden.Mus"] = None,
+                Ds: Optional["Root.Materials.UnconstrainedOgden.Ds"] = None,
                 id: object = None,
                 rho: object = None
             ):
                 self._type = enum_check(type, self.Type)
                 self._alphas = inline_check(alphas, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if alphas is not None else None
-                self._mus = [] if mus is None else [type_check(i, float) for i in mus]
-                self._Ds = [] if Ds is None else [type_check(i, float) for i in Ds]
+                self._mus = type_check(mus, self.Mus) if mus else self.Mus()
+                self._Ds = type_check(Ds, self.Ds) if Ds else self.Ds()
                 self._id = inline_check(id, [int, list], []) if id is not None else None
                 self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
 
@@ -6401,27 +6401,9 @@ class Root(object):
                 ''' 
                 Ogden mu
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string']
                 '''
-                self._mus = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def mus_add(self, value):
-                '''Add to list '''
-                self._mus.append(type_check(value, float))
-
-            def mus_clear(self):
-                '''Clear list (make empty)'''
-                self._mus.clear()
-
-            def mus_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._mus.pop(index)
-
-            def mus_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._mus.remove(item)
-
+                self._mus = type_check(value, self.Mus) 
 
             @property
             def Ds(self):
@@ -6432,27 +6414,9 @@ class Root(object):
                 ''' 
                 Ogden D
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string']
                 '''
-                self._Ds = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def Ds_add(self, value):
-                '''Add to list '''
-                self._Ds.append(type_check(value, float))
-
-            def Ds_clear(self):
-                '''Clear list (make empty)'''
-                self._Ds.clear()
-
-            def Ds_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._Ds.pop(index)
-
-            def Ds_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._Ds.remove(item)
-
+                self._Ds = type_check(value, self.Ds) 
 
             @property
             def id(self):
@@ -6487,16 +6451,112 @@ class Root(object):
 
                 if self.alphas is None:
                     print("Requiered variable Root.Materials.UnconstrainedOgden.alphas does not have value")
-
-                if self.mus:
-                    print("Requiered variable Root.Materials.UnconstrainedOgden.mus does not have value")
-
-                if self.Ds:
-                    print("Requiered variable Root.Materials.UnconstrainedOgden.Ds does not have value")
+                self.mus.check_required()
+                self.Ds.check_required()
                 return
 
             def as_dict(self):
-                return drop_none({"type": self._type.value if self._type is not None else None,"alphas": inline_as_dict(self._alphas),"mus": self._mus,"Ds": self._Ds,"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),})
+                return drop_none({"type": self._type.value if self._type is not None else None,"alphas": inline_as_dict(self._alphas),"mus": self._mus.as_dict(),"Ds": self._Ds.as_dict(),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),})
+
+            class Mus(object):
+                '''Ogden mu
+                \nRequired: []
+                \nOptional: ['item', 'string']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.UnconstrainedOgden.Mus.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
+
+            class Ds(object):
+                '''Ogden D
+                \nRequired: []
+                \nOptional: ['item', 'string']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.UnconstrainedOgden.Ds.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
         class IncompressibleOgden(object):
@@ -6638,7 +6698,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Materials.IncompressibleOgden.C.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -6697,12 +6757,12 @@ class Root(object):
                 class List(object):
                     '''Coefficient(s) of Incompressible Ogden
                     \nRequired: []
-                    \nOptional: ['item']'''
+                    \nOptional: ['item', 'string']'''
                     def __init__(
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -6711,11 +6771,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item]))
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -6734,14 +6794,14 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Materials.IncompressibleOgden.C.List.items does not have value")
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                        return drop_none([inline_as_dict(i) for i in self._items])
 
 
 
@@ -6771,7 +6831,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Materials.IncompressibleOgden.M.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -6830,12 +6890,12 @@ class Root(object):
                 class List(object):
                     '''Exponent(s) of Incompressible Ogden
                     \nRequired: []
-                    \nOptional: ['item']'''
+                    \nOptional: ['item', 'string']'''
                     def __init__(
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -6844,11 +6904,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item]))
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -6867,14 +6927,14 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Materials.IncompressibleOgden.M.List.items does not have value")
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                        return drop_none([inline_as_dict(i) for i in self._items])
 
 
 
@@ -7057,18 +7117,18 @@ class Root(object):
                 type: "Type" = 'HookeLinearElasticity',
                 E: object = None,
                 nu: object = None,
-                elasticity_tensor: Optional[Iterable[float]] = None,
+                elasticity_tensor: Optional["Root.Materials.HookeLinearElasticity.Elasticity_tensor"] = None,
                 id: object = None,
                 rho: object = None,
-                fiber_direction: Optional[Iterable[float]] = None
+                fiber_direction: Optional["Root.Materials.HookeLinearElasticity.Fiber_direction"] = None
             ):
                 self._type = enum_check(type, self.Type)
                 self._E = inline_check(E, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if E is not None else None
                 self._nu = inline_check(nu, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if nu is not None else None
-                self._elasticity_tensor = [] if elasticity_tensor is None else [type_check(i, float) for i in elasticity_tensor]
+                self._elasticity_tensor = type_check(elasticity_tensor, self.Elasticity_tensor) if elasticity_tensor else self.Elasticity_tensor()
                 self._id = inline_check(id, [int, list], []) if id is not None else None
                 self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
-                self._fiber_direction = [] if fiber_direction is None else [type_check(i, float) for i in fiber_direction]
+                self._fiber_direction = type_check(fiber_direction, self.Fiber_direction) if fiber_direction else self.Fiber_direction()
 
             @property
             def type(self):
@@ -7116,27 +7176,9 @@ class Root(object):
                 ''' 
                 Symmetric elasticity tensor
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string']
                 '''
-                self._elasticity_tensor = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def elasticity_tensor_add(self, value):
-                '''Add to list '''
-                self._elasticity_tensor.append(type_check(value, float))
-
-            def elasticity_tensor_clear(self):
-                '''Clear list (make empty)'''
-                self._elasticity_tensor.clear()
-
-            def elasticity_tensor_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._elasticity_tensor.pop(index)
-
-            def elasticity_tensor_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._elasticity_tensor.remove(item)
-
+                self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
 
             @property
             def id(self):
@@ -7173,27 +7215,9 @@ class Root(object):
                 ''' 
                 Fiber direction
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string', 'list']
                 '''
-                self._fiber_direction = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def fiber_direction_add(self, value):
-                '''Add to list '''
-                self._fiber_direction.append(type_check(value, float))
-
-            def fiber_direction_clear(self):
-                '''Clear list (make empty)'''
-                self._fiber_direction.clear()
-
-            def fiber_direction_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._fiber_direction.pop(index)
-
-            def fiber_direction_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._fiber_direction.remove(item)
-
+                self._fiber_direction = type_check(value, self.Fiber_direction) 
 
             def check_required(self):
 
@@ -7205,13 +7229,111 @@ class Root(object):
 
                 if self.nu is None:
                     print("Requiered variable Root.Materials.HookeLinearElasticity.nu does not have value")
-
-                if self.elasticity_tensor:
-                    print("Requiered variable Root.Materials.HookeLinearElasticity.elasticity_tensor does not have value")
+                self.elasticity_tensor.check_required()
                 return
 
             def as_dict(self):
-                return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor,"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction,})
+                return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor.as_dict(),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction.as_dict(),})
+
+            class Elasticity_tensor(object):
+                '''Symmetric elasticity tensor
+                \nRequired: []
+                \nOptional: ['item', 'string']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.HookeLinearElasticity.Elasticity_tensor.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
+
+            class Fiber_direction(object):
+                '''Fiber direction
+                \nRequired: []
+                \nOptional: ['item', 'string', 'list']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.HookeLinearElasticity.Fiber_direction.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
         class SaintVenant(object):
@@ -7226,21 +7348,21 @@ class Root(object):
                 type: "Type" = 'SaintVenant',
                 E: object = None,
                 nu: object = None,
-                elasticity_tensor: Optional[Iterable[float]] = None,
+                elasticity_tensor: Optional["Root.Materials.SaintVenant.Elasticity_tensor"] = None,
                 id: object = None,
                 rho: object = None,
                 phi: object = None,
-                fiber_direction: Optional[Iterable[float]] = None,
+                fiber_direction: Optional["Root.Materials.SaintVenant.Fiber_direction"] = None,
                 psi: object = None
             ):
                 self._type = enum_check(type, self.Type)
                 self._E = inline_check(E, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if E is not None else None
                 self._nu = inline_check(nu, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if nu is not None else None
-                self._elasticity_tensor = [] if elasticity_tensor is None else [type_check(i, float) for i in elasticity_tensor]
+                self._elasticity_tensor = type_check(elasticity_tensor, self.Elasticity_tensor) if elasticity_tensor else self.Elasticity_tensor()
                 self._id = inline_check(id, [int, list], []) if id is not None else None
                 self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
                 self._phi = inline_check(phi, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if phi is not None else None
-                self._fiber_direction = [] if fiber_direction is None else [type_check(i, float) for i in fiber_direction]
+                self._fiber_direction = type_check(fiber_direction, self.Fiber_direction) if fiber_direction else self.Fiber_direction()
                 self._psi = inline_check(psi, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if psi is not None else None
 
             @property
@@ -7289,27 +7411,9 @@ class Root(object):
                 ''' 
                 Symmetric elasticity tensor
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string']
                 '''
-                self._elasticity_tensor = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def elasticity_tensor_add(self, value):
-                '''Add to list '''
-                self._elasticity_tensor.append(type_check(value, float))
-
-            def elasticity_tensor_clear(self):
-                '''Clear list (make empty)'''
-                self._elasticity_tensor.clear()
-
-            def elasticity_tensor_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._elasticity_tensor.pop(index)
-
-            def elasticity_tensor_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._elasticity_tensor.remove(item)
-
+                self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
 
             @property
             def id(self):
@@ -7359,27 +7463,9 @@ class Root(object):
                 ''' 
                 Fiber direction
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string', 'list']
                 '''
-                self._fiber_direction = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def fiber_direction_add(self, value):
-                '''Add to list '''
-                self._fiber_direction.append(type_check(value, float))
-
-            def fiber_direction_clear(self):
-                '''Clear list (make empty)'''
-                self._fiber_direction.clear()
-
-            def fiber_direction_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._fiber_direction.pop(index)
-
-            def fiber_direction_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._fiber_direction.remove(item)
-
+                self._fiber_direction = type_check(value, self.Fiber_direction) 
 
             @property
             def psi(self):
@@ -7404,13 +7490,111 @@ class Root(object):
 
                 if self.nu is None:
                     print("Requiered variable Root.Materials.SaintVenant.nu does not have value")
-
-                if self.elasticity_tensor:
-                    print("Requiered variable Root.Materials.SaintVenant.elasticity_tensor does not have value")
+                self.elasticity_tensor.check_required()
                 return
 
             def as_dict(self):
-                return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor,"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"phi": inline_as_dict(self._phi),"fiber_direction": self._fiber_direction,"psi": inline_as_dict(self._psi),})
+                return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor.as_dict(),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"phi": inline_as_dict(self._phi),"fiber_direction": self._fiber_direction.as_dict(),"psi": inline_as_dict(self._psi),})
+
+            class Elasticity_tensor(object):
+                '''Symmetric elasticity tensor
+                \nRequired: []
+                \nOptional: ['item', 'string']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.SaintVenant.Elasticity_tensor.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
+
+            class Fiber_direction(object):
+                '''Fiber direction
+                \nRequired: []
+                \nOptional: ['item', 'string', 'list']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.SaintVenant.Fiber_direction.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
         class Stokes(object):
@@ -7980,7 +8164,7 @@ class Root(object):
 
                     if self.items:
                         for item in self.items:
-                            if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                            if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
                         print("Requiered variable Root.Materials.MaterialSum.Models.items does not have value")
@@ -8722,15 +8906,15 @@ class Root(object):
                         self,
                         type: "Type" = 'UnconstrainedOgden',
                         alphas: object = None,
-                        mus: Optional[Iterable[float]] = None,
-                        Ds: Optional[Iterable[float]] = None,
+                        mus: Optional["Root.Materials.MaterialSum.Models.UnconstrainedOgden.Mus"] = None,
+                        Ds: Optional["Root.Materials.MaterialSum.Models.UnconstrainedOgden.Ds"] = None,
                         id: object = None,
                         rho: object = None
                     ):
                         self._type = enum_check(type, self.Type)
                         self._alphas = inline_check(alphas, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if alphas is not None else None
-                        self._mus = [] if mus is None else [type_check(i, float) for i in mus]
-                        self._Ds = [] if Ds is None else [type_check(i, float) for i in Ds]
+                        self._mus = type_check(mus, self.Mus) if mus else self.Mus()
+                        self._Ds = type_check(Ds, self.Ds) if Ds else self.Ds()
                         self._id = inline_check(id, [int, list], []) if id is not None else None
                         self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
 
@@ -8767,27 +8951,9 @@ class Root(object):
                         ''' 
                         Ogden mu
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string']
                         '''
-                        self._mus = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def mus_add(self, value):
-                        '''Add to list '''
-                        self._mus.append(type_check(value, float))
-
-                    def mus_clear(self):
-                        '''Clear list (make empty)'''
-                        self._mus.clear()
-
-                    def mus_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._mus.pop(index)
-
-                    def mus_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._mus.remove(item)
-
+                        self._mus = type_check(value, self.Mus) 
 
                     @property
                     def Ds(self):
@@ -8798,27 +8964,9 @@ class Root(object):
                         ''' 
                         Ogden D
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string']
                         '''
-                        self._Ds = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def Ds_add(self, value):
-                        '''Add to list '''
-                        self._Ds.append(type_check(value, float))
-
-                    def Ds_clear(self):
-                        '''Clear list (make empty)'''
-                        self._Ds.clear()
-
-                    def Ds_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._Ds.pop(index)
-
-                    def Ds_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._Ds.remove(item)
-
+                        self._Ds = type_check(value, self.Ds) 
 
                     @property
                     def id(self):
@@ -8853,16 +9001,112 @@ class Root(object):
 
                         if self.alphas is None:
                             print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.alphas does not have value")
-
-                        if self.mus:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.mus does not have value")
-
-                        if self.Ds:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Ds does not have value")
+                        self.mus.check_required()
+                        self.Ds.check_required()
                         return
 
                     def as_dict(self):
-                        return drop_none({"type": self._type.value if self._type is not None else None,"alphas": inline_as_dict(self._alphas),"mus": self._mus,"Ds": self._Ds,"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),})
+                        return drop_none({"type": self._type.value if self._type is not None else None,"alphas": inline_as_dict(self._alphas),"mus": self._mus.as_dict(),"Ds": self._Ds.as_dict(),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),})
+
+                    class Mus(object):
+                        '''Ogden mu
+                        \nRequired: []
+                        \nOptional: ['item', 'string']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Mus.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
+
+                    class Ds(object):
+                        '''Ogden D
+                        \nRequired: []
+                        \nOptional: ['item', 'string']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Ds.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
                 class IncompressibleOgden(object):
@@ -9004,7 +9248,7 @@ class Root(object):
                             if self.value is None:
                                 print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.value does not have value")
                             else:
-                                if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(self.value) not in [int, float, list, str, bool, dict]:
                                     self.value.check_required()
                             return
 
@@ -9063,12 +9307,12 @@ class Root(object):
                         class List(object):
                             '''Coefficient(s) of Incompressible Ogden
                             \nRequired: []
-                            \nOptional: ['item']'''
+                            \nOptional: ['item', 'string']'''
                             def __init__(
                                 self,
                                 items : list = None
                             ):
-                                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                                self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                             @property
                             def items(self):
@@ -9077,11 +9321,11 @@ class Root(object):
                             @items.setter
                             def items(self, items : list):
                                 ''' Replace the list '''
-                                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                                self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                             def add(self, item : object):
                                 ''' Add to the list '''
-                                self._items.append(class_check(item, [self.Item]))
+                                self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
                             def clear(self):
                                 '''Clear list (make empty)'''
@@ -9100,14 +9344,14 @@ class Root(object):
 
                                 if self.items:
                                     for item in self.items:
-                                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                        if type(item) not in [int, float, list, str, bool, dict]:
                                             item.check_required()
                                 else:
                                     print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.List.items does not have value")
                                 return
 
                             def as_dict(self):
-                                return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                                return drop_none([inline_as_dict(i) for i in self._items])
 
 
 
@@ -9137,7 +9381,7 @@ class Root(object):
                             if self.value is None:
                                 print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.value does not have value")
                             else:
-                                if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(self.value) not in [int, float, list, str, bool, dict]:
                                     self.value.check_required()
                             return
 
@@ -9196,12 +9440,12 @@ class Root(object):
                         class List(object):
                             '''Exponent(s) of Incompressible Ogden
                             \nRequired: []
-                            \nOptional: ['item']'''
+                            \nOptional: ['item', 'string']'''
                             def __init__(
                                 self,
                                 items : list = None
                             ):
-                                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                                self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                             @property
                             def items(self):
@@ -9210,11 +9454,11 @@ class Root(object):
                             @items.setter
                             def items(self, items : list):
                                 ''' Replace the list '''
-                                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                                self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                             def add(self, item : object):
                                 ''' Add to the list '''
-                                self._items.append(class_check(item, [self.Item]))
+                                self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
                             def clear(self):
                                 '''Clear list (make empty)'''
@@ -9233,14 +9477,14 @@ class Root(object):
 
                                 if self.items:
                                     for item in self.items:
-                                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                        if type(item) not in [int, float, list, str, bool, dict]:
                                             item.check_required()
                                 else:
                                     print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.List.items does not have value")
                                 return
 
                             def as_dict(self):
-                                return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                                return drop_none([inline_as_dict(i) for i in self._items])
 
 
 
@@ -9423,18 +9667,18 @@ class Root(object):
                         type: "Type" = 'HookeLinearElasticity',
                         E: object = None,
                         nu: object = None,
-                        elasticity_tensor: Optional[Iterable[float]] = None,
+                        elasticity_tensor: Optional["Root.Materials.MaterialSum.Models.HookeLinearElasticity.Elasticity_tensor"] = None,
                         id: object = None,
                         rho: object = None,
-                        fiber_direction: Optional[Iterable[float]] = None
+                        fiber_direction: Optional["Root.Materials.MaterialSum.Models.HookeLinearElasticity.Fiber_direction"] = None
                     ):
                         self._type = enum_check(type, self.Type)
                         self._E = inline_check(E, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if E is not None else None
                         self._nu = inline_check(nu, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if nu is not None else None
-                        self._elasticity_tensor = [] if elasticity_tensor is None else [type_check(i, float) for i in elasticity_tensor]
+                        self._elasticity_tensor = type_check(elasticity_tensor, self.Elasticity_tensor) if elasticity_tensor else self.Elasticity_tensor()
                         self._id = inline_check(id, [int, list], []) if id is not None else None
                         self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
-                        self._fiber_direction = [] if fiber_direction is None else [type_check(i, float) for i in fiber_direction]
+                        self._fiber_direction = type_check(fiber_direction, self.Fiber_direction) if fiber_direction else self.Fiber_direction()
 
                     @property
                     def type(self):
@@ -9482,27 +9726,9 @@ class Root(object):
                         ''' 
                         Symmetric elasticity tensor
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string']
                         '''
-                        self._elasticity_tensor = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def elasticity_tensor_add(self, value):
-                        '''Add to list '''
-                        self._elasticity_tensor.append(type_check(value, float))
-
-                    def elasticity_tensor_clear(self):
-                        '''Clear list (make empty)'''
-                        self._elasticity_tensor.clear()
-
-                    def elasticity_tensor_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._elasticity_tensor.pop(index)
-
-                    def elasticity_tensor_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._elasticity_tensor.remove(item)
-
+                        self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
 
                     @property
                     def id(self):
@@ -9539,27 +9765,9 @@ class Root(object):
                         ''' 
                         Fiber direction
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string', 'list']
                         '''
-                        self._fiber_direction = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def fiber_direction_add(self, value):
-                        '''Add to list '''
-                        self._fiber_direction.append(type_check(value, float))
-
-                    def fiber_direction_clear(self):
-                        '''Clear list (make empty)'''
-                        self._fiber_direction.clear()
-
-                    def fiber_direction_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._fiber_direction.pop(index)
-
-                    def fiber_direction_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._fiber_direction.remove(item)
-
+                        self._fiber_direction = type_check(value, self.Fiber_direction) 
 
                     def check_required(self):
 
@@ -9571,13 +9779,111 @@ class Root(object):
 
                         if self.nu is None:
                             print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.nu does not have value")
-
-                        if self.elasticity_tensor:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.elasticity_tensor does not have value")
+                        self.elasticity_tensor.check_required()
                         return
 
                     def as_dict(self):
-                        return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor,"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction,})
+                        return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor.as_dict(),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction.as_dict(),})
+
+                    class Elasticity_tensor(object):
+                        '''Symmetric elasticity tensor
+                        \nRequired: []
+                        \nOptional: ['item', 'string']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.Elasticity_tensor.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
+
+                    class Fiber_direction(object):
+                        '''Fiber direction
+                        \nRequired: []
+                        \nOptional: ['item', 'string', 'list']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.Fiber_direction.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
                 class SaintVenant(object):
@@ -9592,21 +9898,21 @@ class Root(object):
                         type: "Type" = 'SaintVenant',
                         E: object = None,
                         nu: object = None,
-                        elasticity_tensor: Optional[Iterable[float]] = None,
+                        elasticity_tensor: Optional["Root.Materials.MaterialSum.Models.SaintVenant.Elasticity_tensor"] = None,
                         id: object = None,
                         rho: object = None,
                         phi: object = None,
-                        fiber_direction: Optional[Iterable[float]] = None,
+                        fiber_direction: Optional["Root.Materials.MaterialSum.Models.SaintVenant.Fiber_direction"] = None,
                         psi: object = None
                     ):
                         self._type = enum_check(type, self.Type)
                         self._E = inline_check(E, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if E is not None else None
                         self._nu = inline_check(nu, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if nu is not None else None
-                        self._elasticity_tensor = [] if elasticity_tensor is None else [type_check(i, float) for i in elasticity_tensor]
+                        self._elasticity_tensor = type_check(elasticity_tensor, self.Elasticity_tensor) if elasticity_tensor else self.Elasticity_tensor()
                         self._id = inline_check(id, [int, list], []) if id is not None else None
                         self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
                         self._phi = inline_check(phi, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if phi is not None else None
-                        self._fiber_direction = [] if fiber_direction is None else [type_check(i, float) for i in fiber_direction]
+                        self._fiber_direction = type_check(fiber_direction, self.Fiber_direction) if fiber_direction else self.Fiber_direction()
                         self._psi = inline_check(psi, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if psi is not None else None
 
                     @property
@@ -9655,27 +9961,9 @@ class Root(object):
                         ''' 
                         Symmetric elasticity tensor
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string']
                         '''
-                        self._elasticity_tensor = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def elasticity_tensor_add(self, value):
-                        '''Add to list '''
-                        self._elasticity_tensor.append(type_check(value, float))
-
-                    def elasticity_tensor_clear(self):
-                        '''Clear list (make empty)'''
-                        self._elasticity_tensor.clear()
-
-                    def elasticity_tensor_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._elasticity_tensor.pop(index)
-
-                    def elasticity_tensor_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._elasticity_tensor.remove(item)
-
+                        self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
 
                     @property
                     def id(self):
@@ -9725,27 +10013,9 @@ class Root(object):
                         ''' 
                         Fiber direction
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string', 'list']
                         '''
-                        self._fiber_direction = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def fiber_direction_add(self, value):
-                        '''Add to list '''
-                        self._fiber_direction.append(type_check(value, float))
-
-                    def fiber_direction_clear(self):
-                        '''Clear list (make empty)'''
-                        self._fiber_direction.clear()
-
-                    def fiber_direction_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._fiber_direction.pop(index)
-
-                    def fiber_direction_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._fiber_direction.remove(item)
-
+                        self._fiber_direction = type_check(value, self.Fiber_direction) 
 
                     @property
                     def psi(self):
@@ -9770,13 +10040,111 @@ class Root(object):
 
                         if self.nu is None:
                             print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.nu does not have value")
-
-                        if self.elasticity_tensor:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.elasticity_tensor does not have value")
+                        self.elasticity_tensor.check_required()
                         return
 
                     def as_dict(self):
-                        return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor,"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"phi": inline_as_dict(self._phi),"fiber_direction": self._fiber_direction,"psi": inline_as_dict(self._psi),})
+                        return drop_none({"type": self._type.value if self._type is not None else None,"E": inline_as_dict(self._E),"nu": inline_as_dict(self._nu),"elasticity_tensor": self._elasticity_tensor.as_dict(),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"phi": inline_as_dict(self._phi),"fiber_direction": self._fiber_direction.as_dict(),"psi": inline_as_dict(self._psi),})
+
+                    class Elasticity_tensor(object):
+                        '''Symmetric elasticity tensor
+                        \nRequired: []
+                        \nOptional: ['item', 'string']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.Elasticity_tensor.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
+
+                    class Fiber_direction(object):
+                        '''Fiber direction
+                        \nRequired: []
+                        \nOptional: ['item', 'string', 'list']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.Fiber_direction.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
                 class Stokes(object):
@@ -10918,14 +11286,14 @@ class Root(object):
                         k2: object = None,
                         id: object = None,
                         rho: object = None,
-                        fiber_direction: Optional[Iterable[float]] = None
+                        fiber_direction: Optional["Root.Materials.MaterialSum.Models.HGOFiber.Fiber_direction"] = None
                     ):
                         self._type = enum_check(type, self.Type)
                         self._k1 = inline_check(k1, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if k1 is not None else None
                         self._k2 = inline_check(k2, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if k2 is not None else None
                         self._id = inline_check(id, [int, list], []) if id is not None else None
                         self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
-                        self._fiber_direction = [] if fiber_direction is None else [type_check(i, float) for i in fiber_direction]
+                        self._fiber_direction = type_check(fiber_direction, self.Fiber_direction) if fiber_direction else self.Fiber_direction()
 
                     @property
                     def type(self):
@@ -10999,27 +11367,9 @@ class Root(object):
                         ''' 
                         Fiber direction
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'string', 'list']
                         '''
-                        self._fiber_direction = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def fiber_direction_add(self, value):
-                        '''Add to list '''
-                        self._fiber_direction.append(type_check(value, float))
-
-                    def fiber_direction_clear(self):
-                        '''Clear list (make empty)'''
-                        self._fiber_direction.clear()
-
-                    def fiber_direction_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._fiber_direction.pop(index)
-
-                    def fiber_direction_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._fiber_direction.remove(item)
-
+                        self._fiber_direction = type_check(value, self.Fiber_direction) 
 
                     def check_required(self):
 
@@ -11034,7 +11384,57 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"type": self._type.value if self._type is not None else None,"k1": inline_as_dict(self._k1),"k2": inline_as_dict(self._k2),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction,})
+                        return drop_none({"type": self._type.value if self._type is not None else None,"k1": inline_as_dict(self._k1),"k2": inline_as_dict(self._k2),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction.as_dict(),})
+
+                    class Fiber_direction(object):
+                        '''Fiber direction
+                        \nRequired: []
+                        \nOptional: ['item', 'string', 'list']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Materials.MaterialSum.Models.HGOFiber.Fiber_direction.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
 
@@ -11652,14 +12052,14 @@ class Root(object):
                 k2: object = None,
                 id: object = None,
                 rho: object = None,
-                fiber_direction: Optional[Iterable[float]] = None
+                fiber_direction: Optional["Root.Materials.HGOFiber.Fiber_direction"] = None
             ):
                 self._type = enum_check(type, self.Type)
                 self._k1 = inline_check(k1, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if k1 is not None else None
                 self._k2 = inline_check(k2, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if k2 is not None else None
                 self._id = inline_check(id, [int, list], []) if id is not None else None
                 self._rho = inline_check(rho, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if rho is not None else None
-                self._fiber_direction = [] if fiber_direction is None else [type_check(i, float) for i in fiber_direction]
+                self._fiber_direction = type_check(fiber_direction, self.Fiber_direction) if fiber_direction else self.Fiber_direction()
 
             @property
             def type(self):
@@ -11733,27 +12133,9 @@ class Root(object):
                 ''' 
                 Fiber direction
                 \nRequired: []
-                \nOptional: ['item']
+                \nOptional: ['item', 'string', 'list']
                 '''
-                self._fiber_direction = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-            def fiber_direction_add(self, value):
-                '''Add to list '''
-                self._fiber_direction.append(type_check(value, float))
-
-            def fiber_direction_clear(self):
-                '''Clear list (make empty)'''
-                self._fiber_direction.clear()
-
-            def fiber_direction_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._fiber_direction.pop(index)
-
-            def fiber_direction_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._fiber_direction.remove(item)
-
+                self._fiber_direction = type_check(value, self.Fiber_direction) 
 
             def check_required(self):
 
@@ -11768,7 +12150,57 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"type": self._type.value if self._type is not None else None,"k1": inline_as_dict(self._k1),"k2": inline_as_dict(self._k2),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction,})
+                return drop_none({"type": self._type.value if self._type is not None else None,"k1": inline_as_dict(self._k1),"k2": inline_as_dict(self._k2),"id": inline_as_dict(self._id),"rho": inline_as_dict(self._rho),"fiber_direction": self._fiber_direction.as_dict(),})
+
+            class Fiber_direction(object):
+                '''Fiber direction
+                \nRequired: []
+                \nOptional: ['item', 'string', 'list']'''
+                def __init__(
+                    self,
+                    items : list = None
+                ):
+                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                @property
+                def items(self):
+                    return self._items
+
+                @items.setter
+                def items(self, items : list):
+                    ''' Replace the list '''
+                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                def add(self, item : object):
+                    ''' Add to the list '''
+                    self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                def clear(self):
+                    '''Clear list (make empty)'''
+                    self._items.clear()
+
+                def pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._items.pop(index)
+
+                def remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._items:
+                        self._items.remove(item) 
+
+                def check_required(self):
+
+                    if self.items:
+                        for item in self.items:
+                            if type(item) not in [int, float, list, str, bool, dict]:
+                                item.check_required()
+                    else:
+                        print("Requiered variable Root.Materials.HGOFiber.Fiber_direction.items does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none([inline_as_dict(i) for i in self._items])
+
 
 
 
@@ -12002,7 +12434,7 @@ class Root(object):
                 if self.value is None:
                     print("Requiered variable Root.Space.Discr_order.value does not have value")
                 else:
-                    if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                    if type(self.value) not in [int, float, list, str, bool, dict]:
                         self.value.check_required()
                 return
 
@@ -12049,7 +12481,7 @@ class Root(object):
 
                     if self.items:
                         for item in self.items:
-                            if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                            if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
                         print("Requiered variable Root.Space.Discr_order.List.items does not have value")
@@ -12812,7 +13244,7 @@ class Root(object):
             if self.value is None:
                 print("Requiered variable Root.Time.value does not have value")
             else:
-                if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                if type(self.value) not in [int, float, list, str, bool, dict]:
                     self.value.check_required()
             return
 
@@ -12945,7 +13377,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Time.Object1.Integrator.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -13208,7 +13640,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Time.Object2.Integrator.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -13471,7 +13903,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Time.Object3.Integrator.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -13888,7 +14320,7 @@ class Root(object):
                 if self.value is None:
                     print("Requiered variable Root.Contact.Collision_mesh.value does not have value")
                 else:
-                    if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                    if type(self.value) not in [int, float, list, str, bool, dict]:
                         self.value.check_required()
                 return
 
@@ -14280,7 +14712,7 @@ class Root(object):
             ''' 
             Apply Rayleigh damping.
             \nRequired: []
-            \nOptional: ['item']
+            \nOptional: ['item', 'object2']
             '''
             self._rayleigh_damping = type_check(value, self.Rayleigh_damping) 
 
@@ -17965,7 +18397,7 @@ class Root(object):
                     if self.value is None:
                         print("Requiered variable Root.Solver.Nonlinear.Solver.value does not have value")
                     else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
                     return
 
@@ -18012,7 +18444,7 @@ class Root(object):
 
                         if self.items:
                             for item in self.items:
-                                if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
                             print("Requiered variable Root.Solver.Nonlinear.Solver.List.items does not have value")
@@ -19465,10 +19897,10 @@ class Root(object):
                 \nOptional: ['bounds', 'max_change']'''
                 def __init__(
                     self,
-                    bounds: Optional[Iterable[list]] = None,
+                    bounds: Optional["Root.Solver.Nonlinear.Box_constraints.Bounds"] = None,
                     max_change: object = None
                 ):
-                    self._bounds = [] if bounds is None else [type_check(i, list) for i in bounds]
+                    self._bounds = type_check(bounds, self.Bounds) if bounds else self.Bounds()
                     self._max_change = inline_check(max_change, [float, list], []) if max_change is not None else None
 
                 @property
@@ -19480,27 +19912,9 @@ class Root(object):
                     ''' 
                     Box constraints on optimization variables.
                     \nRequired: []
-                    \nOptional: ['item']
+                    \nOptional: ['item', 'float']
                     '''
-                    self._bounds = [type_check(i, list) for i in (type_check(value, list) if value else [])]
-
-                def bounds_add(self, value):
-                    '''Add to list '''
-                    self._bounds.append(type_check(value, list))
-
-                def bounds_clear(self):
-                    '''Clear list (make empty)'''
-                    self._bounds.clear()
-
-                def bounds_pop(self, index=-1):
-                    '''Remove by index from list'''
-                    return self._bounds.pop(index)
-
-                def bounds_remove(self, item):
-                    '''Safe remove specific item from list'''
-                    if item in self._list:
-                        self._bounds.remove(item)
-
+                    self._bounds = type_check(value, self.Bounds) 
 
                 @property
                 def max_change(self):
@@ -19520,7 +19934,57 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"bounds": self._bounds,"max_change": inline_as_dict(self._max_change),})
+                    return drop_none({"bounds": self._bounds.as_dict(),"max_change": inline_as_dict(self._max_change),})
+
+                class Bounds(object):
+                    '''Box constraints on optimization variables.
+                    \nRequired: []
+                    \nOptional: ['item', 'float']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [class_check(i, [list, float]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [class_check(i, [list, float]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(class_check(item, [list, float]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Solver.Nonlinear.Box_constraints.Bounds.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([i.as_dict() if isinstance(i, tuple([])) else i for i in self._items])
+
 
 
             class Advanced(object):
@@ -20033,7 +20497,7 @@ class Root(object):
                         if self.value is None:
                             print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.value does not have value")
                         else:
-                            if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                            if type(self.value) not in [int, float, list, str, bool, dict]:
                                 self.value.check_required()
                         return
 
@@ -20080,7 +20544,7 @@ class Root(object):
 
                             if self.items:
                                 for item in self.items:
-                                    if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
                                 print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.items does not have value")
@@ -21533,10 +21997,10 @@ class Root(object):
                     \nOptional: ['bounds', 'max_change']'''
                     def __init__(
                         self,
-                        bounds: Optional[Iterable[list]] = None,
+                        bounds: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Box_constraints.Bounds"] = None,
                         max_change: object = None
                     ):
-                        self._bounds = [] if bounds is None else [type_check(i, list) for i in bounds]
+                        self._bounds = type_check(bounds, self.Bounds) if bounds else self.Bounds()
                         self._max_change = inline_check(max_change, [float, list], []) if max_change is not None else None
 
                     @property
@@ -21548,27 +22012,9 @@ class Root(object):
                         ''' 
                         Box constraints on optimization variables.
                         \nRequired: []
-                        \nOptional: ['item']
+                        \nOptional: ['item', 'float']
                         '''
-                        self._bounds = [type_check(i, list) for i in (type_check(value, list) if value else [])]
-
-                    def bounds_add(self, value):
-                        '''Add to list '''
-                        self._bounds.append(type_check(value, list))
-
-                    def bounds_clear(self):
-                        '''Clear list (make empty)'''
-                        self._bounds.clear()
-
-                    def bounds_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._bounds.pop(index)
-
-                    def bounds_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._bounds.remove(item)
-
+                        self._bounds = type_check(value, self.Bounds) 
 
                     @property
                     def max_change(self):
@@ -21588,7 +22034,57 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"bounds": self._bounds,"max_change": inline_as_dict(self._max_change),})
+                        return drop_none({"bounds": self._bounds.as_dict(),"max_change": inline_as_dict(self._max_change),})
+
+                    class Bounds(object):
+                        '''Box constraints on optimization variables.
+                        \nRequired: []
+                        \nOptional: ['item', 'float']'''
+                        def __init__(
+                            self,
+                            items : list = None
+                        ):
+                            self._items = [class_check(i, [list, float]) for i in (type_check(items, list) if items else [])]
+
+                        @property
+                        def items(self):
+                            return self._items
+
+                        @items.setter
+                        def items(self, items : list):
+                            ''' Replace the list '''
+                            self._items = [class_check(i, [list, float]) for i in (type_check(items, list) if items else [])]
+
+                        def add(self, item : object):
+                            ''' Add to the list '''
+                            self._items.append(class_check(item, [list, float]))
+
+                        def clear(self):
+                            '''Clear list (make empty)'''
+                            self._items.clear()
+
+                        def pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._items.pop(index)
+
+                        def remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._items:
+                                self._items.remove(item) 
+
+                        def check_required(self):
+
+                            if self.items:
+                                for item in self.items:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
+                                        item.check_required()
+                            else:
+                                print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Box_constraints.Bounds.items does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none([i.as_dict() if isinstance(i, tuple([])) else i for i in self._items])
+
 
 
                 class Advanced(object):
@@ -21849,12 +22345,12 @@ class Root(object):
         class Rayleigh_damping(object):
             '''Apply Rayleigh damping.
             \nRequired: []
-            \nOptional: ['item']'''
+            \nOptional: ['item', 'object2']'''
             def __init__(
                 self,
                 items : list = None
             ):
-                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                self._items = [class_check(i, [self.Item, self.Object2]) for i in (type_check(items, list) if items else [])]
 
             @property
             def items(self):
@@ -21863,11 +22359,11 @@ class Root(object):
             @items.setter
             def items(self, items : list):
                 ''' Replace the list '''
-                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                self._items = [class_check(i, [self.Item, self.Object2]) for i in (type_check(items, list) if items else [])]
 
             def add(self, item : object):
                 ''' Add to the list '''
-                self._items.append(class_check(item, [self.Item]))
+                self._items.append(class_check(item, [self.Item, self.Object2]))
 
             def clear(self):
                 '''Clear list (make empty)'''
@@ -21886,14 +22382,14 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Solver.Rayleigh_damping.items does not have value")
                 return
 
             def as_dict(self):
-                return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.Object2])) else i for i in self._items])
 
             class Item(object):
                 '''Apply Rayleigh damping to the given Form with a stiffness ratio.
@@ -21971,6 +22467,71 @@ class Root(object):
 
                 def as_dict(self):
                     return drop_none({"form": self._form.value if self._form is not None else None,"stiffness_ratio": self._stiffness_ratio,"stiffness": self._stiffness,"lagging_iterations": self._lagging_iterations,})
+
+
+            class Object2(object):
+                '''Apply Rayleigh damping to the given Form with a stiffness.
+                \nRequired: ['form', 'stiffness']
+                \nOptional: ['lagging_iterations']'''
+                class Form(str, Enum):
+                    ELASTICITY = 'elasticity'
+                    CONTACT = 'contact'
+                    FRICTION = 'friction'
+
+                def __init__(
+                    self,
+                    form: "Form" = None,
+                    stiffness: float = None,
+                    lagging_iterations: int = 1
+                ):
+                    self._form = enum_check(form, self.Form)
+                    self._stiffness = range_check(type_check(stiffness, float), 0, None) if stiffness is not None else None
+                    self._lagging_iterations = type_check(lagging_iterations, int) if lagging_iterations is not None else None
+
+                @property
+                def form(self):
+                    return self._form
+
+                @form.setter
+                def form(self, value):
+                    ''' 
+                    Form to damp.
+                    '''
+                    self._form = enum_check(value, self.Form) 
+
+                @property
+                def stiffness(self):
+                    return self._stiffness
+
+                @stiffness.setter
+                def stiffness(self, value):
+                    ''' 
+                    Ratio of to damp.
+                    '''
+                    self._stiffness = range_check(type_check(value, float), 0, None) 
+
+                @property
+                def lagging_iterations(self):
+                    return self._lagging_iterations
+
+                @lagging_iterations.setter
+                def lagging_iterations(self, value):
+                    ''' 
+                    Maximum number of update iterations for lagging.
+                    '''
+                    self._lagging_iterations = type_check(value, int) 
+
+                def check_required(self):
+
+                    if self.form is None:
+                        print("Requiered variable Root.Solver.Rayleigh_damping.Object2.form does not have value")
+
+                    if self.stiffness is None:
+                        print("Requiered variable Root.Solver.Rayleigh_damping.Object2.stiffness does not have value")
+                    return
+
+                def as_dict(self):
+                    return drop_none({"form": self._form.value if self._form is not None else None,"stiffness": self._stiffness,"lagging_iterations": self._lagging_iterations,})
 
 
 
@@ -22158,7 +22719,7 @@ class Root(object):
             ''' 
             The list of boundary conditions for the main variable. Elements of the list are assignment pairs (ID, value) where ID is assigned by surface selection.
             \nRequired: []
-            \nOptional: ['item']
+            \nOptional: ['item', 'string']
             '''
             self._dirichlet_boundary = type_check(value, self.Dirichlet_boundary) 
 
@@ -22414,7 +22975,7 @@ class Root(object):
                 if self.value is None:
                     print("Requiered variable Root.Boundary_conditions.Rhs.value does not have value")
                 else:
-                    if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                    if type(self.value) not in [int, float, list, str, bool, dict]:
                         self.value.check_required()
                 return
 
@@ -22473,12 +23034,12 @@ class Root(object):
             class List(object):
                 '''Right-hand side of the system being solved for vector-valued PDEs.
                 \nRequired: []
-                \nOptional: ['item']'''
+                \nOptional: ['item', 'string']'''
                 def __init__(
                     self,
                     items : list = None
                 ):
-                    self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 @property
                 def items(self):
@@ -22487,11 +23048,11 @@ class Root(object):
                 @items.setter
                 def items(self, items : list):
                     ''' Replace the list '''
-                    self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 def add(self, item : object):
                     ''' Add to the list '''
-                    self._items.append(class_check(item, [self.Item]))
+                    self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
                 def clear(self):
                     '''Clear list (make empty)'''
@@ -22510,26 +23071,26 @@ class Root(object):
 
                     if self.items:
                         for item in self.items:
-                            if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                            if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
                         print("Requiered variable Root.Boundary_conditions.Rhs.List.items does not have value")
                     return
 
                 def as_dict(self):
-                    return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                    return drop_none([inline_as_dict(i) for i in self._items])
 
 
 
         class Dirichlet_boundary(object):
             '''The list of boundary conditions for the main variable. Elements of the list are assignment pairs (ID, value) where ID is assigned by surface selection.
             \nRequired: []
-            \nOptional: ['item']'''
+            \nOptional: ['item', 'string']'''
             def __init__(
                 self,
                 items : list = None
             ):
-                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                self._items = [class_check(i, [self.Item, str]) for i in (type_check(items, list) if items else [])]
 
             @property
             def items(self):
@@ -22538,11 +23099,11 @@ class Root(object):
             @items.setter
             def items(self, items : list):
                 ''' Replace the list '''
-                self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                self._items = [class_check(i, [self.Item, str]) for i in (type_check(items, list) if items else [])]
 
             def add(self, item : object):
                 ''' Add to the list '''
-                self._items.append(class_check(item, [self.Item]))
+                self._items.append(class_check(item, [self.Item, str]))
 
             def clear(self):
                 '''Clear list (make empty)'''
@@ -22561,7 +23122,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.items does not have value")
@@ -22571,14 +23132,35 @@ class Root(object):
                 return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
 
             class Item(object):
-                '''This is a polymorphic variable, assign an object from its classes to the value
-                \nRequired: []
-                \nOptional: ['item', 'string', 'object3']'''
+                '''Dirichlet boundary condition.
+                \nRequired: ['id', 'value']
+                \nOptional: ['interpolation', 'dimension', 'time_reference']'''
                 def __init__(
                     self,
-                    value : object = None
+                    id: object = None,
+                    value: Optional["Root.Boundary_conditions.Dirichlet_boundary.Item.Value"] = None,
+                    interpolation: Optional["Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation"] = None,
+                    dimension: Optional[Iterable[bool]] = None,
+                    time_reference: Optional[Iterable[float]] = None
                 ):
-                    self._value = class_check(value, [self.Item, str, self.Object3]) if value is not None else None
+                    self._id = inline_check(id, [int, str], []) if id is not None else None
+                    self._value = type_check(value, self.Value) if value else self.Value()
+                    self._interpolation = type_check(interpolation, self.Interpolation) if interpolation else self.Interpolation()
+                    self._dimension = [] if dimension is None else [type_check(i, bool) for i in dimension]
+                    self._time_reference = [] if time_reference is None else [type_check(i, float) for i in time_reference]
+
+                @property
+                def id(self):
+                    return self._id
+
+                @id.setter
+                def id(self, value):
+                    ''' 
+                    This is a polymorphic variable, assign an object from its classes to the value
+                    \nRequired: []
+                    \nOptional: ['int', 'string']
+                    '''
+                    self._id = inline_check(value, [int, str], []) 
 
                 @property
                 def value(self):
@@ -22587,166 +23169,701 @@ class Root(object):
                 @value.setter
                 def value(self, value):
                     ''' 
-                    This is a polymorphic variable, assign an object from its classes to the value
+                    Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
+                    \nRequired: []
+                    \nOptional: ['item', 'string', 'list']
                     '''
-                    self._value = class_check(value, [self.Item, str, self.Object3]) 
+                    self._value = type_check(value, self.Value) 
+
+                @property
+                def interpolation(self):
+                    return self._interpolation
+
+                @interpolation.setter
+                def interpolation(self, value):
+                    ''' 
+                    interpolation of boundary condition
+                    \nRequired: []
+                    \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
+                    '''
+                    self._interpolation = type_check(value, self.Interpolation) 
+
+                @property
+                def dimension(self):
+                    return self._dimension
+
+                @dimension.setter
+                def dimension(self, value):
+                    ''' 
+                    List of 2 (2D) or 3 (3D) boolean values indicating if the Dirichlet boundary condition  is applied for a particular dimension.
+                    \nRequired: []
+                    \nOptional: ['item']
+                    '''
+                    self._dimension = [type_check(i, bool) for i in (type_check(value, list) if value else [])]
+
+                def dimension_add(self, value):
+                    '''Add to list '''
+                    self._dimension.append(type_check(value, bool))
+
+                def dimension_clear(self):
+                    '''Clear list (make empty)'''
+                    self._dimension.clear()
+
+                def dimension_pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._dimension.pop(index)
+
+                def dimension_remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._list:
+                        self._dimension.remove(item)
+
+
+                @property
+                def time_reference(self):
+                    return self._time_reference
+
+                @time_reference.setter
+                def time_reference(self, value):
+                    ''' 
+                    List of times when the Dirichlet boundary condition is specified
+                    \nRequired: []
+                    \nOptional: ['item']
+                    '''
+                    self._time_reference = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                def time_reference_add(self, value):
+                    '''Add to list '''
+                    self._time_reference.append(type_check(value, float))
+
+                def time_reference_clear(self):
+                    '''Clear list (make empty)'''
+                    self._time_reference.clear()
+
+                def time_reference_pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._time_reference.pop(index)
+
+                def time_reference_remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._list:
+                        self._time_reference.remove(item)
+
 
                 def check_required(self):
 
-                    if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.value does not have value")
-                    else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
-                            self.value.check_required()
+                    if self.id is None:
+                        print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.id does not have value")
+                    self.value.check_required()
                     return
 
                 def as_dict(self):
-                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Item, self.Object3])) else self._value)
+                    return drop_none({"id": inline_as_dict(self._id),"value": self._value.as_dict(),"interpolation": self._interpolation.as_dict(),"dimension": self._dimension,"time_reference": self._time_reference,})
 
-                class Object3(object):
-                    '''Dirichlet boundary condition.
-                    \nRequired: ['id', 'value']
-                    \nOptional: ['time_reference', 'interpolation', 'dimension']'''
+                class Value(object):
+                    '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
+                    \nRequired: []
+                    \nOptional: ['item', 'string', 'list']'''
                     def __init__(
                         self,
-                        id: None = None,
-                        value: Optional[Iterable[float]] = None,
-                        time_reference: Optional[Iterable[float]] = None,
-                        interpolation: None = None,
-                        dimension: Optional[Iterable[bool]] = None
+                        items : list = None
                     ):
-                        self._id = type_check(id, None) if id is not None else None
-                        self._value = [] if value is None else [type_check(i, float) for i in value]
-                        self._time_reference = [] if time_reference is None else [type_check(i, float) for i in time_reference]
-                        self._interpolation = type_check(interpolation, None) if interpolation is not None else None
-                        self._dimension = [] if dimension is None else [type_check(i, bool) for i in dimension]
+                        self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     @property
-                    def id(self):
-                        return self._id
+                    def items(self):
+                        return self._items
 
-                    @id.setter
-                    def id(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._id = type_check(value, None) 
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
-                    @property
-                    def value(self):
-                        return self._value
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
-                    @value.setter
-                    def value(self, value):
-                        ''' 
-                        There is no definition
-                        \nRequired: []
-                        \nOptional: ['item']
-                        '''
-                        self._value = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def value_add(self, value):
-                        '''Add to list '''
-                        self._value.append(type_check(value, float))
-
-                    def value_clear(self):
+                    def clear(self):
                         '''Clear list (make empty)'''
-                        self._value.clear()
+                        self._items.clear()
 
-                    def value_pop(self, index=-1):
+                    def pop(self, index=-1):
                         '''Remove by index from list'''
-                        return self._value.pop(index)
+                        return self._items.pop(index)
 
-                    def value_remove(self, item):
+                    def remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._value.remove(item)
-
-
-                    @property
-                    def time_reference(self):
-                        return self._time_reference
-
-                    @time_reference.setter
-                    def time_reference(self, value):
-                        ''' 
-                        List of times when the Dirichlet boundary condition is specified
-                        \nRequired: []
-                        \nOptional: ['item']
-                        '''
-                        self._time_reference = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                    def time_reference_add(self, value):
-                        '''Add to list '''
-                        self._time_reference.append(type_check(value, float))
-
-                    def time_reference_clear(self):
-                        '''Clear list (make empty)'''
-                        self._time_reference.clear()
-
-                    def time_reference_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._time_reference.pop(index)
-
-                    def time_reference_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._time_reference.remove(item)
-
-
-                    @property
-                    def interpolation(self):
-                        return self._interpolation
-
-                    @interpolation.setter
-                    def interpolation(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._interpolation = type_check(value, None) 
-
-                    @property
-                    def dimension(self):
-                        return self._dimension
-
-                    @dimension.setter
-                    def dimension(self, value):
-                        ''' 
-                        List of 2 (2D) or 3 (3D) boolean values indicating if the Dirichlet boundary condition  is applied for a particular dimension.
-                        \nRequired: []
-                        \nOptional: ['item']
-                        '''
-                        self._dimension = [type_check(i, bool) for i in (type_check(value, list) if value else [])]
-
-                    def dimension_add(self, value):
-                        '''Add to list '''
-                        self._dimension.append(type_check(value, bool))
-
-                    def dimension_clear(self):
-                        '''Clear list (make empty)'''
-                        self._dimension.clear()
-
-                    def dimension_pop(self, index=-1):
-                        '''Remove by index from list'''
-                        return self._dimension.pop(index)
-
-                    def dimension_remove(self, item):
-                        '''Safe remove specific item from list'''
-                        if item in self._list:
-                            self._dimension.remove(item)
-
+                        if item in self._items:
+                            self._items.remove(item) 
 
                     def check_required(self):
 
-                        if self.id is None:
-                            print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Object3.id does not have value")
-
-                        if self.value:
-                            print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Object3.value does not have value")
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
-                        return drop_none({"id": self._id,"value": self._value,"time_reference": self._time_reference,"interpolation": self._interpolation,"dimension": self._dimension,})
+                        return drop_none([inline_as_dict(i) for i in self._items])
+
+
+                class Interpolation(object):
+                    '''interpolation of boundary condition
+                    \nRequired: []
+                    \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(class_check(item, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
+
+                    class None_(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type']
+                        \nOptional: []'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic'
+                        ):
+                            self._type = enum_check(type, self.Type)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.None_.type does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,})
+
+
+                    class Linear(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type']
+                        \nOptional: []'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic'
+                        ):
+                            self._type = enum_check(type, self.Type)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear.type does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,})
+
+
+                    class Linear_ramp(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'to']
+                        \nOptional: ['from']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            to: float = None,
+                            from_: float = 0.0
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._to = type_check(to, float) if to is not None else None
+                            self._from_ = type_check(from_, float) if from_ is not None else None
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def to(self):
+                            return self._to
+
+                        @to.setter
+                        def to(self, value):
+                            ''' 
+                            interpolation ending time
+                            '''
+                            self._to = type_check(value, float) 
+
+                        @property
+                        def from_(self):
+                            return self._from_
+
+                        @from_.setter
+                        def from_(self, value):
+                            ''' 
+                            interpolation starting time
+                            '''
+                            self._from_ = type_check(value, float) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear_ramp.type does not have value")
+
+                            if self.to is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear_ramp.to does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"to": self._to,"from": self._from_,})
+
+
+                    class Piecewise_constant(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
+
+                    class Piecewise_linear(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
+
+                    class Piecewise_cubic(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
 
 
 
@@ -22791,7 +23908,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Boundary_conditions.Neumann_boundary.items does not have value")
@@ -22801,14 +23918,31 @@ class Root(object):
                 return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
 
             class Item(object):
-                '''This is a polymorphic variable, assign an object from its classes to the value
-                \nRequired: []
-                \nOptional: ['item', 'string', 'object3']'''
+                '''Neumann boundary condition
+                \nRequired: ['id', 'value']
+                \nOptional: ['interpolation']'''
                 def __init__(
                     self,
-                    value : object = None
+                    id: object = None,
+                    value: Optional["Root.Boundary_conditions.Neumann_boundary.Item.Value"] = None,
+                    interpolation: Optional["Root.Boundary_conditions.Neumann_boundary.Item.Interpolation"] = None
                 ):
-                    self._value = class_check(value, [float, str, self.Object3]) if value is not None else None
+                    self._id = inline_check(id, [int, str], []) if id is not None else None
+                    self._value = type_check(value, self.Value) if value else self.Value()
+                    self._interpolation = type_check(interpolation, self.Interpolation) if interpolation else self.Interpolation()
+
+                @property
+                def id(self):
+                    return self._id
+
+                @id.setter
+                def id(self, value):
+                    ''' 
+                    This is a polymorphic variable, assign an object from its classes to the value
+                    \nRequired: []
+                    \nOptional: ['int', 'string']
+                    '''
+                    self._id = inline_check(value, [int, str], []) 
 
                 @property
                 def value(self):
@@ -22817,80 +23951,639 @@ class Root(object):
                 @value.setter
                 def value(self, value):
                     ''' 
-                    This is a polymorphic variable, assign an object from its classes to the value
+                    Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
+                    \nRequired: []
+                    \nOptional: ['item', 'string']
                     '''
-                    self._value = class_check(value, [float, str, self.Object3]) 
+                    self._value = type_check(value, self.Value) 
+
+                @property
+                def interpolation(self):
+                    return self._interpolation
+
+                @interpolation.setter
+                def interpolation(self, value):
+                    ''' 
+                    interpolation of boundary condition
+                    \nRequired: []
+                    \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
+                    '''
+                    self._interpolation = type_check(value, self.Interpolation) 
 
                 def check_required(self):
 
-                    if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.value does not have value")
-                    else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
-                            self.value.check_required()
+                    if self.id is None:
+                        print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.id does not have value")
+                    self.value.check_required()
                     return
 
                 def as_dict(self):
-                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3])) else self._value)
+                    return drop_none({"id": inline_as_dict(self._id),"value": self._value.as_dict(),"interpolation": self._interpolation.as_dict(),})
 
-                class Object3(object):
-                    '''Neumann boundary condition
-                    \nRequired: ['id', 'value']
-                    \nOptional: ['interpolation']'''
+                class Value(object):
+                    '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
+                    \nRequired: []
+                    \nOptional: ['item', 'string']'''
                     def __init__(
                         self,
-                        id: None = None,
-                        value: None = None,
-                        interpolation: None = None
+                        items : list = None
                     ):
-                        self._id = type_check(id, None) if id is not None else None
-                        self._value = type_check(value, None) if value is not None else None
-                        self._interpolation = type_check(interpolation, None) if interpolation is not None else None
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     @property
-                    def id(self):
-                        return self._id
+                    def items(self):
+                        return self._items
 
-                    @id.setter
-                    def id(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._id = type_check(value, None) 
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
-                    @property
-                    def value(self):
-                        return self._value
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
-                    @value.setter
-                    def value(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._value = type_check(value, None) 
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
 
-                    @property
-                    def interpolation(self):
-                        return self._interpolation
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
 
-                    @interpolation.setter
-                    def interpolation(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._interpolation = type_check(value, None) 
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
 
                     def check_required(self):
 
-                        if self.id is None:
-                            print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Object3.id does not have value")
-
-                        if self.value is None:
-                            print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Object3.value does not have value")
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
-                        return drop_none({"id": self._id,"value": self._value,"interpolation": self._interpolation,})
+                        return drop_none([inline_as_dict(i) for i in self._items])
+
+
+                class Interpolation(object):
+                    '''interpolation of boundary condition
+                    \nRequired: []
+                    \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(class_check(item, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
+
+                    class None_(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type']
+                        \nOptional: []'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic'
+                        ):
+                            self._type = enum_check(type, self.Type)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.None_.type does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,})
+
+
+                    class Linear(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type']
+                        \nOptional: []'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic'
+                        ):
+                            self._type = enum_check(type, self.Type)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear.type does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,})
+
+
+                    class Linear_ramp(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'to']
+                        \nOptional: ['from']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            to: float = None,
+                            from_: float = 0.0
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._to = type_check(to, float) if to is not None else None
+                            self._from_ = type_check(from_, float) if from_ is not None else None
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def to(self):
+                            return self._to
+
+                        @to.setter
+                        def to(self, value):
+                            ''' 
+                            interpolation ending time
+                            '''
+                            self._to = type_check(value, float) 
+
+                        @property
+                        def from_(self):
+                            return self._from_
+
+                        @from_.setter
+                        def from_(self, value):
+                            ''' 
+                            interpolation starting time
+                            '''
+                            self._from_ = type_check(value, float) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear_ramp.type does not have value")
+
+                            if self.to is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear_ramp.to does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"to": self._to,"from": self._from_,})
+
+
+                    class Piecewise_constant(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
+
+                    class Piecewise_linear(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
+
+                    class Piecewise_cubic(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
 
 
 
@@ -22935,7 +24628,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.items does not have value")
@@ -23033,7 +24726,7 @@ class Root(object):
                         if self.value is None:
                             print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.value does not have value")
                         else:
-                            if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                            if type(self.value) not in [int, float, list, str, bool, dict]:
                                 self.value.check_required()
                         return
 
@@ -23589,7 +25282,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Boundary_conditions.Pressure_boundary.items does not have value")
@@ -23703,7 +25396,7 @@ class Root(object):
                         if self.value is None:
                             print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.value does not have value")
                         else:
-                            if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
+                            if type(self.value) not in [int, float, list, str, bool, dict]:
                                 self.value.check_required()
                         return
 
@@ -23762,12 +25455,12 @@ class Root(object):
                     class List(object):
                         '''Values of pressure boundary condition specified per timestep
                         \nRequired: []
-                        \nOptional: ['item']'''
+                        \nOptional: ['item', 'string']'''
                         def __init__(
                             self,
                             items : list = None
                         ):
-                            self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         @property
                         def items(self):
@@ -23776,11 +25469,11 @@ class Root(object):
                         @items.setter
                         def items(self, items : list):
                             ''' Replace the list '''
-                            self._items = [class_check(i, [self.Item]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         def add(self, item : object):
                             ''' Add to the list '''
-                            self._items.append(class_check(item, [self.Item]))
+                            self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
                         def clear(self):
                             '''Clear list (make empty)'''
@@ -23799,14 +25492,14 @@ class Root(object):
 
                             if self.items:
                                 for item in self.items:
-                                    if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                                    if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
                                 print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.List.items does not have value")
                             return
 
                         def as_dict(self):
-                            return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+                            return drop_none([inline_as_dict(i) for i in self._items])
 
 
 
@@ -23852,7 +25545,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Boundary_conditions.Pressure_cavity.items does not have value")
@@ -23951,7 +25644,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.items does not have value")
@@ -23961,14 +25654,31 @@ class Root(object):
                 return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
 
             class Item(object):
-                '''This is a polymorphic variable, assign an object from its classes to the value
-                \nRequired: []
-                \nOptional: ['item', 'string', 'object3']'''
+                '''Obstacle displacements
+                \nRequired: ['id', 'value']
+                \nOptional: ['interpolation']'''
                 def __init__(
                     self,
-                    value : object = None
+                    id: object = None,
+                    value: Optional["Root.Boundary_conditions.Obstacle_displacements.Item.Value"] = None,
+                    interpolation: Optional["Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation"] = None
                 ):
-                    self._value = class_check(value, [float, str, self.Object3]) if value is not None else None
+                    self._id = inline_check(id, [int, str], []) if id is not None else None
+                    self._value = type_check(value, self.Value) if value else self.Value()
+                    self._interpolation = type_check(interpolation, self.Interpolation) if interpolation else self.Interpolation()
+
+                @property
+                def id(self):
+                    return self._id
+
+                @id.setter
+                def id(self, value):
+                    ''' 
+                    This is a polymorphic variable, assign an object from its classes to the value
+                    \nRequired: []
+                    \nOptional: ['int', 'string']
+                    '''
+                    self._id = inline_check(value, [int, str], []) 
 
                 @property
                 def value(self):
@@ -23977,80 +25687,639 @@ class Root(object):
                 @value.setter
                 def value(self, value):
                     ''' 
-                    This is a polymorphic variable, assign an object from its classes to the value
+                    Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
+                    \nRequired: []
+                    \nOptional: ['item', 'string']
                     '''
-                    self._value = class_check(value, [float, str, self.Object3]) 
+                    self._value = type_check(value, self.Value) 
+
+                @property
+                def interpolation(self):
+                    return self._interpolation
+
+                @interpolation.setter
+                def interpolation(self, value):
+                    ''' 
+                    interpolation of boundary condition
+                    \nRequired: []
+                    \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
+                    '''
+                    self._interpolation = type_check(value, self.Interpolation) 
 
                 def check_required(self):
 
-                    if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.value does not have value")
-                    else:
-                        if type(self.value) not in [['int', 'float', 'list', 'str', 'bool']]:
-                            self.value.check_required()
+                    if self.id is None:
+                        print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.id does not have value")
+                    self.value.check_required()
                     return
 
                 def as_dict(self):
-                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3])) else self._value)
+                    return drop_none({"id": inline_as_dict(self._id),"value": self._value.as_dict(),"interpolation": self._interpolation.as_dict(),})
 
-                class Object3(object):
-                    '''Obstacle displacements
-                    \nRequired: ['id', 'value']
-                    \nOptional: ['interpolation']'''
+                class Value(object):
+                    '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
+                    \nRequired: []
+                    \nOptional: ['item', 'string']'''
                     def __init__(
                         self,
-                        id: None = None,
-                        value: None = None,
-                        interpolation: None = None
+                        items : list = None
                     ):
-                        self._id = type_check(id, None) if id is not None else None
-                        self._value = type_check(value, None) if value is not None else None
-                        self._interpolation = type_check(interpolation, None) if interpolation is not None else None
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     @property
-                    def id(self):
-                        return self._id
+                    def items(self):
+                        return self._items
 
-                    @id.setter
-                    def id(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._id = type_check(value, None) 
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
-                    @property
-                    def value(self):
-                        return self._value
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
 
-                    @value.setter
-                    def value(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._value = type_check(value, None) 
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
 
-                    @property
-                    def interpolation(self):
-                        return self._interpolation
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
 
-                    @interpolation.setter
-                    def interpolation(self, value):
-                        ''' 
-                        There is no definition
-                        '''
-                        self._interpolation = type_check(value, None) 
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
 
                     def check_required(self):
 
-                        if self.id is None:
-                            print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Object3.id does not have value")
-
-                        if self.value is None:
-                            print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Object3.value does not have value")
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
-                        return drop_none({"id": self._id,"value": self._value,"interpolation": self._interpolation,})
+                        return drop_none([inline_as_dict(i) for i in self._items])
+
+
+                class Interpolation(object):
+                    '''interpolation of boundary condition
+                    \nRequired: []
+                    \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(class_check(item, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
+
+                    class None_(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type']
+                        \nOptional: []'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic'
+                        ):
+                            self._type = enum_check(type, self.Type)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.None_.type does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,})
+
+
+                    class Linear(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type']
+                        \nOptional: []'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic'
+                        ):
+                            self._type = enum_check(type, self.Type)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear.type does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,})
+
+
+                    class Linear_ramp(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'to']
+                        \nOptional: ['from']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            to: float = None,
+                            from_: float = 0.0
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._to = type_check(to, float) if to is not None else None
+                            self._from_ = type_check(from_, float) if from_ is not None else None
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def to(self):
+                            return self._to
+
+                        @to.setter
+                        def to(self, value):
+                            ''' 
+                            interpolation ending time
+                            '''
+                            self._to = type_check(value, float) 
+
+                        @property
+                        def from_(self):
+                            return self._from_
+
+                        @from_.setter
+                        def from_(self, value):
+                            ''' 
+                            interpolation starting time
+                            '''
+                            self._from_ = type_check(value, float) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear_ramp.type does not have value")
+
+                            if self.to is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear_ramp.to does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"to": self._to,"from": self._from_,})
+
+
+                    class Piecewise_constant(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
+
+                    class Piecewise_linear(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
+
+                    class Piecewise_cubic(object):
+                        '''interpolation of boundary condition
+                        \nRequired: ['type', 'points', 'values']
+                        \nOptional: ['extend']'''
+                        class Type(str, Enum):
+                            PIECEWISE_CUBIC = 'piecewise_cubic'
+
+                        class Extend(str, Enum):
+                            CONSTANT = 'constant'
+                            EXTRAPOLATE = 'extrapolate'
+                            REPEAT = 'repeat'
+                            REPEAT_OFFSET = 'repeat_offset'
+
+                        def __init__(
+                            self,
+                            type: "Type" = 'piecewise_cubic',
+                            points: Optional[Iterable[float]] = None,
+                            values: Optional[Iterable[float]] = None,
+                            extend: "Extend" = 'constant'
+                        ):
+                            self._type = enum_check(type, self.Type)
+                            self._points = [] if points is None else [type_check(i, float) for i in points]
+                            self._values = [] if values is None else [type_check(i, float) for i in values]
+                            self._extend = enum_check(extend, self.Extend)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            ''' 
+                            type of interpolation of boundary condition
+                            '''
+                            self._type = enum_check(value, self.Type) 
+
+                        @property
+                        def points(self):
+                            return self._points
+
+                        @points.setter
+                        def points(self, value):
+                            ''' 
+                            interpolation time points
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._points = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def points_add(self, value):
+                            '''Add to list '''
+                            self._points.append(type_check(value, float))
+
+                        def points_clear(self):
+                            '''Clear list (make empty)'''
+                            self._points.clear()
+
+                        def points_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._points.pop(index)
+
+                        def points_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._points.remove(item)
+
+
+                        @property
+                        def values(self):
+                            return self._values
+
+                        @values.setter
+                        def values(self, value):
+                            ''' 
+                            interpolation values
+                            \nRequired: []
+                            \nOptional: ['item']
+                            '''
+                            self._values = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                        def values_add(self, value):
+                            '''Add to list '''
+                            self._values.append(type_check(value, float))
+
+                        def values_clear(self):
+                            '''Clear list (make empty)'''
+                            self._values.clear()
+
+                        def values_pop(self, index=-1):
+                            '''Remove by index from list'''
+                            return self._values.pop(index)
+
+                        def values_remove(self, item):
+                            '''Safe remove specific item from list'''
+                            if item in self._list:
+                                self._values.remove(item)
+
+
+                        @property
+                        def extend(self):
+                            return self._extend
+
+                        @extend.setter
+                        def extend(self, value):
+                            ''' 
+                            how to extend the piecewise interpolation
+                            '''
+                            self._extend = enum_check(value, self.Extend) 
+
+                        def check_required(self):
+
+                            if self.type is None:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.type does not have value")
+
+                            if self.points:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.points does not have value")
+
+                            if self.values:
+                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.values does not have value")
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
+
 
 
 
@@ -24156,7 +26425,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Initial_conditions.Solution.items does not have value")
@@ -24164,6 +26433,103 @@ class Root(object):
 
             def as_dict(self):
                 return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+
+            class Item(object):
+                '''A list of (ID, value) pairs defining the initial conditions for the main variable values. Ids are set by selection, and values can be floats or formulas.
+                \nRequired: ['id', 'value']
+                \nOptional: []'''
+                def __init__(
+                    self,
+                    id: int = None,
+                    value: Optional["Root.Initial_conditions.Solution.Item.Value"] = None
+                ):
+                    self._id = type_check(id, int) if id is not None else None
+                    self._value = type_check(value, self.Value) if value else self.Value()
+
+                @property
+                def id(self):
+                    return self._id
+
+                @id.setter
+                def id(self, value):
+                    ''' 
+                    ID from volume selections
+                    '''
+                    self._id = type_check(value, int) 
+
+                @property
+                def value(self):
+                    return self._value
+
+                @value.setter
+                def value(self, value):
+                    ''' 
+                    value of the solution
+                    \nRequired: []
+                    \nOptional: ['item', 'string']
+                    '''
+                    self._value = type_check(value, self.Value) 
+
+                def check_required(self):
+
+                    if self.id is None:
+                        print("Requiered variable Root.Initial_conditions.Solution.Item.id does not have value")
+                    self.value.check_required()
+                    return
+
+                def as_dict(self):
+                    return drop_none({"id": self._id,"value": self._value.as_dict(),})
+
+                class Value(object):
+                    '''value of the solution
+                    \nRequired: []
+                    \nOptional: ['item', 'string']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Initial_conditions.Solution.Item.Value.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([inline_as_dict(i) for i in self._items])
+
+
 
 
         class Velocity(object):
@@ -24206,7 +26572,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Initial_conditions.Velocity.items does not have value")
@@ -24214,6 +26580,103 @@ class Root(object):
 
             def as_dict(self):
                 return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+
+            class Item(object):
+                '''A list of (ID, value) pairs defining the initial conditions for the first derivative of the main variable values. Ids are set by selection, and values can be floats or formulas.
+                \nRequired: ['id', 'value']
+                \nOptional: []'''
+                def __init__(
+                    self,
+                    id: int = None,
+                    value: Optional["Root.Initial_conditions.Velocity.Item.Value"] = None
+                ):
+                    self._id = type_check(id, int) if id is not None else None
+                    self._value = type_check(value, self.Value) if value else self.Value()
+
+                @property
+                def id(self):
+                    return self._id
+
+                @id.setter
+                def id(self, value):
+                    ''' 
+                    ID from volume selections
+                    '''
+                    self._id = type_check(value, int) 
+
+                @property
+                def value(self):
+                    return self._value
+
+                @value.setter
+                def value(self, value):
+                    ''' 
+                    value od the initial velocity
+                    \nRequired: []
+                    \nOptional: ['item', 'string']
+                    '''
+                    self._value = range_check(type_check(value, self.Value), 2, 3) 
+
+                def check_required(self):
+
+                    if self.id is None:
+                        print("Requiered variable Root.Initial_conditions.Velocity.Item.id does not have value")
+                    self.value.check_required()
+                    return
+
+                def as_dict(self):
+                    return drop_none({"id": self._id,"value": self._value.as_dict(),})
+
+                class Value(object):
+                    '''value od the initial velocity
+                    \nRequired: []
+                    \nOptional: ['item', 'string']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Initial_conditions.Velocity.Item.Value.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([inline_as_dict(i) for i in self._items])
+
+
 
 
         class Acceleration(object):
@@ -24256,7 +26719,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Initial_conditions.Acceleration.items does not have value")
@@ -24264,6 +26727,103 @@ class Root(object):
 
             def as_dict(self):
                 return drop_none([i.as_dict() if isinstance(i, tuple([self.Item])) else i for i in self._items])
+
+            class Item(object):
+                '''entries
+                \nRequired: ['id', 'value']
+                \nOptional: []'''
+                def __init__(
+                    self,
+                    id: int = None,
+                    value: Optional["Root.Initial_conditions.Acceleration.Item.Value"] = None
+                ):
+                    self._id = type_check(id, int) if id is not None else None
+                    self._value = type_check(value, self.Value) if value else self.Value()
+
+                @property
+                def id(self):
+                    return self._id
+
+                @id.setter
+                def id(self, value):
+                    ''' 
+                    ID from volume selections
+                    '''
+                    self._id = type_check(value, int) 
+
+                @property
+                def value(self):
+                    return self._value
+
+                @value.setter
+                def value(self, value):
+                    ''' 
+                    value
+                    \nRequired: []
+                    \nOptional: ['item', 'string']
+                    '''
+                    self._value = range_check(type_check(value, self.Value), 2, 3) 
+
+                def check_required(self):
+
+                    if self.id is None:
+                        print("Requiered variable Root.Initial_conditions.Acceleration.Item.id does not have value")
+                    self.value.check_required()
+                    return
+
+                def as_dict(self):
+                    return drop_none({"id": self._id,"value": self._value.as_dict(),})
+
+                class Value(object):
+                    '''value
+                    \nRequired: []
+                    \nOptional: ['item', 'string']'''
+                    def __init__(
+                        self,
+                        items : list = None
+                    ):
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                    @property
+                    def items(self):
+                        return self._items
+
+                    @items.setter
+                    def items(self, items : list):
+                        ''' Replace the list '''
+                        self._items = [inline_check(i, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+
+                    def add(self, item : object):
+                        ''' Add to the list '''
+                        self._items.append(inline_check(item, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+
+                    def clear(self):
+                        '''Clear list (make empty)'''
+                        self._items.clear()
+
+                    def pop(self, index=-1):
+                        '''Remove by index from list'''
+                        return self._items.pop(index)
+
+                    def remove(self, item):
+                        '''Safe remove specific item from list'''
+                        if item in self._items:
+                            self._items.remove(item) 
+
+                    def check_required(self):
+
+                        if self.items:
+                            for item in self.items:
+                                if type(item) not in [int, float, list, str, bool, dict]:
+                                    item.check_required()
+                        else:
+                            print("Requiered variable Root.Initial_conditions.Acceleration.Item.Value.items does not have value")
+                        return
+
+                    def as_dict(self):
+                        return drop_none([inline_as_dict(i) for i in self._items])
+
+
 
 
 
@@ -24370,7 +26930,7 @@ class Root(object):
 
                 if self.items:
                     for item in self.items:
-                        if type(item) not in [['int', 'float', 'list', 'str', 'bool']]:
+                        if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
                     print("Requiered variable Root.Constraints.Soft.items does not have value")
