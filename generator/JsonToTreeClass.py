@@ -79,11 +79,12 @@ def is_structured_list_node(node):
     return child is not None and child.type in ("object", "polymorphic")
 
 class ClassGenerator(object):
-    def __init__(self, class_name : str, doc : str, required, optional):
+    def __init__(self, class_name : str, doc : str, required, optional, required_field_sets=None):
         self._class_name = py_class_name(class_name)
         doc = self.doc_text(doc)
+        required_text = required_field_sets if required_field_sets and len(required_field_sets) > 1 else required
         self._doc = f"""{doc}
-    \\nRequired: {required}
+    \\nRequired: {required_text}
     \\nOptional: {optional}"""
         self._init_input = []
         self._init_body = []
@@ -415,7 +416,7 @@ class ClassGenerator(object):
         elif node.type == "list" and len(node._optional) == 1:
             self._check_required.append(
                 f"""
-        if self.{name}:
+        if not self.{name}:
             print("Requiered variable {path} does not have value")"""
                 )
         else :
@@ -424,6 +425,24 @@ class ClassGenerator(object):
         if self.{name} is None:
             print("Requiered variable {path} does not have value")"""
                 )
+
+    def set_check_required_alternatives(self, path, required_field_sets):
+        conditions = []
+        descriptions = []
+        for required_fields in required_field_sets:
+            fields = [py_identifier(field) for field in required_fields]
+            conditions.append(
+                "(" + " and ".join(f"self.{field} is not None" for field in fields) + ")"
+            )
+            descriptions.append(", ".join(required_fields))
+
+        condition = " or ".join(conditions)
+        description = "; ".join(descriptions)
+        self._check_required.append(
+            f"""
+        if not ({condition}):
+            print("Requiered variable {path} must satisfy one required field set: {description}")"""
+        )
 
     def set_property_setter_list(self, node):
         if not self._property_setter:
@@ -662,6 +681,7 @@ class JsonToTreeClass(object):
         self.max = None
         self.type_name = None
         self.variant_fields = None
+        self.required_field_sets = []
         # self.camera: str = 'you'
 
     def __str__(self):
@@ -677,6 +697,7 @@ class JsonToTreeClass(object):
         cloned.max = self.max
         cloned.type_name = self.type_name
         cloned.variant_fields = list(self.variant_fields) if self.variant_fields is not None else None
+        cloned.required_field_sets = [list(fields) for fields in self.required_field_sets]
         cloned._required = {
             key: value.clone(key)
             for key, value in self._required.items()
@@ -859,13 +880,24 @@ class JsonToTreeClass(object):
         return self, None
 
     def class_generator(self, path = "Root"):
-        class_builder = ClassGenerator(self.name, self.doc, list(self._required), list(self._optional))
+        required_field_sets = self.required_field_sets if len(self.required_field_sets) > 1 else None
+        class_builder = ClassGenerator(
+            self.name,
+            self.doc,
+            list(self._required),
+            list(self._optional),
+            required_field_sets,
+        )
+        if required_field_sets:
+            class_builder.set_check_required_alternatives(path, required_field_sets)
+
         for required in self._required.values():
             #print(self.name)
             inner_path_capitalize = path + "." + py_class_name(required.name)
             inner_path = path + "." + required.name
             class_builder.set_init(required, inner_path_capitalize)
-            class_builder.set_check_required(required, inner_path)
+            if not required_field_sets:
+                class_builder.set_check_required(required, inner_path)
             class_builder.set_property_setter(required)
                 
             child = None
@@ -1016,6 +1048,11 @@ def mark_variant_fields(node, entry):
             if field not in node.variant_fields:
                 node.variant_fields.append(field)
 
+def mark_required_field_set(node, entry):
+    required_fields = list(entry.get("required") or [])
+    if required_fields and required_fields not in node.required_field_sets:
+        node.required_field_sets.append(required_fields)
+
 def prune_variant_fields(node, visited=None):
     visited = visited or set()
     node_id = id(node)
@@ -1023,7 +1060,7 @@ def prune_variant_fields(node, visited=None):
         return
     visited.add(node_id)
 
-    if node.type_name and node.variant_fields is not None:
+    if node.variant_fields is not None:
         node._required = {
             key: node._required[key]
             for key in node.variant_fields
@@ -1196,8 +1233,9 @@ def build_tree(schema_entries):
                     path.type_name = type_name
                 replacement_node = polymorph
 
-        if type_name and entry.get('type') == "object":
+        if entry.get('type') == "object":
             mark_variant_fields(path, entry)
+            mark_required_field_set(path, entry)
 
         if entry.get('required'):
             for value in entry.get('required'):

@@ -104,14 +104,14 @@ def type_check(variable, tp):
 class Root(object):
     '''Root of the configuration file.
     \nRequired: ['geometry', 'materials']
-    \nOptional: ['common', 'root_path', 'units', 'space', 'time', 'contact', 'solver', 'boundary_conditions', 'initial_conditions', 'constraints', 'output', 'input']'''
+    \nOptional: ['units', 'common', 'root_path', 'space', 'time', 'contact', 'solver', 'boundary_conditions', 'initial_conditions', 'constraints', 'output', 'input']'''
     def __init__(
         self,
         geometry: Optional["Root.Geometry"] = None,
         materials: Optional["Root.Materials"] = None,
+        units: Optional["Root.Units"] = None,
         common: str = '',
         root_path: str = '',
-        units: Optional["Root.Units"] = None,
         space: Optional["Root.Space"] = None,
         time: Optional["Root.Time"] = None,
         contact: Optional["Root.Contact"] = None,
@@ -124,9 +124,9 @@ class Root(object):
     ):
         self._geometry = type_check(geometry, self.Geometry) if geometry else self.Geometry()
         self._materials = type_check(materials, self.Materials) if materials else self.Materials()
+        self._units = type_check(units, self.Units) if units else self.Units()
         self._common = extension_check(type_check(common, str), ['.json']) if common is not None else None
         self._root_path = type_check(root_path, str) if root_path is not None else None
-        self._units = type_check(units, self.Units) if units else self.Units()
         self._space = type_check(space, self.Space) if space else self.Space()
         self._time = type_check(time, self.Time) if isinstance(time, self.Time) else self.Time(time) if time is not None else self.Time()
         self._contact = type_check(contact, self.Contact) if contact else self.Contact()
@@ -164,6 +164,19 @@ class Root(object):
         self._materials = type_check(value, self.Materials) 
  
     @property
+    def units(self):
+        return self._units
+
+    @units.setter
+    def units(self, value):
+        ''' 
+        Basic units used in the code.
+        \nRequired: []
+        \nOptional: ['length', 'mass', 'time', 'characteristic_length']
+        '''
+        self._units = type_check(value, self.Units) 
+ 
+    @property
     def common(self):
         return self._common
 
@@ -186,19 +199,6 @@ class Root(object):
         self._root_path = type_check(value, str) 
  
     @property
-    def units(self):
-        return self._units
-
-    @units.setter
-    def units(self, value):
-        ''' 
-        Basic units used in the code.
-        \nRequired: []
-        \nOptional: ['length', 'mass', 'time', 'characteristic_length']
-        '''
-        self._units = type_check(value, self.Units) 
- 
-    @property
     def space(self):
         return self._space
 
@@ -207,7 +207,7 @@ class Root(object):
         ''' 
         Options related to the FE space.
         \nRequired: []
-        \nOptional: ['discr_orderq', 'discr_order', 'pressure_discr_order', 'basis_type', 'poly_basis_type', 'use_p_ref', 'remesh', 'advanced']
+        \nOptional: ['discr_order', 'discr_orderq', 'pressure_discr_order', 'basis_type', 'poly_basis_type', 'use_p_ref', 'remesh', 'advanced']
         '''
         self._space = type_check(value, self.Space) 
  
@@ -233,7 +233,7 @@ class Root(object):
         ''' 
         Contact handling parameters.
         \nRequired: []
-        \nOptional: ['use_adaptive_dhat', 'min_distance_ratio', 'use_gcp_formulation', 'alpha_t', 'alpha_n', 'enabled', 'dhat', 'dhat_percentage', 'epsv', 'friction_coefficient', 'use_convergent_formulation', 'use_area_weighting', 'use_improved_max_operator', 'use_physical_barrier', 'collision_mesh', 'periodic', 'adhesion']
+        \nOptional: ['enabled', 'dhat', 'dhat_percentage', 'epsv', 'friction_coefficient', 'use_convergent_formulation', 'use_area_weighting', 'use_improved_max_operator', 'use_physical_barrier', 'collision_mesh', 'use_gcp_formulation', 'alpha_n', 'alpha_t', 'min_distance_ratio', 'use_adaptive_dhat', 'periodic', 'adhesion']
         '''
         self._contact = type_check(value, self.Contact) 
  
@@ -246,7 +246,7 @@ class Root(object):
         ''' 
         The settings for the solver including linear solver, nonlinear solver, and some advanced options.
         \nRequired: []
-        \nOptional: ['linear', 'adjoint_linear', 'nonlinear', 'max_threads', 'augmented_lagrangian', 'contact', 'rayleigh_damping', 'advanced']
+        \nOptional: ['max_threads', 'linear', 'adjoint_linear', 'nonlinear', 'augmented_lagrangian', 'contact', 'rayleigh_damping', 'advanced']
         '''
         self._solver = type_check(value, self.Solver) 
  
@@ -259,7 +259,7 @@ class Root(object):
         ''' 
         The settings for boundary conditions.
         \nRequired: []
-        \nOptional: ['periodic_boundary', 'rhs', 'dirichlet_boundary', 'neumann_boundary', 'normal_aligned_neumann_boundary', 'pressure_boundary', 'pressure_cavity', 'obstacle_displacements']
+        \nOptional: ['rhs', 'dirichlet_boundary', 'neumann_boundary', 'normal_aligned_neumann_boundary', 'pressure_boundary', 'pressure_cavity', 'obstacle_displacements', 'periodic_boundary']
         '''
         self._boundary_conditions = type_check(value, self.Boundary_conditions) 
  
@@ -285,7 +285,7 @@ class Root(object):
         ''' 
         soft and hard constraints
         \nRequired: []
-        \nOptional: ['hard', 'soft']
+        \nOptional: ['soft', 'hard']
         '''
         self._constraints = type_check(value, self.Constraints) 
  
@@ -298,7 +298,7 @@ class Root(object):
         ''' 
         output settings
         \nRequired: []
-        \nOptional: ['directory', 'stats', 'log', 'json', 'restart_json', 'paraview', 'data', 'reference', 'advanced']
+        \nOptional: ['directory', 'log', 'json', 'restart_json', 'paraview', 'data', 'advanced', 'reference', 'stats']
         '''
         self._output = type_check(value, self.Output) 
  
@@ -321,7 +321,7 @@ class Root(object):
         return
 
     def as_dict(self):
-        return drop_none({"geometry": self._geometry.as_dict(),"materials": self._materials.as_dict(),"common": self._common,"root_path": self._root_path,"units": self._units.as_dict(),"space": self._space.as_dict(),"time": self._time.as_dict(),"contact": self._contact.as_dict(),"solver": self._solver.as_dict(),"boundary_conditions": self._boundary_conditions.as_dict(),"initial_conditions": self._initial_conditions.as_dict(),"constraints": self._constraints.as_dict(),"output": self._output.as_dict(),"input": self._input.as_dict(),})
+        return drop_none({"geometry": self._geometry.as_dict(),"materials": self._materials.as_dict(),"units": self._units.as_dict(),"common": self._common,"root_path": self._root_path,"space": self._space.as_dict(),"time": self._time.as_dict(),"contact": self._contact.as_dict(),"solver": self._solver.as_dict(),"boundary_conditions": self._boundary_conditions.as_dict(),"initial_conditions": self._initial_conditions.as_dict(),"constraints": self._constraints.as_dict(),"output": self._output.as_dict(),"input": self._input.as_dict(),})
 
     class Geometry(object):
         '''List of geometry objects.
@@ -468,7 +468,7 @@ class Root(object):
                 ''' 
                 Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
-                \nOptional: ['rotation_mode', 'translation', 'rotation', 'scale', 'dimensions']
+                \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']
                 '''
                 self._transformation = type_check(value, self.Transformation) 
 
@@ -582,31 +582,20 @@ class Root(object):
             class Transformation(object):
                 '''Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
-                \nOptional: ['rotation_mode', 'translation', 'rotation', 'scale', 'dimensions']'''
+                \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']'''
                 def __init__(
                     self,
-                    rotation_mode: str = 'xyz',
                     translation: Optional[Iterable[float]] = None,
                     rotation: Optional[Iterable[float]] = None,
+                    rotation_mode: str = 'xyz',
                     scale: Optional[Iterable[float]] = None,
                     dimensions: object = None
                 ):
-                    self._rotation_mode = type_check(rotation_mode, str) if rotation_mode is not None else None
                     self._translation = [] if translation is None else [type_check(i, float) for i in translation]
                     self._rotation = [] if rotation is None else [type_check(i, float) for i in rotation]
+                    self._rotation_mode = type_check(rotation_mode, str) if rotation_mode is not None else None
                     self._scale = [] if scale is None else [type_check(i, float) for i in scale]
                     self._dimensions = inline_check(dimensions, [float, list], []) if dimensions is not None else None
-
-                @property
-                def rotation_mode(self):
-                    return self._rotation_mode
-
-                @rotation_mode.setter
-                def rotation_mode(self, value):
-                    ''' 
-                    Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
-                    '''
-                    self._rotation_mode = type_check(value, str) 
 
                 @property
                 def translation(self):
@@ -671,6 +660,17 @@ class Root(object):
 
 
                 @property
+                def rotation_mode(self):
+                    return self._rotation_mode
+
+                @rotation_mode.setter
+                def rotation_mode(self, value):
+                    ''' 
+                    Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
+                    '''
+                    self._rotation_mode = type_check(value, str) 
+
+                @property
                 def scale(self):
                     return self._scale
 
@@ -719,7 +719,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"rotation_mode": self._rotation_mode,"translation": self._translation,"rotation": self._rotation,"scale": self._scale,"dimensions": inline_as_dict(self._dimensions),})
+                    return drop_none({"translation": self._translation,"rotation": self._rotation,"rotation_mode": self._rotation_mode,"scale": self._scale,"dimensions": inline_as_dict(self._dimensions),})
 
 
             class Volume_selection(object):
@@ -827,7 +827,7 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Box.id does not have value")
 
-                        if self.box:
+                        if not self.box:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Box.box does not have value")
                         return
 
@@ -923,7 +923,7 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Sphere.radius does not have value")
 
-                        if self.center:
+                        if not self.center:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Sphere.center does not have value")
                         return
 
@@ -1052,10 +1052,10 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.radius does not have value")
 
-                        if self.p1:
+                        if not self.p1:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.p1 does not have value")
 
-                        if self.p2:
+                        if not self.p2:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.p2 does not have value")
                         return
 
@@ -1168,10 +1168,10 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Plane.id does not have value")
 
-                        if self.point:
+                        if not self.point:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Plane.point does not have value")
 
-                        if self.normal:
+                        if not self.normal:
                             print("Requiered variable Root.Geometry.Mesh.Volume_selection.Plane.normal does not have value")
                         return
 
@@ -1392,7 +1392,7 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Box.id does not have value")
 
-                        if self.box:
+                        if not self.box:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Box.box does not have value")
                         return
 
@@ -1488,7 +1488,7 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Sphere.radius does not have value")
 
-                        if self.center:
+                        if not self.center:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Sphere.center does not have value")
                         return
 
@@ -1617,10 +1617,10 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.radius does not have value")
 
-                        if self.p1:
+                        if not self.p1:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.p1 does not have value")
 
-                        if self.p2:
+                        if not self.p2:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.p2 does not have value")
                         return
 
@@ -1733,10 +1733,10 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Plane.id does not have value")
 
-                        if self.point:
+                        if not self.point:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Plane.point does not have value")
 
-                        if self.normal:
+                        if not self.normal:
                             print("Requiered variable Root.Geometry.Mesh.Surface_selection.Plane.normal does not have value")
                         return
 
@@ -2090,7 +2090,7 @@ class Root(object):
                             if self.id is None:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Box.id does not have value")
 
-                            if self.box:
+                            if not self.box:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Box.box does not have value")
                             return
 
@@ -2186,7 +2186,7 @@ class Root(object):
                             if self.radius is None:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Sphere.radius does not have value")
 
-                            if self.center:
+                            if not self.center:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Sphere.center does not have value")
                             return
 
@@ -2315,10 +2315,10 @@ class Root(object):
                             if self.radius is None:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.radius does not have value")
 
-                            if self.p1:
+                            if not self.p1:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.p1 does not have value")
 
-                            if self.p2:
+                            if not self.p2:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.p2 does not have value")
                             return
 
@@ -2431,10 +2431,10 @@ class Root(object):
                             if self.id is None:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Plane.id does not have value")
 
-                            if self.point:
+                            if not self.point:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Plane.point does not have value")
 
-                            if self.normal:
+                            if not self.normal:
                                 print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Plane.normal does not have value")
                             return
 
@@ -2746,7 +2746,7 @@ class Root(object):
                 ''' 
                 Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
-                \nOptional: ['rotation_mode', 'translation', 'rotation', 'scale', 'dimensions']
+                \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']
                 '''
                 self._transformation = type_check(value, self.Transformation) 
 
@@ -2930,7 +2930,7 @@ class Root(object):
                     if self.offset is None:
                         print("Requiered variable Root.Geometry.Mesh_array.Array.offset does not have value")
 
-                    if self.size:
+                    if not self.size:
                         print("Requiered variable Root.Geometry.Mesh_array.Array.size does not have value")
                     return
 
@@ -2941,31 +2941,20 @@ class Root(object):
             class Transformation(object):
                 '''Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
-                \nOptional: ['rotation_mode', 'translation', 'rotation', 'scale', 'dimensions']'''
+                \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']'''
                 def __init__(
                     self,
-                    rotation_mode: str = 'xyz',
                     translation: Optional[Iterable[float]] = None,
                     rotation: Optional[Iterable[float]] = None,
+                    rotation_mode: str = 'xyz',
                     scale: Optional[Iterable[float]] = None,
                     dimensions: object = None
                 ):
-                    self._rotation_mode = type_check(rotation_mode, str) if rotation_mode is not None else None
                     self._translation = [] if translation is None else [type_check(i, float) for i in translation]
                     self._rotation = [] if rotation is None else [type_check(i, float) for i in rotation]
+                    self._rotation_mode = type_check(rotation_mode, str) if rotation_mode is not None else None
                     self._scale = [] if scale is None else [type_check(i, float) for i in scale]
                     self._dimensions = inline_check(dimensions, [float, list], []) if dimensions is not None else None
-
-                @property
-                def rotation_mode(self):
-                    return self._rotation_mode
-
-                @rotation_mode.setter
-                def rotation_mode(self, value):
-                    ''' 
-                    Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
-                    '''
-                    self._rotation_mode = type_check(value, str) 
 
                 @property
                 def translation(self):
@@ -3030,6 +3019,17 @@ class Root(object):
 
 
                 @property
+                def rotation_mode(self):
+                    return self._rotation_mode
+
+                @rotation_mode.setter
+                def rotation_mode(self, value):
+                    ''' 
+                    Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
+                    '''
+                    self._rotation_mode = type_check(value, str) 
+
+                @property
                 def scale(self):
                     return self._scale
 
@@ -3078,7 +3078,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"rotation_mode": self._rotation_mode,"translation": self._translation,"rotation": self._rotation,"scale": self._scale,"dimensions": inline_as_dict(self._dimensions),})
+                    return drop_none({"translation": self._translation,"rotation": self._rotation,"rotation_mode": self._rotation_mode,"scale": self._scale,"dimensions": inline_as_dict(self._dimensions),})
 
 
             class Volume_selection(object):
@@ -3186,7 +3186,7 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Box.id does not have value")
 
-                        if self.box:
+                        if not self.box:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Box.box does not have value")
                         return
 
@@ -3282,7 +3282,7 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Sphere.radius does not have value")
 
-                        if self.center:
+                        if not self.center:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Sphere.center does not have value")
                         return
 
@@ -3411,10 +3411,10 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.radius does not have value")
 
-                        if self.p1:
+                        if not self.p1:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.p1 does not have value")
 
-                        if self.p2:
+                        if not self.p2:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.p2 does not have value")
                         return
 
@@ -3527,10 +3527,10 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Plane.id does not have value")
 
-                        if self.point:
+                        if not self.point:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Plane.point does not have value")
 
-                        if self.normal:
+                        if not self.normal:
                             print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Plane.normal does not have value")
                         return
 
@@ -3751,7 +3751,7 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Box.id does not have value")
 
-                        if self.box:
+                        if not self.box:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Box.box does not have value")
                         return
 
@@ -3847,7 +3847,7 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Sphere.radius does not have value")
 
-                        if self.center:
+                        if not self.center:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Sphere.center does not have value")
                         return
 
@@ -3976,10 +3976,10 @@ class Root(object):
                         if self.radius is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.radius does not have value")
 
-                        if self.p1:
+                        if not self.p1:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.p1 does not have value")
 
-                        if self.p2:
+                        if not self.p2:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.p2 does not have value")
                         return
 
@@ -4092,10 +4092,10 @@ class Root(object):
                         if self.id is None:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Plane.id does not have value")
 
-                        if self.point:
+                        if not self.point:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Plane.point does not have value")
 
-                        if self.normal:
+                        if not self.normal:
                             print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Plane.normal does not have value")
                         return
 
@@ -4449,7 +4449,7 @@ class Root(object):
                             if self.id is None:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Box.id does not have value")
 
-                            if self.box:
+                            if not self.box:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Box.box does not have value")
                             return
 
@@ -4545,7 +4545,7 @@ class Root(object):
                             if self.radius is None:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.radius does not have value")
 
-                            if self.center:
+                            if not self.center:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.center does not have value")
                             return
 
@@ -4674,10 +4674,10 @@ class Root(object):
                             if self.radius is None:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.radius does not have value")
 
-                            if self.p1:
+                            if not self.p1:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.p1 does not have value")
 
-                            if self.p2:
+                            if not self.p2:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.p2 does not have value")
                             return
 
@@ -4790,10 +4790,10 @@ class Root(object):
                             if self.id is None:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Plane.id does not have value")
 
-                            if self.point:
+                            if not self.point:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Plane.point does not have value")
 
-                            if self.normal:
+                            if not self.normal:
                                 print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Plane.normal does not have value")
                             return
 
@@ -5112,10 +5112,10 @@ class Root(object):
 
             def check_required(self):
 
-                if self.point:
+                if not self.point:
                     print("Requiered variable Root.Geometry.Plane.point does not have value")
 
-                if self.normal:
+                if not self.normal:
                     print("Requiered variable Root.Geometry.Plane.normal does not have value")
                 return
 
@@ -5299,7 +5299,7 @@ class Root(object):
                 ''' 
                 Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
-                \nOptional: ['rotation_mode', 'translation', 'rotation', 'scale', 'dimensions']
+                \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']
                 '''
                 self._transformation = type_check(value, self.Transformation) 
 
@@ -5364,31 +5364,20 @@ class Root(object):
             class Transformation(object):
                 '''Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
-                \nOptional: ['rotation_mode', 'translation', 'rotation', 'scale', 'dimensions']'''
+                \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']'''
                 def __init__(
                     self,
-                    rotation_mode: str = 'xyz',
                     translation: Optional[Iterable[float]] = None,
                     rotation: Optional[Iterable[float]] = None,
+                    rotation_mode: str = 'xyz',
                     scale: Optional[Iterable[float]] = None,
                     dimensions: object = None
                 ):
-                    self._rotation_mode = type_check(rotation_mode, str) if rotation_mode is not None else None
                     self._translation = [] if translation is None else [type_check(i, float) for i in translation]
                     self._rotation = [] if rotation is None else [type_check(i, float) for i in rotation]
+                    self._rotation_mode = type_check(rotation_mode, str) if rotation_mode is not None else None
                     self._scale = [] if scale is None else [type_check(i, float) for i in scale]
                     self._dimensions = inline_check(dimensions, [float, list], []) if dimensions is not None else None
-
-                @property
-                def rotation_mode(self):
-                    return self._rotation_mode
-
-                @rotation_mode.setter
-                def rotation_mode(self, value):
-                    ''' 
-                    Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
-                    '''
-                    self._rotation_mode = type_check(value, str) 
 
                 @property
                 def translation(self):
@@ -5453,6 +5442,17 @@ class Root(object):
 
 
                 @property
+                def rotation_mode(self):
+                    return self._rotation_mode
+
+                @rotation_mode.setter
+                def rotation_mode(self, value):
+                    ''' 
+                    Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
+                    '''
+                    self._rotation_mode = type_check(value, str) 
+
+                @property
                 def scale(self):
                     return self._scale
 
@@ -5501,7 +5501,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"rotation_mode": self._rotation_mode,"translation": self._translation,"rotation": self._rotation,"scale": self._scale,"dimensions": inline_as_dict(self._dimensions),})
+                    return drop_none({"translation": self._translation,"rotation": self._rotation,"rotation_mode": self._rotation_mode,"scale": self._scale,"dimensions": inline_as_dict(self._dimensions),})
 
 
             class Advanced(object):
@@ -5625,7 +5625,7 @@ class Root(object):
 
         class NeoHookean(object):
             '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-            \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
             \nOptional: ['id', 'rho', 'phi', 'psi']'''
             class Type(str, Enum):
                 NEOHOOKEAN = 'NeoHookean'
@@ -5769,20 +5769,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.NeoHookean.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.NeoHookean.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.NeoHookean.nu does not have value")
-
-                if self.lambda_ is None:
-                    print("Requiered variable Root.Materials.NeoHookean.lambda does not have value")
-
-                if self.mu is None:
-                    print("Requiered variable Root.Materials.NeoHookean.mu does not have value")
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                    print("Requiered variable Root.Materials.NeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -5791,7 +5779,7 @@ class Root(object):
 
         class IsochoricNeoHookean(object):
             '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-            \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
             \nOptional: ['id', 'rho', 'phi', 'psi']'''
             class Type(str, Enum):
                 ISOCHORICNEOHOOKEAN = 'IsochoricNeoHookean'
@@ -5935,20 +5923,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.IsochoricNeoHookean.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.IsochoricNeoHookean.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.IsochoricNeoHookean.nu does not have value")
-
-                if self.lambda_ is None:
-                    print("Requiered variable Root.Materials.IsochoricNeoHookean.lambda does not have value")
-
-                if self.mu is None:
-                    print("Requiered variable Root.Materials.IsochoricNeoHookean.mu does not have value")
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                    print("Requiered variable Root.Materials.IsochoricNeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -6941,7 +6917,7 @@ class Root(object):
 
         class LinearElasticity(object):
             '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-            \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
             \nOptional: ['id', 'rho', 'phi', 'psi']'''
             class Type(str, Enum):
                 LINEARELASTICITY = 'LinearElasticity'
@@ -7085,20 +7061,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.LinearElasticity.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.LinearElasticity.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.LinearElasticity.nu does not have value")
-
-                if self.lambda_ is None:
-                    print("Requiered variable Root.Materials.LinearElasticity.lambda does not have value")
-
-                if self.mu is None:
-                    print("Requiered variable Root.Materials.LinearElasticity.mu does not have value")
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                    print("Requiered variable Root.Materials.LinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -7107,7 +7071,7 @@ class Root(object):
 
         class HookeLinearElasticity(object):
             '''Material Parameters including ID, E, nu, density ($\\rho$)
-            \nRequired: ['type', 'E', 'nu', 'elasticity_tensor']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'elasticity_tensor']]
             \nOptional: ['id', 'rho', 'fiber_direction']'''
             class Type(str, Enum):
                 HOOKELINEARELASTICITY = 'HookeLinearElasticity'
@@ -7221,15 +7185,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.HookeLinearElasticity.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.HookeLinearElasticity.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.HookeLinearElasticity.nu does not have value")
-                self.elasticity_tensor.check_required()
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
+                    print("Requiered variable Root.Materials.HookeLinearElasticity must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                 return
 
             def as_dict(self):
@@ -7338,7 +7295,7 @@ class Root(object):
 
         class SaintVenant(object):
             '''Material Parameters including ID, E, nu, density ($\\rho$)
-            \nRequired: ['type', 'E', 'nu', 'elasticity_tensor']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'elasticity_tensor']]
             \nOptional: ['id', 'rho', 'phi', 'fiber_direction', 'psi']'''
             class Type(str, Enum):
                 SAINTVENANT = 'SaintVenant'
@@ -7482,15 +7439,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.SaintVenant.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.SaintVenant.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.SaintVenant.nu does not have value")
-                self.elasticity_tensor.check_required()
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
+                    print("Requiered variable Root.Materials.SaintVenant must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                 return
 
             def as_dict(self):
@@ -7927,7 +7877,7 @@ class Root(object):
 
         class IncompressibleLinearElasticity(object):
             '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-            \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
             \nOptional: ['id', 'rho']'''
             class Type(str, Enum):
                 INCOMPRESSIBLELINEARELASTICITY = 'IncompressibleLinearElasticity'
@@ -8041,20 +7991,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity.nu does not have value")
-
-                if self.lambda_ is None:
-                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity.lambda does not have value")
-
-                if self.mu is None:
-                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity.mu does not have value")
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -8175,7 +8113,7 @@ class Root(object):
 
                 class NeoHookean(object):
                     '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-                    \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
                     \nOptional: ['id', 'rho', 'phi', 'psi']'''
                     class Type(str, Enum):
                         NEOHOOKEAN = 'NeoHookean'
@@ -8319,20 +8257,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean.nu does not have value")
-
-                        if self.lambda_ is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean.lambda does not have value")
-
-                        if self.mu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean.mu does not have value")
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -8341,7 +8267,7 @@ class Root(object):
 
                 class IsochoricNeoHookean(object):
                     '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-                    \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
                     \nOptional: ['id', 'rho', 'phi', 'psi']'''
                     class Type(str, Enum):
                         ISOCHORICNEOHOOKEAN = 'IsochoricNeoHookean'
@@ -8485,20 +8411,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean.nu does not have value")
-
-                        if self.lambda_ is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean.lambda does not have value")
-
-                        if self.mu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean.mu does not have value")
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -9491,7 +9405,7 @@ class Root(object):
 
                 class LinearElasticity(object):
                     '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-                    \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
                     \nOptional: ['id', 'rho', 'phi', 'psi']'''
                     class Type(str, Enum):
                         LINEARELASTICITY = 'LinearElasticity'
@@ -9635,20 +9549,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity.nu does not have value")
-
-                        if self.lambda_ is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity.lambda does not have value")
-
-                        if self.mu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity.mu does not have value")
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -9657,7 +9559,7 @@ class Root(object):
 
                 class HookeLinearElasticity(object):
                     '''Material Parameters including ID, E, nu, density ($\\rho$)
-                    \nRequired: ['type', 'E', 'nu', 'elasticity_tensor']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'elasticity_tensor']]
                     \nOptional: ['id', 'rho', 'fiber_direction']'''
                     class Type(str, Enum):
                         HOOKELINEARELASTICITY = 'HookeLinearElasticity'
@@ -9771,15 +9673,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.nu does not have value")
-                        self.elasticity_tensor.check_required()
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                         return
 
                     def as_dict(self):
@@ -9888,7 +9783,7 @@ class Root(object):
 
                 class SaintVenant(object):
                     '''Material Parameters including ID, E, nu, density ($\\rho$)
-                    \nRequired: ['type', 'E', 'nu', 'elasticity_tensor']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'elasticity_tensor']]
                     \nOptional: ['id', 'rho', 'phi', 'fiber_direction', 'psi']'''
                     class Type(str, Enum):
                         SAINTVENANT = 'SaintVenant'
@@ -10032,15 +9927,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.nu does not have value")
-                        self.elasticity_tensor.check_required()
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                         return
 
                     def as_dict(self):
@@ -10477,7 +10365,7 @@ class Root(object):
 
                 class IncompressibleLinearElasticity(object):
                     '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
-                    \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
                     \nOptional: ['id', 'rho']'''
                     class Type(str, Enum):
                         INCOMPRESSIBLELINEARELASTICITY = 'IncompressibleLinearElasticity'
@@ -10591,20 +10479,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity.nu does not have value")
-
-                        if self.lambda_ is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity.lambda does not have value")
-
-                        if self.mu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity.mu does not have value")
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -11026,7 +10902,7 @@ class Root(object):
 
                 class FixedCorotational(object):
                     '''Material Parameters including ID
-                    \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+                    \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
                     \nOptional: ['id', 'rho', 'phi', 'psi']'''
                     class Type(str, Enum):
                         FIXEDCOROTATIONAL = 'FixedCorotational'
@@ -11170,20 +11046,8 @@ class Root(object):
 
                     def check_required(self):
 
-                        if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational.type does not have value")
-
-                        if self.E is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational.E does not have value")
-
-                        if self.nu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational.nu does not have value")
-
-                        if self.lambda_ is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational.lambda does not have value")
-
-                        if self.mu is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational.mu does not have value")
+                        if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -11792,7 +11656,7 @@ class Root(object):
 
         class FixedCorotational(object):
             '''Material Parameters including ID
-            \nRequired: ['type', 'E', 'nu', 'lambda', 'mu']
+            \nRequired: [['type', 'E', 'nu'], ['type', 'lambda', 'mu']]
             \nOptional: ['id', 'rho', 'phi', 'psi']'''
             class Type(str, Enum):
                 FIXEDCOROTATIONAL = 'FixedCorotational'
@@ -11936,20 +11800,8 @@ class Root(object):
 
             def check_required(self):
 
-                if self.type is None:
-                    print("Requiered variable Root.Materials.FixedCorotational.type does not have value")
-
-                if self.E is None:
-                    print("Requiered variable Root.Materials.FixedCorotational.E does not have value")
-
-                if self.nu is None:
-                    print("Requiered variable Root.Materials.FixedCorotational.nu does not have value")
-
-                if self.lambda_ is None:
-                    print("Requiered variable Root.Materials.FixedCorotational.lambda does not have value")
-
-                if self.mu is None:
-                    print("Requiered variable Root.Materials.FixedCorotational.mu does not have value")
+                if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
+                    print("Requiered variable Root.Materials.FixedCorotational must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -12275,7 +12127,7 @@ class Root(object):
     class Space(object):
         '''Options related to the FE space.
         \nRequired: []
-        \nOptional: ['discr_orderq', 'discr_order', 'pressure_discr_order', 'basis_type', 'poly_basis_type', 'use_p_ref', 'remesh', 'advanced']'''
+        \nOptional: ['discr_order', 'discr_orderq', 'pressure_discr_order', 'basis_type', 'poly_basis_type', 'use_p_ref', 'remesh', 'advanced']'''
         class Basis_type(str, Enum):
             LAGRANGE = 'Lagrange'
             SPLINE = 'Spline'
@@ -12289,8 +12141,8 @@ class Root(object):
 
         def __init__(
             self,
-            discr_orderq: int = 1,
             discr_order: Optional["Root.Space.Discr_order"] = None,
+            discr_orderq: int = 1,
             pressure_discr_order: int = 1,
             basis_type: "Basis_type" = 'Lagrange',
             poly_basis_type: "Poly_basis_type" = 'MFSHarmonic',
@@ -12298,25 +12150,14 @@ class Root(object):
             remesh: Optional["Root.Space.Remesh"] = None,
             advanced: Optional["Root.Space.Advanced"] = None
         ):
-            self._discr_orderq = type_check(discr_orderq, int) if discr_orderq is not None else None
             self._discr_order = type_check(discr_order, self.Discr_order) if isinstance(discr_order, self.Discr_order) else self.Discr_order(discr_order) if discr_order is not None else self.Discr_order()
+            self._discr_orderq = type_check(discr_orderq, int) if discr_orderq is not None else None
             self._pressure_discr_order = type_check(pressure_discr_order, int) if pressure_discr_order is not None else None
             self._basis_type = enum_check(basis_type, self.Basis_type)
             self._poly_basis_type = enum_check(poly_basis_type, self.Poly_basis_type)
             self._use_p_ref = type_check(use_p_ref, bool) if use_p_ref is not None else None
             self._remesh = type_check(remesh, self.Remesh) if remesh else self.Remesh()
             self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
-
-        @property
-        def discr_orderq(self):
-            return self._discr_orderq
-
-        @discr_orderq.setter
-        def discr_orderq(self, value):
-            ''' 
-            Lagrange element order at height dimension for the space for the main unknown, for prism.
-            '''
-            self._discr_orderq = type_check(value, int) 
 
         @property
         def discr_order(self):
@@ -12330,6 +12171,17 @@ class Root(object):
             \nOptional: ['int', 'file', 'list']
             '''
             self._discr_order = type_check(value, self.Discr_order) if isinstance(value, self.Discr_order) else self.Discr_order(value) 
+
+        @property
+        def discr_orderq(self):
+            return self._discr_orderq
+
+        @discr_orderq.setter
+        def discr_orderq(self, value):
+            ''' 
+            Lagrange element order at height dimension for the space for the main unknown, for prism.
+            '''
+            self._discr_orderq = type_check(value, int) 
 
         @property
         def pressure_discr_order(self):
@@ -12397,7 +12249,7 @@ class Root(object):
             ''' 
             Advanced settings for the FE space.
             \nRequired: []
-            \nOptional: ['discr_order_max', 'isoparametric', 'bc_method', 'n_boundary_samples', 'quadrature_order', 'use_corner_quadrature', 'mass_quadrature_order', 'integral_constraints', 'n_harmonic_samples', 'force_no_ref_for_harmonic', 'B', 'h1_formula', 'count_flipped_els', 'count_flipped_els_continuous', 'use_particle_advection']
+            \nOptional: ['discr_order_max', 'isoparametric', 'bc_method', 'n_boundary_samples', 'quadrature_order', 'mass_quadrature_order', 'use_corner_quadrature', 'integral_constraints', 'n_harmonic_samples', 'force_no_ref_for_harmonic', 'B', 'h1_formula', 'count_flipped_els', 'count_flipped_els_continuous', 'use_particle_advection']
             '''
             self._advanced = type_check(value, self.Advanced) 
 
@@ -12406,7 +12258,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"discr_orderq": self._discr_orderq,"discr_order": self._discr_order.as_dict(),"pressure_discr_order": self._pressure_discr_order,"basis_type": self._basis_type.value if self._basis_type is not None else None,"poly_basis_type": self._poly_basis_type.value if self._poly_basis_type is not None else None,"use_p_ref": self._use_p_ref,"remesh": self._remesh.as_dict(),"advanced": self._advanced.as_dict(),})
+            return drop_none({"discr_order": self._discr_order.as_dict(),"discr_orderq": self._discr_orderq,"pressure_discr_order": self._pressure_discr_order,"basis_type": self._basis_type.value if self._basis_type is not None else None,"poly_basis_type": self._poly_basis_type.value if self._poly_basis_type is not None else None,"use_p_ref": self._use_p_ref,"remesh": self._remesh.as_dict(),"advanced": self._advanced.as_dict(),})
 
         class Discr_order(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
@@ -13005,7 +12857,7 @@ class Root(object):
         class Advanced(object):
             '''Advanced settings for the FE space.
             \nRequired: []
-            \nOptional: ['discr_order_max', 'isoparametric', 'bc_method', 'n_boundary_samples', 'quadrature_order', 'use_corner_quadrature', 'mass_quadrature_order', 'integral_constraints', 'n_harmonic_samples', 'force_no_ref_for_harmonic', 'B', 'h1_formula', 'count_flipped_els', 'count_flipped_els_continuous', 'use_particle_advection']'''
+            \nOptional: ['discr_order_max', 'isoparametric', 'bc_method', 'n_boundary_samples', 'quadrature_order', 'mass_quadrature_order', 'use_corner_quadrature', 'integral_constraints', 'n_harmonic_samples', 'force_no_ref_for_harmonic', 'B', 'h1_formula', 'count_flipped_els', 'count_flipped_els_continuous', 'use_particle_advection']'''
             class Bc_method(str, Enum):
                 LSQ = 'lsq'
                 SAMPLE = 'sample'
@@ -13017,8 +12869,8 @@ class Root(object):
                 bc_method: "Bc_method" = 'sample',
                 n_boundary_samples: int = -1,
                 quadrature_order: int = -1,
-                use_corner_quadrature: bool = False,
                 mass_quadrature_order: int = -1,
+                use_corner_quadrature: bool = False,
                 integral_constraints: int = 2,
                 n_harmonic_samples: int = 10,
                 force_no_ref_for_harmonic: bool = False,
@@ -13033,8 +12885,8 @@ class Root(object):
                 self._bc_method = enum_check(bc_method, self.Bc_method)
                 self._n_boundary_samples = type_check(n_boundary_samples, int) if n_boundary_samples is not None else None
                 self._quadrature_order = type_check(quadrature_order, int) if quadrature_order is not None else None
-                self._use_corner_quadrature = type_check(use_corner_quadrature, bool) if use_corner_quadrature is not None else None
                 self._mass_quadrature_order = type_check(mass_quadrature_order, int) if mass_quadrature_order is not None else None
+                self._use_corner_quadrature = type_check(use_corner_quadrature, bool) if use_corner_quadrature is not None else None
                 self._integral_constraints = type_check(integral_constraints, int) if integral_constraints is not None else None
                 self._n_harmonic_samples = type_check(n_harmonic_samples, int) if n_harmonic_samples is not None else None
                 self._force_no_ref_for_harmonic = type_check(force_no_ref_for_harmonic, bool) if force_no_ref_for_harmonic is not None else None
@@ -13100,17 +12952,6 @@ class Root(object):
                 self._quadrature_order = type_check(value, int) 
 
             @property
-            def use_corner_quadrature(self):
-                return self._use_corner_quadrature
-
-            @use_corner_quadrature.setter
-            def use_corner_quadrature(self, value):
-                ''' 
-                Use quadrature rules that always include all the vertices of the element.
-                '''
-                self._use_corner_quadrature = type_check(value, bool) 
-
-            @property
             def mass_quadrature_order(self):
                 return self._mass_quadrature_order
 
@@ -13120,6 +12961,17 @@ class Root(object):
                 Minimal quadrature order to use in mass matrix assembler; the actual order is determined as min(2*p+1,quadrature_order)
                 '''
                 self._mass_quadrature_order = type_check(value, int) 
+
+            @property
+            def use_corner_quadrature(self):
+                return self._use_corner_quadrature
+
+            @use_corner_quadrature.setter
+            def use_corner_quadrature(self, value):
+                ''' 
+                Use quadrature rules that always include all the vertices of the element.
+                '''
+                self._use_corner_quadrature = type_check(value, bool) 
 
             @property
             def integral_constraints(self):
@@ -13214,7 +13066,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"discr_order_max": self._discr_order_max,"isoparametric": self._isoparametric,"bc_method": self._bc_method.value if self._bc_method is not None else None,"n_boundary_samples": self._n_boundary_samples,"quadrature_order": self._quadrature_order,"use_corner_quadrature": self._use_corner_quadrature,"mass_quadrature_order": self._mass_quadrature_order,"integral_constraints": self._integral_constraints,"n_harmonic_samples": self._n_harmonic_samples,"force_no_ref_for_harmonic": self._force_no_ref_for_harmonic,"B": self._B,"h1_formula": self._h1_formula,"count_flipped_els": self._count_flipped_els,"count_flipped_els_continuous": self._count_flipped_els_continuous,"use_particle_advection": self._use_particle_advection,})
+                return drop_none({"discr_order_max": self._discr_order_max,"isoparametric": self._isoparametric,"bc_method": self._bc_method.value if self._bc_method is not None else None,"n_boundary_samples": self._n_boundary_samples,"quadrature_order": self._quadrature_order,"mass_quadrature_order": self._mass_quadrature_order,"use_corner_quadrature": self._use_corner_quadrature,"integral_constraints": self._integral_constraints,"n_harmonic_samples": self._n_harmonic_samples,"force_no_ref_for_harmonic": self._force_no_ref_for_harmonic,"B": self._B,"h1_formula": self._h1_formula,"count_flipped_els": self._count_flipped_els,"count_flipped_els_continuous": self._count_flipped_els_continuous,"use_particle_advection": self._use_particle_advection,})
 
 
 
@@ -13254,20 +13106,18 @@ class Root(object):
         class Object1(object):
             '''The time parameters: start time `t0`, end time `tend`, time step `dt`.
             \nRequired: ['tend', 'dt']
-            \nOptional: ['t0', 'time_steps', 'integrator', 'quasistatic']'''
+            \nOptional: ['t0', 'integrator', 'quasistatic']'''
             def __init__(
                 self,
                 tend: float = None,
                 dt: float = None,
                 t0: float = 0.0,
-                time_steps: int = None,
                 integrator: Optional["Root.Time.Object1.Integrator"] = None,
                 quasistatic: bool = False
             ):
                 self._tend = range_check(type_check(tend, float), 0, None) if tend is not None else None
                 self._dt = range_check(type_check(dt, float), 0, None) if dt is not None else None
                 self._t0 = range_check(type_check(t0, float), 0, None) if t0 is not None else None
-                self._time_steps = range_check(type_check(time_steps, int), 0, None) if time_steps is not None else None
                 self._integrator = type_check(integrator, self.Integrator) if isinstance(integrator, self.Integrator) else self.Integrator(integrator) if integrator is not None else self.Integrator()
                 self._quasistatic = type_check(quasistatic, bool) if quasistatic is not None else None
 
@@ -13305,17 +13155,6 @@ class Root(object):
                 self._t0 = range_check(type_check(value, float), 0, None) 
 
             @property
-            def time_steps(self):
-                return self._time_steps
-
-            @time_steps.setter
-            def time_steps(self, value):
-                ''' 
-                Number of time steps
-                '''
-                self._time_steps = range_check(type_check(value, int), 0, None) 
-
-            @property
             def integrator(self):
                 return self._integrator
 
@@ -13349,7 +13188,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"tend": self._tend,"dt": self._dt,"t0": self._t0,"time_steps": self._time_steps,"integrator": self._integrator.as_dict(),"quasistatic": self._quasistatic,})
+                return drop_none({"tend": self._tend,"dt": self._dt,"t0": self._t0,"integrator": self._integrator.as_dict(),"quasistatic": self._quasistatic,})
 
             class Integrator(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
@@ -14057,14 +13896,9 @@ class Root(object):
     class Contact(object):
         '''Contact handling parameters.
         \nRequired: []
-        \nOptional: ['use_adaptive_dhat', 'min_distance_ratio', 'use_gcp_formulation', 'alpha_t', 'alpha_n', 'enabled', 'dhat', 'dhat_percentage', 'epsv', 'friction_coefficient', 'use_convergent_formulation', 'use_area_weighting', 'use_improved_max_operator', 'use_physical_barrier', 'collision_mesh', 'periodic', 'adhesion']'''
+        \nOptional: ['enabled', 'dhat', 'dhat_percentage', 'epsv', 'friction_coefficient', 'use_convergent_formulation', 'use_area_weighting', 'use_improved_max_operator', 'use_physical_barrier', 'collision_mesh', 'use_gcp_formulation', 'alpha_n', 'alpha_t', 'min_distance_ratio', 'use_adaptive_dhat', 'periodic', 'adhesion']'''
         def __init__(
             self,
-            use_adaptive_dhat: bool = False,
-            min_distance_ratio: float = 0.5,
-            use_gcp_formulation: bool = False,
-            alpha_t: float = 0.5,
-            alpha_n: float = 0.5,
             enabled: bool = False,
             dhat: float = 0.001,
             dhat_percentage: float = 0.8,
@@ -14075,14 +13909,14 @@ class Root(object):
             use_improved_max_operator: bool = True,
             use_physical_barrier: bool = True,
             collision_mesh: Optional["Root.Contact.Collision_mesh"] = None,
+            use_gcp_formulation: bool = False,
+            alpha_n: float = 0.5,
+            alpha_t: float = 0.5,
+            min_distance_ratio: float = 0.5,
+            use_adaptive_dhat: bool = False,
             periodic: bool = False,
             adhesion: Optional["Root.Contact.Adhesion"] = None
         ):
-            self._use_adaptive_dhat = type_check(use_adaptive_dhat, bool) if use_adaptive_dhat is not None else None
-            self._min_distance_ratio = range_check(type_check(min_distance_ratio, float), 0, None) if min_distance_ratio is not None else None
-            self._use_gcp_formulation = type_check(use_gcp_formulation, bool) if use_gcp_formulation is not None else None
-            self._alpha_t = range_check(type_check(alpha_t, float), -1, 1) if alpha_t is not None else None
-            self._alpha_n = range_check(type_check(alpha_n, float), -1, 1) if alpha_n is not None else None
             self._enabled = type_check(enabled, bool) if enabled is not None else None
             self._dhat = range_check(type_check(dhat, float), 0, None) if dhat is not None else None
             self._dhat_percentage = type_check(dhat_percentage, float) if dhat_percentage is not None else None
@@ -14093,63 +13927,13 @@ class Root(object):
             self._use_improved_max_operator = type_check(use_improved_max_operator, bool) if use_improved_max_operator is not None else None
             self._use_physical_barrier = type_check(use_physical_barrier, bool) if use_physical_barrier is not None else None
             self._collision_mesh = type_check(collision_mesh, self.Collision_mesh) if isinstance(collision_mesh, self.Collision_mesh) else self.Collision_mesh(collision_mesh) if collision_mesh is not None else self.Collision_mesh()
+            self._use_gcp_formulation = type_check(use_gcp_formulation, bool) if use_gcp_formulation is not None else None
+            self._alpha_n = range_check(type_check(alpha_n, float), -1, 1) if alpha_n is not None else None
+            self._alpha_t = range_check(type_check(alpha_t, float), -1, 1) if alpha_t is not None else None
+            self._min_distance_ratio = range_check(type_check(min_distance_ratio, float), 0, None) if min_distance_ratio is not None else None
+            self._use_adaptive_dhat = type_check(use_adaptive_dhat, bool) if use_adaptive_dhat is not None else None
             self._periodic = type_check(periodic, bool) if periodic is not None else None
             self._adhesion = type_check(adhesion, self.Adhesion) if adhesion else self.Adhesion()
-
-        @property
-        def use_adaptive_dhat(self):
-            return self._use_adaptive_dhat
-
-        @use_adaptive_dhat.setter
-        def use_adaptive_dhat(self, value):
-            ''' 
-            True if adaptive epsilon is used.
-            '''
-            self._use_adaptive_dhat = type_check(value, bool) 
-
-        @property
-        def min_distance_ratio(self):
-            return self._min_distance_ratio
-
-        @min_distance_ratio.setter
-        def min_distance_ratio(self, value):
-            ''' 
-            Ratio of the minimum distance to contact to define local epsilon.
-            '''
-            self._min_distance_ratio = range_check(type_check(value, float), 0, None) 
-
-        @property
-        def use_gcp_formulation(self):
-            return self._use_gcp_formulation
-
-        @use_gcp_formulation.setter
-        def use_gcp_formulation(self, value):
-            ''' 
-            True if the smooth contact formulation is used.
-            '''
-            self._use_gcp_formulation = type_check(value, bool) 
-
-        @property
-        def alpha_t(self):
-            return self._alpha_t
-
-        @alpha_t.setter
-        def alpha_t(self, value):
-            ''' 
-            Control the smoothness of tangent angle contraints of contact pairs.
-            '''
-            self._alpha_t = range_check(type_check(value, float), -1, 1) 
-
-        @property
-        def alpha_n(self):
-            return self._alpha_n
-
-        @alpha_n.setter
-        def alpha_n(self, value):
-            ''' 
-            Control the smoothness of normal angle contraints of contact pairs.
-            '''
-            self._alpha_n = range_check(type_check(value, float), -1, 1) 
 
         @property
         def enabled(self):
@@ -14264,6 +14048,61 @@ class Root(object):
             self._collision_mesh = type_check(value, self.Collision_mesh) if isinstance(value, self.Collision_mesh) else self.Collision_mesh(value) 
 
         @property
+        def use_gcp_formulation(self):
+            return self._use_gcp_formulation
+
+        @use_gcp_formulation.setter
+        def use_gcp_formulation(self, value):
+            ''' 
+            True if the smooth contact formulation is used.
+            '''
+            self._use_gcp_formulation = type_check(value, bool) 
+
+        @property
+        def alpha_n(self):
+            return self._alpha_n
+
+        @alpha_n.setter
+        def alpha_n(self, value):
+            ''' 
+            Control the smoothness of normal angle contraints of contact pairs.
+            '''
+            self._alpha_n = range_check(type_check(value, float), -1, 1) 
+
+        @property
+        def alpha_t(self):
+            return self._alpha_t
+
+        @alpha_t.setter
+        def alpha_t(self, value):
+            ''' 
+            Control the smoothness of tangent angle contraints of contact pairs.
+            '''
+            self._alpha_t = range_check(type_check(value, float), -1, 1) 
+
+        @property
+        def min_distance_ratio(self):
+            return self._min_distance_ratio
+
+        @min_distance_ratio.setter
+        def min_distance_ratio(self, value):
+            ''' 
+            Ratio of the minimum distance to contact to define local epsilon.
+            '''
+            self._min_distance_ratio = range_check(type_check(value, float), 0, None) 
+
+        @property
+        def use_adaptive_dhat(self):
+            return self._use_adaptive_dhat
+
+        @use_adaptive_dhat.setter
+        def use_adaptive_dhat(self, value):
+            ''' 
+            True if adaptive epsilon is used.
+            '''
+            self._use_adaptive_dhat = type_check(value, bool) 
+
+        @property
         def periodic(self):
             return self._periodic
 
@@ -14292,7 +14131,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"use_adaptive_dhat": self._use_adaptive_dhat,"min_distance_ratio": self._min_distance_ratio,"use_gcp_formulation": self._use_gcp_formulation,"alpha_t": self._alpha_t,"alpha_n": self._alpha_n,"enabled": self._enabled,"dhat": self._dhat,"dhat_percentage": self._dhat_percentage,"epsv": self._epsv,"friction_coefficient": self._friction_coefficient,"use_convergent_formulation": self._use_convergent_formulation,"use_area_weighting": self._use_area_weighting,"use_improved_max_operator": self._use_improved_max_operator,"use_physical_barrier": self._use_physical_barrier,"collision_mesh": self._collision_mesh.as_dict(),"periodic": self._periodic,"adhesion": self._adhesion.as_dict(),})
+            return drop_none({"enabled": self._enabled,"dhat": self._dhat,"dhat_percentage": self._dhat_percentage,"epsv": self._epsv,"friction_coefficient": self._friction_coefficient,"use_convergent_formulation": self._use_convergent_formulation,"use_area_weighting": self._use_area_weighting,"use_improved_max_operator": self._use_improved_max_operator,"use_physical_barrier": self._use_physical_barrier,"collision_mesh": self._collision_mesh.as_dict(),"use_gcp_formulation": self._use_gcp_formulation,"alpha_n": self._alpha_n,"alpha_t": self._alpha_t,"min_distance_ratio": self._min_distance_ratio,"use_adaptive_dhat": self._use_adaptive_dhat,"periodic": self._periodic,"adhesion": self._adhesion.as_dict(),})
 
         class Collision_mesh(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
@@ -14330,23 +14169,15 @@ class Root(object):
             class Object1(object):
                 '''Load a preconstructed collision mesh.
                 \nRequired: ['mesh', 'linear_map']
-                \nOptional: ['max_edge_length', 'tessellation_type', 'enabled']'''
-                class Tessellation_type(str, Enum):
-                    REGULAR = 'regular'
-                    IRREGULAR = 'irregular'
-
+                \nOptional: ['enabled']'''
                 def __init__(
                     self,
                     mesh: str = None,
                     linear_map: str = None,
-                    max_edge_length: float = None,
-                    tessellation_type: "Tessellation_type" = 'regular',
                     enabled: bool = True
                 ):
                     self._mesh = type_check(mesh, str) if mesh is not None else None
                     self._linear_map = type_check(linear_map, str) if linear_map is not None else None
-                    self._max_edge_length = type_check(max_edge_length, float) if max_edge_length is not None else None
-                    self._tessellation_type = enum_check(tessellation_type, self.Tessellation_type)
                     self._enabled = type_check(enabled, bool) if enabled is not None else None
 
                 @property
@@ -14372,28 +14203,6 @@ class Root(object):
                     self._linear_map = type_check(value, str) 
 
                 @property
-                def max_edge_length(self):
-                    return self._max_edge_length
-
-                @max_edge_length.setter
-                def max_edge_length(self, value):
-                    ''' 
-                    Maximum edge length to use for building the collision mesh.
-                    '''
-                    self._max_edge_length = type_check(value, float) 
-
-                @property
-                def tessellation_type(self):
-                    return self._tessellation_type
-
-                @tessellation_type.setter
-                def tessellation_type(self, value):
-                    ''' 
-                    Type of tessellation to use for building the collision mesh.
-                    '''
-                    self._tessellation_type = enum_check(value, self.Tessellation_type) 
-
-                @property
                 def enabled(self):
                     return self._enabled
 
@@ -14414,7 +14223,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"mesh": self._mesh,"linear_map": self._linear_map,"max_edge_length": self._max_edge_length,"tessellation_type": self._tessellation_type.value if self._tessellation_type is not None else None,"enabled": self._enabled,})
+                    return drop_none({"mesh": self._mesh,"linear_map": self._linear_map,"enabled": self._enabled,})
 
 
             class Object2(object):
@@ -14606,26 +14415,37 @@ class Root(object):
     class Solver(object):
         '''The settings for the solver including linear solver, nonlinear solver, and some advanced options.
         \nRequired: []
-        \nOptional: ['linear', 'adjoint_linear', 'nonlinear', 'max_threads', 'augmented_lagrangian', 'contact', 'rayleigh_damping', 'advanced']'''
+        \nOptional: ['max_threads', 'linear', 'adjoint_linear', 'nonlinear', 'augmented_lagrangian', 'contact', 'rayleigh_damping', 'advanced']'''
         def __init__(
             self,
+            max_threads: int = 0,
             linear: Optional["Root.Solver.Linear"] = None,
             adjoint_linear: Optional["Root.Solver.Adjoint_linear"] = None,
             nonlinear: Optional["Root.Solver.Nonlinear"] = None,
-            max_threads: int = 0,
             augmented_lagrangian: Optional["Root.Solver.Augmented_lagrangian"] = None,
             contact: Optional["Root.Solver.Contact"] = None,
             rayleigh_damping: Optional["Root.Solver.Rayleigh_damping"] = None,
             advanced: Optional["Root.Solver.Advanced"] = None
         ):
+            self._max_threads = range_check(type_check(max_threads, int), 0, None) if max_threads is not None else None
             self._linear = type_check(linear, self.Linear) if linear else self.Linear()
             self._adjoint_linear = type_check(adjoint_linear, self.Adjoint_linear) if adjoint_linear else self.Adjoint_linear()
             self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear else self.Nonlinear()
-            self._max_threads = range_check(type_check(max_threads, int), 0, None) if max_threads is not None else None
             self._augmented_lagrangian = type_check(augmented_lagrangian, self.Augmented_lagrangian) if augmented_lagrangian else self.Augmented_lagrangian()
             self._contact = type_check(contact, self.Contact) if contact else self.Contact()
             self._rayleigh_damping = type_check(rayleigh_damping, self.Rayleigh_damping) if rayleigh_damping else self.Rayleigh_damping()
             self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+
+        @property
+        def max_threads(self):
+            return self._max_threads
+
+        @max_threads.setter
+        def max_threads(self, value):
+            ''' 
+            Maximum number of threads used; 0 is unlimited.
+            '''
+            self._max_threads = range_check(type_check(value, int), 0, None) 
 
         @property
         def linear(self):
@@ -14636,7 +14456,7 @@ class Root(object):
             ''' 
             Settings for the linear solver.
             \nRequired: []
-            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS', 'adjoint_solver']
+            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']
             '''
             self._linear = type_check(value, self.Linear) 
 
@@ -14662,20 +14482,9 @@ class Root(object):
             ''' 
             Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
             \nRequired: []
-            \nOptional: ['solver', 'x_delta_tol', 'rel_x_delta_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'grad_norm_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'line_search', 'box_constraints', 'advanced']
+            \nOptional: ['solver', 'x_delta_tol', 'grad_norm_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'rel_x_delta_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'line_search', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'box_constraints', 'advanced']
             '''
             self._nonlinear = type_check(value, self.Nonlinear) 
-
-        @property
-        def max_threads(self):
-            return self._max_threads
-
-        @max_threads.setter
-        def max_threads(self, value):
-            ''' 
-            Maximum number of threads used; 0 is unlimited.
-            '''
-            self._max_threads = range_check(type_check(value, int), 0, None) 
 
         @property
         def augmented_lagrangian(self):
@@ -14686,7 +14495,7 @@ class Root(object):
             ''' 
             Parameters for the AL for imposing Dirichlet BCs. If the bc are not imposable, we add $w\\|u - bc\\|^2$ to the energy ($u$ is the solution at the Dirichlet nodes and $bc$ are the Dirichlet values). After convergence, we try to impose bc again. The algorithm computes E + a/2*AL^2 - lambda AL, where E is the current energy (elastic, inertia, contact, etc.) and AL is the augmented Lagrangian energy. a starts at `initial_weight` and, in case DBC cannot be imposed, we update a as `a *= scaling` until `max_weight`. See IPC additional material
             \nRequired: []
-            \nOptional: ['nonlinear', 'initial_weight', 'error', 'scaling', 'max_weight', 'eta']
+            \nOptional: ['initial_weight', 'scaling', 'max_weight', 'eta', 'nonlinear']
             '''
             self._augmented_lagrangian = type_check(value, self.Augmented_lagrangian) 
 
@@ -14699,7 +14508,7 @@ class Root(object):
             ''' 
             Settings for contact handling in the solver.
             \nRequired: []
-            \nOptional: ['initial_barrier_stiffness', 'CCD', 'friction_iterations', 'tangential_adhesion_iterations', 'friction_convergence_tol', 'barrier_stiffness']
+            \nOptional: ['CCD', 'friction_iterations', 'tangential_adhesion_iterations', 'friction_convergence_tol', 'barrier_stiffness', 'initial_barrier_stiffness']
             '''
             self._contact = type_check(value, self.Contact) 
 
@@ -14725,7 +14534,7 @@ class Root(object):
             ''' 
             Advanced settings for the solver
             \nRequired: []
-            \nOptional: ['check_inversion', 'jacobian_threshold', 'characteristic_length', 'characteristic_force_density', 'cache_size', 'lump_mass_matrix', 'lagged_regularization_weight', 'lagged_regularization_iterations']
+            \nOptional: ['cache_size', 'lump_mass_matrix', 'lagged_regularization_weight', 'lagged_regularization_iterations', 'check_inversion', 'jacobian_threshold', 'characteristic_length', 'characteristic_force_density']
             '''
             self._advanced = type_check(value, self.Advanced) 
 
@@ -14734,12 +14543,12 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"linear": self._linear.as_dict(),"adjoint_linear": self._adjoint_linear.as_dict(),"nonlinear": self._nonlinear.as_dict(),"max_threads": self._max_threads,"augmented_lagrangian": self._augmented_lagrangian.as_dict(),"contact": self._contact.as_dict(),"rayleigh_damping": self._rayleigh_damping.as_dict(),"advanced": self._advanced.as_dict(),})
+            return drop_none({"max_threads": self._max_threads,"linear": self._linear.as_dict(),"adjoint_linear": self._adjoint_linear.as_dict(),"nonlinear": self._nonlinear.as_dict(),"augmented_lagrangian": self._augmented_lagrangian.as_dict(),"contact": self._contact.as_dict(),"rayleigh_damping": self._rayleigh_damping.as_dict(),"advanced": self._advanced.as_dict(),})
 
         class Linear(object):
             '''Settings for the linear solver.
             \nRequired: []
-            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS', 'adjoint_solver']'''
+            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']'''
             class Solver(str, Enum):
                 EIGEN_SIMPLICIALLDLT = 'Eigen::SimplicialLDLT'
                 EIGEN_SPARSELU = 'Eigen::SparseLU'
@@ -14781,8 +14590,7 @@ class Root(object):
                 Pardiso: Optional["Root.Solver.Linear.Pardiso"] = None,
                 Hypre: Optional["Root.Solver.Linear.Hypre"] = None,
                 AMGCL: Optional["Root.Solver.Linear.AMGCL"] = None,
-                MAS: Optional["Root.Solver.Linear.MAS"] = None,
-                adjoint_solver: Optional["Root.Solver.Linear.Adjoint_solver"] = None
+                MAS: Optional["Root.Solver.Linear.MAS"] = None
             ):
                 self._enable_overwrite_solver = type_check(enable_overwrite_solver, bool) if enable_overwrite_solver is not None else None
                 self._solver = enum_check(solver, self.Solver)
@@ -14797,7 +14605,6 @@ class Root(object):
                 self._Hypre = type_check(Hypre, self.Hypre) if Hypre else self.Hypre()
                 self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL else self.AMGCL()
                 self._MAS = type_check(MAS, self.MAS) if MAS else self.MAS()
-                self._adjoint_solver = type_check(adjoint_solver, self.Adjoint_solver) if adjoint_solver else self.Adjoint_solver()
 
             @property
             def enable_overwrite_solver(self):
@@ -14932,7 +14739,7 @@ class Root(object):
                 ''' 
                 Settings for the Hypre solver.
                 \nRequired: []
-                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'interp_rbms', 'nodal_coarsening', 'dimension']
+                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']
                 '''
                 self._Hypre = type_check(value, self.Hypre) 
 
@@ -14962,25 +14769,12 @@ class Root(object):
                 '''
                 self._MAS = type_check(value, self.MAS) 
 
-            @property
-            def adjoint_solver(self):
-                return self._adjoint_solver
-
-            @adjoint_solver.setter
-            def adjoint_solver(self, value):
-                ''' 
-                Settings for the linear solver.
-                \nRequired: []
-                \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']
-                '''
-                self._adjoint_solver = type_check(value, self.Adjoint_solver) 
-
             def check_required(self):
 
                 return
 
             def as_dict(self):
-                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict(),"Eigen::DGMRES": self._Eigen_DGMRES.as_dict(),"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict(),"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict(),"Eigen::GMRES": self._Eigen_GMRES.as_dict(),"Eigen::MINRES": self._Eigen_MINRES.as_dict(),"Pardiso": self._Pardiso.as_dict(),"Hypre": self._Hypre.as_dict(),"AMGCL": self._AMGCL.as_dict(),"MAS": self._MAS.as_dict(),"adjoint_solver": self._adjoint_solver.as_dict(),})
+                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict(),"Eigen::DGMRES": self._Eigen_DGMRES.as_dict(),"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict(),"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict(),"Eigen::GMRES": self._Eigen_GMRES.as_dict(),"Eigen::MINRES": self._Eigen_MINRES.as_dict(),"Pardiso": self._Pardiso.as_dict(),"Hypre": self._Hypre.as_dict(),"AMGCL": self._AMGCL.as_dict(),"MAS": self._MAS.as_dict(),})
 
             class EigenLeastSquaresConjugateGradient(object):
                 '''Settings for the Eigen's Least Squares Conjugate Gradient solver.
@@ -15266,23 +15060,23 @@ class Root(object):
             class Hypre(object):
                 '''Settings for the Hypre solver.
                 \nRequired: []
-                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'interp_rbms', 'nodal_coarsening', 'dimension']'''
+                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']'''
                 def __init__(
                     self,
                     max_iter: int = 1000,
                     pre_max_iter: int = 1,
                     tolerance: float = 1e-10,
                     theta: float = 0.5,
-                    interp_rbms: bool = False,
                     nodal_coarsening: bool = False,
+                    interp_rbms: bool = False,
                     dimension: int = 1
                 ):
                     self._max_iter = type_check(max_iter, int) if max_iter is not None else None
                     self._pre_max_iter = type_check(pre_max_iter, int) if pre_max_iter is not None else None
                     self._tolerance = type_check(tolerance, float) if tolerance is not None else None
                     self._theta = type_check(theta, float) if theta is not None else None
-                    self._interp_rbms = type_check(interp_rbms, bool) if interp_rbms is not None else None
                     self._nodal_coarsening = type_check(nodal_coarsening, bool) if nodal_coarsening is not None else None
+                    self._interp_rbms = type_check(interp_rbms, bool) if interp_rbms is not None else None
                     self._dimension = type_check(dimension, int) if dimension is not None else None
 
                 @property
@@ -15330,17 +15124,6 @@ class Root(object):
                     self._theta = type_check(value, float) 
 
                 @property
-                def interp_rbms(self):
-                    return self._interp_rbms
-
-                @interp_rbms.setter
-                def interp_rbms(self, value):
-                    ''' 
-                    Whether or not to interp rbms.
-                    '''
-                    self._interp_rbms = type_check(value, bool) 
-
-                @property
                 def nodal_coarsening(self):
                     return self._nodal_coarsening
 
@@ -15350,6 +15133,17 @@ class Root(object):
                     Whether or not to include nodal coarsening options.
                     '''
                     self._nodal_coarsening = type_check(value, bool) 
+
+                @property
+                def interp_rbms(self):
+                    return self._interp_rbms
+
+                @interp_rbms.setter
+                def interp_rbms(self, value):
+                    ''' 
+                    Whether or not to interp rbms.
+                    '''
+                    self._interp_rbms = type_check(value, bool) 
 
                 @property
                 def dimension(self):
@@ -15367,7 +15161,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"max_iter": self._max_iter,"pre_max_iter": self._pre_max_iter,"tolerance": self._tolerance,"theta": self._theta,"interp_rbms": self._interp_rbms,"nodal_coarsening": self._nodal_coarsening,"dimension": self._dimension,})
+                    return drop_none({"max_iter": self._max_iter,"pre_max_iter": self._pre_max_iter,"tolerance": self._tolerance,"theta": self._theta,"nodal_coarsening": self._nodal_coarsening,"interp_rbms": self._interp_rbms,"dimension": self._dimension,})
 
 
             class AMGCL(object):
@@ -15391,7 +15185,7 @@ class Root(object):
                     ''' 
                     Solver settings for the AMGCL.
                     \nRequired: []
-                    \nOptional: ['maxiter', 'tol', 'type']
+                    \nOptional: ['tol', 'maxiter', 'type']
                     '''
                     self._solver = type_check(value, self.Solver) 
 
@@ -15418,27 +15212,16 @@ class Root(object):
                 class Solver(object):
                     '''Solver settings for the AMGCL.
                     \nRequired: []
-                    \nOptional: ['maxiter', 'tol', 'type']'''
+                    \nOptional: ['tol', 'maxiter', 'type']'''
                     def __init__(
                         self,
-                        maxiter: int = 1000,
                         tol: float = 1e-10,
+                        maxiter: int = 1000,
                         type: str = 'cg'
                     ):
-                        self._maxiter = type_check(maxiter, int) if maxiter is not None else None
                         self._tol = type_check(tol, float) if tol is not None else None
+                        self._maxiter = type_check(maxiter, int) if maxiter is not None else None
                         self._type = type_check(type, str) if type is not None else None
-
-                    @property
-                    def maxiter(self):
-                        return self._maxiter
-
-                    @maxiter.setter
-                    def maxiter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._maxiter = type_check(value, int) 
 
                     @property
                     def tol(self):
@@ -15450,6 +15233,17 @@ class Root(object):
                         Convergence tolerance.
                         '''
                         self._tol = type_check(value, float) 
+
+                    @property
+                    def maxiter(self):
+                        return self._maxiter
+
+                    @maxiter.setter
+                    def maxiter(self, value):
+                        ''' 
+                        Maximum number of iterations.
+                        '''
+                        self._maxiter = type_check(value, int) 
 
                     @property
                     def type(self):
@@ -15467,7 +15261,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"maxiter": self._maxiter,"tol": self._tol,"type": self._type,})
+                        return drop_none({"tol": self._tol,"maxiter": self._maxiter,"type": self._type,})
 
 
                 class Precond(object):
@@ -15856,1112 +15650,6 @@ class Root(object):
                     return drop_none({"block_dim": self._block_dim,"max_iter": self._max_iter,"relative_tolerance": self._relative_tolerance,"absolute_tolerance": self._absolute_tolerance,"lazy_partitioning": self._lazy_partitioning,"use_preconditioned_residual_norm": self._use_preconditioned_residual_norm,})
 
 
-            class Adjoint_solver(object):
-                '''Settings for the linear solver.
-                \nRequired: []
-                \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']'''
-                class Solver(str, Enum):
-                    EIGEN_SIMPLICIALLDLT = 'Eigen::SimplicialLDLT'
-                    EIGEN_SPARSELU = 'Eigen::SparseLU'
-                    EIGEN_CHOLMODSUPERNODALLLT = 'Eigen::CholmodSupernodalLLT'
-                    EIGEN_UMFPACKLU = 'Eigen::UmfPackLU'
-                    EIGEN_SUPERLU = 'Eigen::SuperLU'
-                    EIGEN_PARDISOLDLT = 'Eigen::PardisoLDLT'
-                    EIGEN_PARDISOLLT = 'Eigen::PardisoLLT'
-                    EIGEN_PARDISOLU = 'Eigen::PardisoLU'
-                    PARDISO = 'Pardiso'
-                    HYPRE = 'Hypre'
-                    AMGCL = 'AMGCL'
-                    EIGEN_LEASTSQUARESCONJUGATEGRADIENT = 'Eigen::LeastSquaresConjugateGradient'
-                    EIGEN_DGMRES = 'Eigen::DGMRES'
-                    EIGEN_CONJUGATEGRADIENT = 'Eigen::ConjugateGradient'
-                    EIGEN_BICGSTAB = 'Eigen::BiCGSTAB'
-                    EIGEN_GMRES = 'Eigen::GMRES'
-                    EIGEN_MINRES = 'Eigen::MINRES'
-                    MAS = 'MAS'
-
-                class Precond(str, Enum):
-                    EIGEN_IDENTITYPRECONDITIONER = 'Eigen::IdentityPreconditioner'
-                    EIGEN_DIAGONALPRECONDITIONER = 'Eigen::DiagonalPreconditioner'
-                    EIGEN_INCOMPLETECHOLESKY = 'Eigen::IncompleteCholesky'
-                    EIGEN_LEASTSQUAREDIAGONALPRECONDITIONER = 'Eigen::LeastSquareDiagonalPreconditioner'
-                    EIGEN_INCOMPLETELUT = 'Eigen::IncompleteLUT'
-
-                def __init__(
-                    self,
-                    enable_overwrite_solver: bool = False,
-                    solver: "Solver" = '',
-                    precond: "Precond" = '',
-                    Eigen_LeastSquaresConjugateGradient: Optional["Root.Solver.Linear.Adjoint_solver.EigenLeastSquaresConjugateGradient"] = None,
-                    Eigen_DGMRES: Optional["Root.Solver.Linear.Adjoint_solver.EigenDGMRES"] = None,
-                    Eigen_ConjugateGradient: Optional["Root.Solver.Linear.Adjoint_solver.EigenConjugateGradient"] = None,
-                    Eigen_BiCGSTAB: Optional["Root.Solver.Linear.Adjoint_solver.EigenBiCGSTAB"] = None,
-                    Eigen_GMRES: Optional["Root.Solver.Linear.Adjoint_solver.EigenGMRES"] = None,
-                    Eigen_MINRES: Optional["Root.Solver.Linear.Adjoint_solver.EigenMINRES"] = None,
-                    Pardiso: Optional["Root.Solver.Linear.Adjoint_solver.Pardiso"] = None,
-                    Hypre: Optional["Root.Solver.Linear.Adjoint_solver.Hypre"] = None,
-                    AMGCL: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL"] = None,
-                    MAS: Optional["Root.Solver.Linear.Adjoint_solver.MAS"] = None
-                ):
-                    self._enable_overwrite_solver = type_check(enable_overwrite_solver, bool) if enable_overwrite_solver is not None else None
-                    self._solver = enum_check(solver, self.Solver)
-                    self._precond = enum_check(precond, self.Precond)
-                    self._Eigen_LeastSquaresConjugateGradient = type_check(Eigen_LeastSquaresConjugateGradient, self.EigenLeastSquaresConjugateGradient) if Eigen_LeastSquaresConjugateGradient else self.EigenLeastSquaresConjugateGradient()
-                    self._Eigen_DGMRES = type_check(Eigen_DGMRES, self.EigenDGMRES) if Eigen_DGMRES else self.EigenDGMRES()
-                    self._Eigen_ConjugateGradient = type_check(Eigen_ConjugateGradient, self.EigenConjugateGradient) if Eigen_ConjugateGradient else self.EigenConjugateGradient()
-                    self._Eigen_BiCGSTAB = type_check(Eigen_BiCGSTAB, self.EigenBiCGSTAB) if Eigen_BiCGSTAB else self.EigenBiCGSTAB()
-                    self._Eigen_GMRES = type_check(Eigen_GMRES, self.EigenGMRES) if Eigen_GMRES else self.EigenGMRES()
-                    self._Eigen_MINRES = type_check(Eigen_MINRES, self.EigenMINRES) if Eigen_MINRES else self.EigenMINRES()
-                    self._Pardiso = type_check(Pardiso, self.Pardiso) if Pardiso else self.Pardiso()
-                    self._Hypre = type_check(Hypre, self.Hypre) if Hypre else self.Hypre()
-                    self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL else self.AMGCL()
-                    self._MAS = type_check(MAS, self.MAS) if MAS else self.MAS()
-
-                @property
-                def enable_overwrite_solver(self):
-                    return self._enable_overwrite_solver
-
-                @enable_overwrite_solver.setter
-                def enable_overwrite_solver(self, value):
-                    ''' 
-                    If solver name is not present, falls back to default
-                    '''
-                    self._enable_overwrite_solver = type_check(value, bool) 
-
-                @property
-                def solver(self):
-                    return self._solver
-
-                @solver.setter
-                def solver(self, value):
-                    ''' 
-                    Linear solver type.
-                    '''
-                    self._solver = enum_check(value, self.Solver) 
-
-                @property
-                def precond(self):
-                    return self._precond
-
-                @precond.setter
-                def precond(self, value):
-                    ''' 
-                    Preconditioner used if using an iterative linear solver.
-                    '''
-                    self._precond = enum_check(value, self.Precond) 
-
-                @property
-                def Eigen_LeastSquaresConjugateGradient(self):
-                    return self._Eigen_LeastSquaresConjugateGradient
-
-                @Eigen_LeastSquaresConjugateGradient.setter
-                def Eigen_LeastSquaresConjugateGradient(self, value):
-                    ''' 
-                    Settings for the Eigen's Least Squares Conjugate Gradient solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']
-                    '''
-                    self._Eigen_LeastSquaresConjugateGradient = type_check(value, self.EigenLeastSquaresConjugateGradient) 
-
-                @property
-                def Eigen_DGMRES(self):
-                    return self._Eigen_DGMRES
-
-                @Eigen_DGMRES.setter
-                def Eigen_DGMRES(self, value):
-                    ''' 
-                    Settings for the Eigen's DGMRES solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']
-                    '''
-                    self._Eigen_DGMRES = type_check(value, self.EigenDGMRES) 
-
-                @property
-                def Eigen_ConjugateGradient(self):
-                    return self._Eigen_ConjugateGradient
-
-                @Eigen_ConjugateGradient.setter
-                def Eigen_ConjugateGradient(self, value):
-                    ''' 
-                    Settings for the Eigen's Conjugate Gradient solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']
-                    '''
-                    self._Eigen_ConjugateGradient = type_check(value, self.EigenConjugateGradient) 
-
-                @property
-                def Eigen_BiCGSTAB(self):
-                    return self._Eigen_BiCGSTAB
-
-                @Eigen_BiCGSTAB.setter
-                def Eigen_BiCGSTAB(self, value):
-                    ''' 
-                    Settings for the Eigen's BiCGSTAB solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']
-                    '''
-                    self._Eigen_BiCGSTAB = type_check(value, self.EigenBiCGSTAB) 
-
-                @property
-                def Eigen_GMRES(self):
-                    return self._Eigen_GMRES
-
-                @Eigen_GMRES.setter
-                def Eigen_GMRES(self, value):
-                    ''' 
-                    Settings for the Eigen's GMRES solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']
-                    '''
-                    self._Eigen_GMRES = type_check(value, self.EigenGMRES) 
-
-                @property
-                def Eigen_MINRES(self):
-                    return self._Eigen_MINRES
-
-                @Eigen_MINRES.setter
-                def Eigen_MINRES(self, value):
-                    ''' 
-                    Settings for the Eigen's MINRES solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']
-                    '''
-                    self._Eigen_MINRES = type_check(value, self.EigenMINRES) 
-
-                @property
-                def Pardiso(self):
-                    return self._Pardiso
-
-                @Pardiso.setter
-                def Pardiso(self, value):
-                    ''' 
-                    Settings for the Pardiso solver.
-                    \nRequired: []
-                    \nOptional: ['mtype']
-                    '''
-                    self._Pardiso = type_check(value, self.Pardiso) 
-
-                @property
-                def Hypre(self):
-                    return self._Hypre
-
-                @Hypre.setter
-                def Hypre(self, value):
-                    ''' 
-                    Settings for the Hypre solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'interp_rbms', 'nodal_coarsening', 'dimension']
-                    '''
-                    self._Hypre = type_check(value, self.Hypre) 
-
-                @property
-                def AMGCL(self):
-                    return self._AMGCL
-
-                @AMGCL.setter
-                def AMGCL(self, value):
-                    ''' 
-                    Settings for the AMGCL solver.
-                    \nRequired: []
-                    \nOptional: ['solver', 'precond']
-                    '''
-                    self._AMGCL = type_check(value, self.AMGCL) 
-
-                @property
-                def MAS(self):
-                    return self._MAS
-
-                @MAS.setter
-                def MAS(self, value):
-                    ''' 
-                    Settings for the MAS solver.
-                    \nRequired: []
-                    \nOptional: ['block_dim', 'max_iter', 'relative_tolerance', 'absolute_tolerance', 'lazy_partitioning', 'use_preconditioned_residual_norm']
-                    '''
-                    self._MAS = type_check(value, self.MAS) 
-
-                def check_required(self):
-
-                    return
-
-                def as_dict(self):
-                    return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict(),"Eigen::DGMRES": self._Eigen_DGMRES.as_dict(),"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict(),"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict(),"Eigen::GMRES": self._Eigen_GMRES.as_dict(),"Eigen::MINRES": self._Eigen_MINRES.as_dict(),"Pardiso": self._Pardiso.as_dict(),"Hypre": self._Hypre.as_dict(),"AMGCL": self._AMGCL.as_dict(),"MAS": self._MAS.as_dict(),})
-
-                class EigenLeastSquaresConjugateGradient(object):
-                    '''Settings for the Eigen's Least Squares Conjugate Gradient solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        tolerance: float = 1e-12
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
-
-
-                class EigenDGMRES(object):
-                    '''Settings for the Eigen's DGMRES solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        tolerance: float = 1e-12
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
-
-
-                class EigenConjugateGradient(object):
-                    '''Settings for the Eigen's Conjugate Gradient solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        tolerance: float = 1e-12
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
-
-
-                class EigenBiCGSTAB(object):
-                    '''Settings for the Eigen's BiCGSTAB solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        tolerance: float = 1e-12
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
-
-
-                class EigenGMRES(object):
-                    '''Settings for the Eigen's GMRES solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        tolerance: float = 1e-12
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
-
-
-                class EigenMINRES(object):
-                    '''Settings for the Eigen's MINRES solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'tolerance']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        tolerance: float = 1e-12
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
-
-
-                class Pardiso(object):
-                    '''Settings for the Pardiso solver.
-                    \nRequired: []
-                    \nOptional: ['mtype']'''
-                    def __init__(
-                        self,
-                        mtype: int = 11
-                    ):
-                        self._mtype = type_check(mtype, int) if mtype is not None else None
-
-                    @property
-                    def mtype(self):
-                        return self._mtype
-
-                    @mtype.setter
-                    def mtype(self, value):
-                        ''' 
-                        Matrix type.
-                        '''
-                        self._mtype = type_check(value, int) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"mtype": self._mtype,})
-
-
-                class Hypre(object):
-                    '''Settings for the Hypre solver.
-                    \nRequired: []
-                    \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'interp_rbms', 'nodal_coarsening', 'dimension']'''
-                    def __init__(
-                        self,
-                        max_iter: int = 1000,
-                        pre_max_iter: int = 1,
-                        tolerance: float = 1e-10,
-                        theta: float = 0.5,
-                        interp_rbms: bool = False,
-                        nodal_coarsening: bool = False,
-                        dimension: int = 1
-                    ):
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._pre_max_iter = type_check(pre_max_iter, int) if pre_max_iter is not None else None
-                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-                        self._theta = type_check(theta, float) if theta is not None else None
-                        self._interp_rbms = type_check(interp_rbms, bool) if interp_rbms is not None else None
-                        self._nodal_coarsening = type_check(nodal_coarsening, bool) if nodal_coarsening is not None else None
-                        self._dimension = type_check(dimension, int) if dimension is not None else None
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def pre_max_iter(self):
-                        return self._pre_max_iter
-
-                    @pre_max_iter.setter
-                    def pre_max_iter(self, value):
-                        ''' 
-                        Maximum number of pre iterations.
-                        '''
-                        self._pre_max_iter = type_check(value, int) 
-
-                    @property
-                    def tolerance(self):
-                        return self._tolerance
-
-                    @tolerance.setter
-                    def tolerance(self, value):
-                        ''' 
-                        Convergence tolerance.
-                        '''
-                        self._tolerance = type_check(value, float) 
-
-                    @property
-                    def theta(self):
-                        return self._theta
-
-                    @theta.setter
-                    def theta(self, value):
-                        ''' 
-                        Strong threshold.
-                        '''
-                        self._theta = type_check(value, float) 
-
-                    @property
-                    def interp_rbms(self):
-                        return self._interp_rbms
-
-                    @interp_rbms.setter
-                    def interp_rbms(self, value):
-                        ''' 
-                        Whether or not to interp rbms.
-                        '''
-                        self._interp_rbms = type_check(value, bool) 
-
-                    @property
-                    def nodal_coarsening(self):
-                        return self._nodal_coarsening
-
-                    @nodal_coarsening.setter
-                    def nodal_coarsening(self, value):
-                        ''' 
-                        Whether or not to include nodal coarsening options.
-                        '''
-                        self._nodal_coarsening = type_check(value, bool) 
-
-                    @property
-                    def dimension(self):
-                        return self._dimension
-
-                    @dimension.setter
-                    def dimension(self, value):
-                        ''' 
-                        Dimension of problem.
-                        '''
-                        self._dimension = type_check(value, int) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"max_iter": self._max_iter,"pre_max_iter": self._pre_max_iter,"tolerance": self._tolerance,"theta": self._theta,"interp_rbms": self._interp_rbms,"nodal_coarsening": self._nodal_coarsening,"dimension": self._dimension,})
-
-
-                class AMGCL(object):
-                    '''Settings for the AMGCL solver.
-                    \nRequired: []
-                    \nOptional: ['solver', 'precond']'''
-                    def __init__(
-                        self,
-                        solver: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Solver"] = None,
-                        precond: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond"] = None
-                    ):
-                        self._solver = type_check(solver, self.Solver) if solver else self.Solver()
-                        self._precond = type_check(precond, self.Precond) if precond else self.Precond()
-
-                    @property
-                    def solver(self):
-                        return self._solver
-
-                    @solver.setter
-                    def solver(self, value):
-                        ''' 
-                        Solver settings for the AMGCL.
-                        \nRequired: []
-                        \nOptional: ['maxiter', 'tol', 'type']
-                        '''
-                        self._solver = type_check(value, self.Solver) 
-
-                    @property
-                    def precond(self):
-                        return self._precond
-
-                    @precond.setter
-                    def precond(self, value):
-                        ''' 
-                        Preconditioner settings for the AMGCL.
-                        \nRequired: []
-                        \nOptional: ['relax', 'class', 'max_levels', 'direct_coarse', 'ncycle', 'coarsening']
-                        '''
-                        self._precond = type_check(value, self.Precond) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"solver": self._solver.as_dict(),"precond": self._precond.as_dict(),})
-
-                    class Solver(object):
-                        '''Solver settings for the AMGCL.
-                        \nRequired: []
-                        \nOptional: ['maxiter', 'tol', 'type']'''
-                        def __init__(
-                            self,
-                            maxiter: int = 1000,
-                            tol: float = 1e-10,
-                            type: str = 'cg'
-                        ):
-                            self._maxiter = type_check(maxiter, int) if maxiter is not None else None
-                            self._tol = type_check(tol, float) if tol is not None else None
-                            self._type = type_check(type, str) if type is not None else None
-
-                        @property
-                        def maxiter(self):
-                            return self._maxiter
-
-                        @maxiter.setter
-                        def maxiter(self, value):
-                            ''' 
-                            Maximum number of iterations.
-                            '''
-                            self._maxiter = type_check(value, int) 
-
-                        @property
-                        def tol(self):
-                            return self._tol
-
-                        @tol.setter
-                        def tol(self, value):
-                            ''' 
-                            Convergence tolerance.
-                            '''
-                            self._tol = type_check(value, float) 
-
-                        @property
-                        def type(self):
-                            return self._type
-
-                        @type.setter
-                        def type(self, value):
-                            ''' 
-                            Type of solver to use.
-                            '''
-                            self._type = type_check(value, str) 
-
-                        def check_required(self):
-
-                            return
-
-                        def as_dict(self):
-                            return drop_none({"maxiter": self._maxiter,"tol": self._tol,"type": self._type,})
-
-
-                    class Precond(object):
-                        '''Preconditioner settings for the AMGCL.
-                        \nRequired: []
-                        \nOptional: ['relax', 'class', 'max_levels', 'direct_coarse', 'ncycle', 'coarsening']'''
-                        def __init__(
-                            self,
-                            relax: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond.Relax"] = None,
-                            class_: str = 'amg',
-                            max_levels: int = 6,
-                            direct_coarse: bool = False,
-                            ncycle: int = 2,
-                            coarsening: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond.Coarsening"] = None
-                        ):
-                            self._relax = type_check(relax, self.Relax) if relax else self.Relax()
-                            self._class_ = type_check(class_, str) if class_ is not None else None
-                            self._max_levels = type_check(max_levels, int) if max_levels is not None else None
-                            self._direct_coarse = type_check(direct_coarse, bool) if direct_coarse is not None else None
-                            self._ncycle = type_check(ncycle, int) if ncycle is not None else None
-                            self._coarsening = type_check(coarsening, self.Coarsening) if coarsening else self.Coarsening()
-
-                        @property
-                        def relax(self):
-                            return self._relax
-
-                        @relax.setter
-                        def relax(self, value):
-                            ''' 
-                            Preconditioner settings for the AMGCL.
-                            \nRequired: []
-                            \nOptional: ['degree', 'type', 'power_iters', 'higher', 'lower', 'scale']
-                            '''
-                            self._relax = type_check(value, self.Relax) 
-
-                        @property
-                        def class_(self):
-                            return self._class_
-
-                        @class_.setter
-                        def class_(self, value):
-                            ''' 
-                            Type of preconditioner to use.
-                            '''
-                            self._class_ = type_check(value, str) 
-
-                        @property
-                        def max_levels(self):
-                            return self._max_levels
-
-                        @max_levels.setter
-                        def max_levels(self, value):
-                            ''' 
-                            Maximum number of levels.
-                            '''
-                            self._max_levels = type_check(value, int) 
-
-                        @property
-                        def direct_coarse(self):
-                            return self._direct_coarse
-
-                        @direct_coarse.setter
-                        def direct_coarse(self, value):
-                            ''' 
-                            Use direct solver for the coarsest level.
-                            '''
-                            self._direct_coarse = type_check(value, bool) 
-
-                        @property
-                        def ncycle(self):
-                            return self._ncycle
-
-                        @ncycle.setter
-                        def ncycle(self, value):
-                            ''' 
-                            Number of cycles.
-                            '''
-                            self._ncycle = type_check(value, int) 
-
-                        @property
-                        def coarsening(self):
-                            return self._coarsening
-
-                        @coarsening.setter
-                        def coarsening(self, value):
-                            ''' 
-                            Coarsening parameters.
-                            \nRequired: []
-                            \nOptional: ['type', 'estimate_spectral_radius', 'relax', 'aggr']
-                            '''
-                            self._coarsening = type_check(value, self.Coarsening) 
-
-                        def check_required(self):
-
-                            return
-
-                        def as_dict(self):
-                            return drop_none({"relax": self._relax.as_dict(),"class": self._class_,"max_levels": self._max_levels,"direct_coarse": self._direct_coarse,"ncycle": self._ncycle,"coarsening": self._coarsening.as_dict(),})
-
-                        class Relax(object):
-                            '''Preconditioner settings for the AMGCL.
-                            \nRequired: []
-                            \nOptional: ['degree', 'type', 'power_iters', 'higher', 'lower', 'scale']'''
-                            def __init__(
-                                self,
-                                degree: int = 16,
-                                type: str = 'chebyshev',
-                                power_iters: int = 100,
-                                higher: float = 2.0,
-                                lower: float = 0.008333333333,
-                                scale: bool = True
-                            ):
-                                self._degree = type_check(degree, int) if degree is not None else None
-                                self._type = type_check(type, str) if type is not None else None
-                                self._power_iters = type_check(power_iters, int) if power_iters is not None else None
-                                self._higher = type_check(higher, float) if higher is not None else None
-                                self._lower = type_check(lower, float) if lower is not None else None
-                                self._scale = type_check(scale, bool) if scale is not None else None
-
-                            @property
-                            def degree(self):
-                                return self._degree
-
-                            @degree.setter
-                            def degree(self, value):
-                                ''' 
-                                Degree of the polynomial.
-                                '''
-                                self._degree = type_check(value, int) 
-
-                            @property
-                            def type(self):
-                                return self._type
-
-                            @type.setter
-                            def type(self, value):
-                                ''' 
-                                Type of relaxation to use.
-                                '''
-                                self._type = type_check(value, str) 
-
-                            @property
-                            def power_iters(self):
-                                return self._power_iters
-
-                            @power_iters.setter
-                            def power_iters(self, value):
-                                ''' 
-                                Number of power iterations.
-                                '''
-                                self._power_iters = type_check(value, int) 
-
-                            @property
-                            def higher(self):
-                                return self._higher
-
-                            @higher.setter
-                            def higher(self, value):
-                                ''' 
-                                Higher level relaxation.
-                                '''
-                                self._higher = type_check(value, float) 
-
-                            @property
-                            def lower(self):
-                                return self._lower
-
-                            @lower.setter
-                            def lower(self, value):
-                                ''' 
-                                Lower level relaxation.
-                                '''
-                                self._lower = type_check(value, float) 
-
-                            @property
-                            def scale(self):
-                                return self._scale
-
-                            @scale.setter
-                            def scale(self, value):
-                                ''' 
-                                Scale.
-                                '''
-                                self._scale = type_check(value, bool) 
-
-                            def check_required(self):
-
-                                return
-
-                            def as_dict(self):
-                                return drop_none({"degree": self._degree,"type": self._type,"power_iters": self._power_iters,"higher": self._higher,"lower": self._lower,"scale": self._scale,})
-
-
-                        class Coarsening(object):
-                            '''Coarsening parameters.
-                            \nRequired: []
-                            \nOptional: ['type', 'estimate_spectral_radius', 'relax', 'aggr']'''
-                            def __init__(
-                                self,
-                                type: str = 'smoothed_aggregation',
-                                estimate_spectral_radius: bool = True,
-                                relax: float = 1.0,
-                                aggr: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond.Coarsening.Aggr"] = None
-                            ):
-                                self._type = type_check(type, str) if type is not None else None
-                                self._estimate_spectral_radius = type_check(estimate_spectral_radius, bool) if estimate_spectral_radius is not None else None
-                                self._relax = type_check(relax, float) if relax is not None else None
-                                self._aggr = type_check(aggr, self.Aggr) if aggr else self.Aggr()
-
-                            @property
-                            def type(self):
-                                return self._type
-
-                            @type.setter
-                            def type(self, value):
-                                ''' 
-                                Coarsening type.
-                                '''
-                                self._type = type_check(value, str) 
-
-                            @property
-                            def estimate_spectral_radius(self):
-                                return self._estimate_spectral_radius
-
-                            @estimate_spectral_radius.setter
-                            def estimate_spectral_radius(self, value):
-                                ''' 
-                                Should the spectral radius be estimated.
-                                '''
-                                self._estimate_spectral_radius = type_check(value, bool) 
-
-                            @property
-                            def relax(self):
-                                return self._relax
-
-                            @relax.setter
-                            def relax(self, value):
-                                ''' 
-                                Coarsening relaxation.
-                                '''
-                                self._relax = type_check(value, float) 
-
-                            @property
-                            def aggr(self):
-                                return self._aggr
-
-                            @aggr.setter
-                            def aggr(self, value):
-                                ''' 
-                                Aggregation settings.
-                                \nRequired: []
-                                \nOptional: ['eps_strong']
-                                '''
-                                self._aggr = type_check(value, self.Aggr) 
-
-                            def check_required(self):
-
-                                return
-
-                            def as_dict(self):
-                                return drop_none({"type": self._type,"estimate_spectral_radius": self._estimate_spectral_radius,"relax": self._relax,"aggr": self._aggr.as_dict(),})
-
-                            class Aggr(object):
-                                '''Aggregation settings.
-                                \nRequired: []
-                                \nOptional: ['eps_strong']'''
-                                def __init__(
-                                    self,
-                                    eps_strong: float = 0.0
-                                ):
-                                    self._eps_strong = type_check(eps_strong, float) if eps_strong is not None else None
-
-                                @property
-                                def eps_strong(self):
-                                    return self._eps_strong
-
-                                @eps_strong.setter
-                                def eps_strong(self, value):
-                                    ''' 
-                                    Aggregation epsilon strong.
-                                    '''
-                                    self._eps_strong = type_check(value, float) 
-
-                                def check_required(self):
-
-                                    return
-
-                                def as_dict(self):
-                                    return drop_none({"eps_strong": self._eps_strong,})
-
-
-
-
-
-                class MAS(object):
-                    '''Settings for the MAS solver.
-                    \nRequired: []
-                    \nOptional: ['block_dim', 'max_iter', 'relative_tolerance', 'absolute_tolerance', 'lazy_partitioning', 'use_preconditioned_residual_norm']'''
-                    def __init__(
-                        self,
-                        block_dim: int = 1,
-                        max_iter: int = 10000,
-                        relative_tolerance: float = 0.0001,
-                        absolute_tolerance: float = 1e-08,
-                        lazy_partitioning: bool = True,
-                        use_preconditioned_residual_norm: bool = False
-                    ):
-                        self._block_dim = type_check(block_dim, int) if block_dim is not None else None
-                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
-                        self._relative_tolerance = type_check(relative_tolerance, float) if relative_tolerance is not None else None
-                        self._absolute_tolerance = type_check(absolute_tolerance, float) if absolute_tolerance is not None else None
-                        self._lazy_partitioning = type_check(lazy_partitioning, bool) if lazy_partitioning is not None else None
-                        self._use_preconditioned_residual_norm = type_check(use_preconditioned_residual_norm, bool) if use_preconditioned_residual_norm is not None else None
-
-                    @property
-                    def block_dim(self):
-                        return self._block_dim
-
-                    @block_dim.setter
-                    def block_dim(self, value):
-                        ''' 
-                        Block size of the BSR matrix PCG sovler internally use. Choose 3 for 3d problem, 2 for 2d, etc.
-                        '''
-                        self._block_dim = type_check(value, int) 
-
-                    @property
-                    def max_iter(self):
-                        return self._max_iter
-
-                    @max_iter.setter
-                    def max_iter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._max_iter = type_check(value, int) 
-
-                    @property
-                    def relative_tolerance(self):
-                        return self._relative_tolerance
-
-                    @relative_tolerance.setter
-                    def relative_tolerance(self, value):
-                        ''' 
-                        Relative convergence tolerance.
-                        '''
-                        self._relative_tolerance = type_check(value, float) 
-
-                    @property
-                    def absolute_tolerance(self):
-                        return self._absolute_tolerance
-
-                    @absolute_tolerance.setter
-                    def absolute_tolerance(self, value):
-                        ''' 
-                        Absolute convergence tolerance.
-                        '''
-                        self._absolute_tolerance = type_check(value, float) 
-
-                    @property
-                    def lazy_partitioning(self):
-                        return self._lazy_partitioning
-
-                    @lazy_partitioning.setter
-                    def lazy_partitioning(self, value):
-                        ''' 
-                        If true, reuse the first graph partition.
-                        '''
-                        self._lazy_partitioning = type_check(value, bool) 
-
-                    @property
-                    def use_preconditioned_residual_norm(self):
-                        return self._use_preconditioned_residual_norm
-
-                    @use_preconditioned_residual_norm.setter
-                    def use_preconditioned_residual_norm(self, value):
-                        ''' 
-                        Use preconditioned residual norm for termination check.
-                        '''
-                        self._use_preconditioned_residual_norm = type_check(value, bool) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"block_dim": self._block_dim,"max_iter": self._max_iter,"relative_tolerance": self._relative_tolerance,"absolute_tolerance": self._absolute_tolerance,"lazy_partitioning": self._lazy_partitioning,"use_preconditioned_residual_norm": self._use_preconditioned_residual_norm,})
-
-
-
 
         class Adjoint_linear(object):
             '''Settings for the linear solver.
@@ -17157,7 +15845,7 @@ class Root(object):
                 ''' 
                 Settings for the Hypre solver.
                 \nRequired: []
-                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'interp_rbms', 'nodal_coarsening', 'dimension']
+                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']
                 '''
                 self._Hypre = type_check(value, self.Hypre) 
 
@@ -17478,23 +16166,23 @@ class Root(object):
             class Hypre(object):
                 '''Settings for the Hypre solver.
                 \nRequired: []
-                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'interp_rbms', 'nodal_coarsening', 'dimension']'''
+                \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']'''
                 def __init__(
                     self,
                     max_iter: int = 1000,
                     pre_max_iter: int = 1,
                     tolerance: float = 1e-10,
                     theta: float = 0.5,
-                    interp_rbms: bool = False,
                     nodal_coarsening: bool = False,
+                    interp_rbms: bool = False,
                     dimension: int = 1
                 ):
                     self._max_iter = type_check(max_iter, int) if max_iter is not None else None
                     self._pre_max_iter = type_check(pre_max_iter, int) if pre_max_iter is not None else None
                     self._tolerance = type_check(tolerance, float) if tolerance is not None else None
                     self._theta = type_check(theta, float) if theta is not None else None
-                    self._interp_rbms = type_check(interp_rbms, bool) if interp_rbms is not None else None
                     self._nodal_coarsening = type_check(nodal_coarsening, bool) if nodal_coarsening is not None else None
+                    self._interp_rbms = type_check(interp_rbms, bool) if interp_rbms is not None else None
                     self._dimension = type_check(dimension, int) if dimension is not None else None
 
                 @property
@@ -17542,17 +16230,6 @@ class Root(object):
                     self._theta = type_check(value, float) 
 
                 @property
-                def interp_rbms(self):
-                    return self._interp_rbms
-
-                @interp_rbms.setter
-                def interp_rbms(self, value):
-                    ''' 
-                    Whether or not to interp rbms.
-                    '''
-                    self._interp_rbms = type_check(value, bool) 
-
-                @property
                 def nodal_coarsening(self):
                     return self._nodal_coarsening
 
@@ -17562,6 +16239,17 @@ class Root(object):
                     Whether or not to include nodal coarsening options.
                     '''
                     self._nodal_coarsening = type_check(value, bool) 
+
+                @property
+                def interp_rbms(self):
+                    return self._interp_rbms
+
+                @interp_rbms.setter
+                def interp_rbms(self, value):
+                    ''' 
+                    Whether or not to interp rbms.
+                    '''
+                    self._interp_rbms = type_check(value, bool) 
 
                 @property
                 def dimension(self):
@@ -17579,7 +16267,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"max_iter": self._max_iter,"pre_max_iter": self._pre_max_iter,"tolerance": self._tolerance,"theta": self._theta,"interp_rbms": self._interp_rbms,"nodal_coarsening": self._nodal_coarsening,"dimension": self._dimension,})
+                    return drop_none({"max_iter": self._max_iter,"pre_max_iter": self._pre_max_iter,"tolerance": self._tolerance,"theta": self._theta,"nodal_coarsening": self._nodal_coarsening,"interp_rbms": self._interp_rbms,"dimension": self._dimension,})
 
 
             class AMGCL(object):
@@ -17603,7 +16291,7 @@ class Root(object):
                     ''' 
                     Solver settings for the AMGCL.
                     \nRequired: []
-                    \nOptional: ['maxiter', 'tol', 'type']
+                    \nOptional: ['tol', 'maxiter', 'type']
                     '''
                     self._solver = type_check(value, self.Solver) 
 
@@ -17630,27 +16318,16 @@ class Root(object):
                 class Solver(object):
                     '''Solver settings for the AMGCL.
                     \nRequired: []
-                    \nOptional: ['maxiter', 'tol', 'type']'''
+                    \nOptional: ['tol', 'maxiter', 'type']'''
                     def __init__(
                         self,
-                        maxiter: int = 1000,
                         tol: float = 1e-10,
+                        maxiter: int = 1000,
                         type: str = 'cg'
                     ):
-                        self._maxiter = type_check(maxiter, int) if maxiter is not None else None
                         self._tol = type_check(tol, float) if tol is not None else None
+                        self._maxiter = type_check(maxiter, int) if maxiter is not None else None
                         self._type = type_check(type, str) if type is not None else None
-
-                    @property
-                    def maxiter(self):
-                        return self._maxiter
-
-                    @maxiter.setter
-                    def maxiter(self, value):
-                        ''' 
-                        Maximum number of iterations.
-                        '''
-                        self._maxiter = type_check(value, int) 
 
                     @property
                     def tol(self):
@@ -17662,6 +16339,17 @@ class Root(object):
                         Convergence tolerance.
                         '''
                         self._tol = type_check(value, float) 
+
+                    @property
+                    def maxiter(self):
+                        return self._maxiter
+
+                    @maxiter.setter
+                    def maxiter(self, value):
+                        ''' 
+                        Maximum number of iterations.
+                        '''
+                        self._maxiter = type_check(value, int) 
 
                     @property
                     def type(self):
@@ -17679,7 +16367,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"maxiter": self._maxiter,"tol": self._tol,"type": self._type,})
+                        return drop_none({"tol": self._tol,"maxiter": self._maxiter,"type": self._type,})
 
 
                 class Precond(object):
@@ -18072,7 +16760,7 @@ class Root(object):
         class Nonlinear(object):
             '''Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
             \nRequired: []
-            \nOptional: ['solver', 'x_delta_tol', 'rel_x_delta_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'grad_norm_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'line_search', 'box_constraints', 'advanced']'''
+            \nOptional: ['solver', 'x_delta_tol', 'grad_norm_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'rel_x_delta_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'line_search', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'box_constraints', 'advanced']'''
             class Norm_type(str, Enum):
                 EUCLIDEAN = 'Euclidean'
                 L2 = 'L2'
@@ -18082,14 +16770,15 @@ class Root(object):
                 self,
                 solver: Optional["Root.Solver.Nonlinear.Solver"] = None,
                 x_delta_tol: float = 0.0,
-                rel_x_delta_tol: float = 0.0,
+                grad_norm_tol: float = 1e-10,
                 rel_grad_norm_tol: float = 1e-10,
                 newton_decrement_tol: float = 0.0,
-                grad_norm_tol: float = 1e-10,
+                rel_x_delta_tol: float = 0.0,
                 first_grad_norm_tol: float = 1e-12,
                 norm_type: "Norm_type" = 'L2',
                 max_iterations: int = 500,
                 iterations_per_strategy: object = None,
+                line_search: Optional["Root.Solver.Nonlinear.Line_search"] = None,
                 allow_out_of_iterations: bool = False,
                 L_BFGS: Optional["Root.Solver.Nonlinear.LBFGS"] = None,
                 L_BFGS_B: Optional["Root.Solver.Nonlinear.LBFGSB"] = None,
@@ -18097,20 +16786,20 @@ class Root(object):
                 ADAM: Optional["Root.Solver.Nonlinear.ADAM"] = None,
                 StochasticADAM: Optional["Root.Solver.Nonlinear.StochasticADAM"] = None,
                 StochasticGradientDescent: Optional["Root.Solver.Nonlinear.StochasticGradientDescent"] = None,
-                line_search: Optional["Root.Solver.Nonlinear.Line_search"] = None,
                 box_constraints: Optional["Root.Solver.Nonlinear.Box_constraints"] = None,
                 advanced: Optional["Root.Solver.Nonlinear.Advanced"] = None
             ):
                 self._solver = type_check(solver, self.Solver) if isinstance(solver, self.Solver) else self.Solver(solver) if solver is not None else self.Solver()
                 self._x_delta_tol = range_check(type_check(x_delta_tol, float), 0, None) if x_delta_tol is not None else None
-                self._rel_x_delta_tol = range_check(type_check(rel_x_delta_tol, float), 0, None) if rel_x_delta_tol is not None else None
+                self._grad_norm_tol = range_check(type_check(grad_norm_tol, float), 0, None) if grad_norm_tol is not None else None
                 self._rel_grad_norm_tol = range_check(type_check(rel_grad_norm_tol, float), 0, None) if rel_grad_norm_tol is not None else None
                 self._newton_decrement_tol = range_check(type_check(newton_decrement_tol, float), 0, None) if newton_decrement_tol is not None else None
-                self._grad_norm_tol = range_check(type_check(grad_norm_tol, float), 0, None) if grad_norm_tol is not None else None
+                self._rel_x_delta_tol = range_check(type_check(rel_x_delta_tol, float), 0, None) if rel_x_delta_tol is not None else None
                 self._first_grad_norm_tol = type_check(first_grad_norm_tol, float) if first_grad_norm_tol is not None else None
                 self._norm_type = enum_check(norm_type, self.Norm_type)
                 self._max_iterations = type_check(max_iterations, int) if max_iterations is not None else None
                 self._iterations_per_strategy = inline_check(iterations_per_strategy, [int, list], []) if iterations_per_strategy is not None else None
+                self._line_search = type_check(line_search, self.Line_search) if line_search else self.Line_search()
                 self._allow_out_of_iterations = type_check(allow_out_of_iterations, bool) if allow_out_of_iterations is not None else None
                 self._L_BFGS = type_check(L_BFGS, self.LBFGS) if L_BFGS else self.LBFGS()
                 self._L_BFGS_B = type_check(L_BFGS_B, self.LBFGSB) if L_BFGS_B else self.LBFGSB()
@@ -18118,7 +16807,6 @@ class Root(object):
                 self._ADAM = type_check(ADAM, self.ADAM) if ADAM else self.ADAM()
                 self._StochasticADAM = type_check(StochasticADAM, self.StochasticADAM) if StochasticADAM else self.StochasticADAM()
                 self._StochasticGradientDescent = type_check(StochasticGradientDescent, self.StochasticGradientDescent) if StochasticGradientDescent else self.StochasticGradientDescent()
-                self._line_search = type_check(line_search, self.Line_search) if line_search else self.Line_search()
                 self._box_constraints = type_check(box_constraints, self.Box_constraints) if box_constraints else self.Box_constraints()
                 self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
 
@@ -18147,15 +16835,15 @@ class Root(object):
                 self._x_delta_tol = range_check(type_check(value, float), 0, None) 
 
             @property
-            def rel_x_delta_tol(self):
-                return self._rel_x_delta_tol
+            def grad_norm_tol(self):
+                return self._grad_norm_tol
 
-            @rel_x_delta_tol.setter
-            def rel_x_delta_tol(self, value):
+            @grad_norm_tol.setter
+            def grad_norm_tol(self, value):
                 ''' 
-                Stopping criterion: minimal change of the variables x for the iterations to continue relative to first step in nonlinear solve.
+                Stopping criterion: Minimal gradient norm for the iterations to continue.
                 '''
-                self._rel_x_delta_tol = range_check(type_check(value, float), 0, None) 
+                self._grad_norm_tol = range_check(type_check(value, float), 0, None) 
 
             @property
             def rel_grad_norm_tol(self):
@@ -18180,15 +16868,15 @@ class Root(object):
                 self._newton_decrement_tol = range_check(type_check(value, float), 0, None) 
 
             @property
-            def grad_norm_tol(self):
-                return self._grad_norm_tol
+            def rel_x_delta_tol(self):
+                return self._rel_x_delta_tol
 
-            @grad_norm_tol.setter
-            def grad_norm_tol(self, value):
+            @rel_x_delta_tol.setter
+            def rel_x_delta_tol(self, value):
                 ''' 
-                Stopping criterion: Minimal gradient norm for the iterations to continue.
+                Stopping criterion: minimal change of the variables x for the iterations to continue relative to first step in nonlinear solve.
                 '''
-                self._grad_norm_tol = range_check(type_check(value, float), 0, None) 
+                self._rel_x_delta_tol = range_check(type_check(value, float), 0, None) 
 
             @property
             def first_grad_norm_tol(self):
@@ -18235,6 +16923,19 @@ class Root(object):
                 \nOptional: ['int', 'list']
                 '''
                 self._iterations_per_strategy = inline_check(value, [int, list], []) 
+
+            @property
+            def line_search(self):
+                return self._line_search
+
+            @line_search.setter
+            def line_search(self, value):
+                ''' 
+                Settings for line-search in the nonlinear solver
+                \nRequired: []
+                \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']
+                '''
+                self._line_search = type_check(value, self.Line_search) 
 
             @property
             def allow_out_of_iterations(self):
@@ -18326,19 +17027,6 @@ class Root(object):
                 self._StochasticGradientDescent = type_check(value, self.StochasticGradientDescent) 
 
             @property
-            def line_search(self):
-                return self._line_search
-
-            @line_search.setter
-            def line_search(self, value):
-                ''' 
-                Settings for line-search in the nonlinear solver
-                \nRequired: []
-                \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']
-                '''
-                self._line_search = type_check(value, self.Line_search) 
-
-            @property
             def box_constraints(self):
                 return self._box_constraints
 
@@ -18369,7 +17057,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"grad_norm_tol": self._grad_norm_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict(),"L-BFGS-B": self._L_BFGS_B.as_dict(),"Newton": self._Newton.as_dict(),"ADAM": self._ADAM.as_dict(),"StochasticADAM": self._StochasticADAM.as_dict(),"StochasticGradientDescent": self._StochasticGradientDescent.as_dict(),"line_search": self._line_search.as_dict(),"box_constraints": self._box_constraints.as_dict(),"advanced": self._advanced.as_dict(),})
+                return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"grad_norm_tol": self._grad_norm_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"line_search": self._line_search.as_dict(),"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict(),"L-BFGS-B": self._L_BFGS_B.as_dict(),"Newton": self._Newton.as_dict(),"ADAM": self._ADAM.as_dict(),"StochasticADAM": self._StochasticADAM.as_dict(),"StochasticGradientDescent": self._StochasticGradientDescent.as_dict(),"box_constraints": self._box_constraints.as_dict(),"advanced": self._advanced.as_dict(),})
 
             class Solver(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
@@ -19334,6 +18022,220 @@ class Root(object):
 
 
 
+            class Line_search(object):
+                '''Settings for line-search in the nonlinear solver
+                \nRequired: []
+                \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']'''
+                class Method(str, Enum):
+                    ARMIJO = 'Armijo'
+                    ROBUSTARMIJO = 'RobustArmijo'
+                    BACKTRACKING = 'Backtracking'
+                    NONE = 'None'
+
+                def __init__(
+                    self,
+                    method: "Method" = 'RobustArmijo',
+                    use_grad_norm_tol: float = 1e-06,
+                    min_step_size: float = 1e-10,
+                    max_step_size_iter: int = 30,
+                    min_step_size_final: float = 1e-20,
+                    max_step_size_iter_final: int = 100,
+                    default_init_step_size: float = 1.0,
+                    step_ratio: float = 0.5,
+                    Armijo: Optional["Root.Solver.Nonlinear.Line_search.Armijo"] = None,
+                    RobustArmijo: Optional["Root.Solver.Nonlinear.Line_search.RobustArmijo"] = None
+                ):
+                    self._method = enum_check(method, self.Method)
+                    self._use_grad_norm_tol = type_check(use_grad_norm_tol, float) if use_grad_norm_tol is not None else None
+                    self._min_step_size = type_check(min_step_size, float) if min_step_size is not None else None
+                    self._max_step_size_iter = type_check(max_step_size_iter, int) if max_step_size_iter is not None else None
+                    self._min_step_size_final = type_check(min_step_size_final, float) if min_step_size_final is not None else None
+                    self._max_step_size_iter_final = type_check(max_step_size_iter_final, int) if max_step_size_iter_final is not None else None
+                    self._default_init_step_size = type_check(default_init_step_size, float) if default_init_step_size is not None else None
+                    self._step_ratio = type_check(step_ratio, float) if step_ratio is not None else None
+                    self._Armijo = type_check(Armijo, self.Armijo) if Armijo else self.Armijo()
+                    self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo else self.RobustArmijo()
+
+                @property
+                def method(self):
+                    return self._method
+
+                @method.setter
+                def method(self, value):
+                    ''' 
+                    Line-search type
+                    '''
+                    self._method = enum_check(value, self.Method) 
+
+                @property
+                def use_grad_norm_tol(self):
+                    return self._use_grad_norm_tol
+
+                @use_grad_norm_tol.setter
+                def use_grad_norm_tol(self, value):
+                    ''' 
+                    When the energy is smaller than use_grad_norm_tol, line-search uses norm of gradient instead of energy
+                    '''
+                    self._use_grad_norm_tol = type_check(value, float) 
+
+                @property
+                def min_step_size(self):
+                    return self._min_step_size
+
+                @min_step_size.setter
+                def min_step_size(self, value):
+                    ''' 
+                    Mimimum step size
+                    '''
+                    self._min_step_size = type_check(value, float) 
+
+                @property
+                def max_step_size_iter(self):
+                    return self._max_step_size_iter
+
+                @max_step_size_iter.setter
+                def max_step_size_iter(self, value):
+                    ''' 
+                    Number of iterations
+                    '''
+                    self._max_step_size_iter = type_check(value, int) 
+
+                @property
+                def min_step_size_final(self):
+                    return self._min_step_size_final
+
+                @min_step_size_final.setter
+                def min_step_size_final(self, value):
+                    ''' 
+                    Mimimum step size for last descent strategy
+                    '''
+                    self._min_step_size_final = type_check(value, float) 
+
+                @property
+                def max_step_size_iter_final(self):
+                    return self._max_step_size_iter_final
+
+                @max_step_size_iter_final.setter
+                def max_step_size_iter_final(self, value):
+                    ''' 
+                    Number of iterations for last descent strategy
+                    '''
+                    self._max_step_size_iter_final = type_check(value, int) 
+
+                @property
+                def default_init_step_size(self):
+                    return self._default_init_step_size
+
+                @default_init_step_size.setter
+                def default_init_step_size(self, value):
+                    ''' 
+                    Initial step size
+                    '''
+                    self._default_init_step_size = type_check(value, float) 
+
+                @property
+                def step_ratio(self):
+                    return self._step_ratio
+
+                @step_ratio.setter
+                def step_ratio(self, value):
+                    ''' 
+                    Ratio used to decrease the step
+                    '''
+                    self._step_ratio = type_check(value, float) 
+
+                @property
+                def Armijo(self):
+                    return self._Armijo
+
+                @Armijo.setter
+                def Armijo(self, value):
+                    ''' 
+                    Options for Armijo.
+                    \nRequired: []
+                    \nOptional: ['c']
+                    '''
+                    self._Armijo = type_check(value, self.Armijo) 
+
+                @property
+                def RobustArmijo(self):
+                    return self._RobustArmijo
+
+                @RobustArmijo.setter
+                def RobustArmijo(self, value):
+                    ''' 
+                    Options for RobustArmijo.
+                    \nRequired: []
+                    \nOptional: ['delta_relative_tolerance']
+                    '''
+                    self._RobustArmijo = type_check(value, self.RobustArmijo) 
+
+                def check_required(self):
+
+                    return
+
+                def as_dict(self):
+                    return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict(),"RobustArmijo": self._RobustArmijo.as_dict(),})
+
+                class Armijo(object):
+                    '''Options for Armijo.
+                    \nRequired: []
+                    \nOptional: ['c']'''
+                    def __init__(
+                        self,
+                        c: float = 0.0001
+                    ):
+                        self._c = type_check(c, float) if c is not None else None
+
+                    @property
+                    def c(self):
+                        return self._c
+
+                    @c.setter
+                    def c(self, value):
+                        ''' 
+                        Armijo c parameter.
+                        '''
+                        self._c = type_check(value, float) 
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"c": self._c,})
+
+
+                class RobustArmijo(object):
+                    '''Options for RobustArmijo.
+                    \nRequired: []
+                    \nOptional: ['delta_relative_tolerance']'''
+                    def __init__(
+                        self,
+                        delta_relative_tolerance: float = 0.1
+                    ):
+                        self._delta_relative_tolerance = type_check(delta_relative_tolerance, float) if delta_relative_tolerance is not None else None
+
+                    @property
+                    def delta_relative_tolerance(self):
+                        return self._delta_relative_tolerance
+
+                    @delta_relative_tolerance.setter
+                    def delta_relative_tolerance(self, value):
+                        ''' 
+                        Relative tolerance on E to switch to approximate.
+                        '''
+                        self._delta_relative_tolerance = type_check(value, float) 
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"delta_relative_tolerance": self._delta_relative_tolerance,})
+
+
+
             class LBFGS(object):
                 '''Options for LBFGS.
                 \nRequired: []
@@ -19677,220 +18579,6 @@ class Root(object):
                     return drop_none({"erase_component_probability": self._erase_component_probability,})
 
 
-            class Line_search(object):
-                '''Settings for line-search in the nonlinear solver
-                \nRequired: []
-                \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']'''
-                class Method(str, Enum):
-                    ARMIJO = 'Armijo'
-                    ROBUSTARMIJO = 'RobustArmijo'
-                    BACKTRACKING = 'Backtracking'
-                    NONE = 'None'
-
-                def __init__(
-                    self,
-                    method: "Method" = 'RobustArmijo',
-                    use_grad_norm_tol: float = 1e-06,
-                    min_step_size: float = 1e-10,
-                    max_step_size_iter: int = 30,
-                    min_step_size_final: float = 1e-20,
-                    max_step_size_iter_final: int = 100,
-                    default_init_step_size: float = 1.0,
-                    step_ratio: float = 0.5,
-                    Armijo: Optional["Root.Solver.Nonlinear.Line_search.Armijo"] = None,
-                    RobustArmijo: Optional["Root.Solver.Nonlinear.Line_search.RobustArmijo"] = None
-                ):
-                    self._method = enum_check(method, self.Method)
-                    self._use_grad_norm_tol = type_check(use_grad_norm_tol, float) if use_grad_norm_tol is not None else None
-                    self._min_step_size = type_check(min_step_size, float) if min_step_size is not None else None
-                    self._max_step_size_iter = type_check(max_step_size_iter, int) if max_step_size_iter is not None else None
-                    self._min_step_size_final = type_check(min_step_size_final, float) if min_step_size_final is not None else None
-                    self._max_step_size_iter_final = type_check(max_step_size_iter_final, int) if max_step_size_iter_final is not None else None
-                    self._default_init_step_size = type_check(default_init_step_size, float) if default_init_step_size is not None else None
-                    self._step_ratio = type_check(step_ratio, float) if step_ratio is not None else None
-                    self._Armijo = type_check(Armijo, self.Armijo) if Armijo else self.Armijo()
-                    self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo else self.RobustArmijo()
-
-                @property
-                def method(self):
-                    return self._method
-
-                @method.setter
-                def method(self, value):
-                    ''' 
-                    Line-search type
-                    '''
-                    self._method = enum_check(value, self.Method) 
-
-                @property
-                def use_grad_norm_tol(self):
-                    return self._use_grad_norm_tol
-
-                @use_grad_norm_tol.setter
-                def use_grad_norm_tol(self, value):
-                    ''' 
-                    When the energy is smaller than use_grad_norm_tol, line-search uses norm of gradient instead of energy
-                    '''
-                    self._use_grad_norm_tol = type_check(value, float) 
-
-                @property
-                def min_step_size(self):
-                    return self._min_step_size
-
-                @min_step_size.setter
-                def min_step_size(self, value):
-                    ''' 
-                    Mimimum step size
-                    '''
-                    self._min_step_size = type_check(value, float) 
-
-                @property
-                def max_step_size_iter(self):
-                    return self._max_step_size_iter
-
-                @max_step_size_iter.setter
-                def max_step_size_iter(self, value):
-                    ''' 
-                    Number of iterations
-                    '''
-                    self._max_step_size_iter = type_check(value, int) 
-
-                @property
-                def min_step_size_final(self):
-                    return self._min_step_size_final
-
-                @min_step_size_final.setter
-                def min_step_size_final(self, value):
-                    ''' 
-                    Mimimum step size for last descent strategy
-                    '''
-                    self._min_step_size_final = type_check(value, float) 
-
-                @property
-                def max_step_size_iter_final(self):
-                    return self._max_step_size_iter_final
-
-                @max_step_size_iter_final.setter
-                def max_step_size_iter_final(self, value):
-                    ''' 
-                    Number of iterations for last descent strategy
-                    '''
-                    self._max_step_size_iter_final = type_check(value, int) 
-
-                @property
-                def default_init_step_size(self):
-                    return self._default_init_step_size
-
-                @default_init_step_size.setter
-                def default_init_step_size(self, value):
-                    ''' 
-                    Initial step size
-                    '''
-                    self._default_init_step_size = type_check(value, float) 
-
-                @property
-                def step_ratio(self):
-                    return self._step_ratio
-
-                @step_ratio.setter
-                def step_ratio(self, value):
-                    ''' 
-                    Ratio used to decrease the step
-                    '''
-                    self._step_ratio = type_check(value, float) 
-
-                @property
-                def Armijo(self):
-                    return self._Armijo
-
-                @Armijo.setter
-                def Armijo(self, value):
-                    ''' 
-                    Options for Armijo.
-                    \nRequired: []
-                    \nOptional: ['c']
-                    '''
-                    self._Armijo = type_check(value, self.Armijo) 
-
-                @property
-                def RobustArmijo(self):
-                    return self._RobustArmijo
-
-                @RobustArmijo.setter
-                def RobustArmijo(self, value):
-                    ''' 
-                    Options for RobustArmijo.
-                    \nRequired: []
-                    \nOptional: ['delta_relative_tolerance']
-                    '''
-                    self._RobustArmijo = type_check(value, self.RobustArmijo) 
-
-                def check_required(self):
-
-                    return
-
-                def as_dict(self):
-                    return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict(),"RobustArmijo": self._RobustArmijo.as_dict(),})
-
-                class Armijo(object):
-                    '''Options for Armijo.
-                    \nRequired: []
-                    \nOptional: ['c']'''
-                    def __init__(
-                        self,
-                        c: float = 0.0001
-                    ):
-                        self._c = type_check(c, float) if c is not None else None
-
-                    @property
-                    def c(self):
-                        return self._c
-
-                    @c.setter
-                    def c(self, value):
-                        ''' 
-                        Armijo c parameter.
-                        '''
-                        self._c = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"c": self._c,})
-
-
-                class RobustArmijo(object):
-                    '''Options for RobustArmijo.
-                    \nRequired: []
-                    \nOptional: ['delta_relative_tolerance']'''
-                    def __init__(
-                        self,
-                        delta_relative_tolerance: float = 0.1
-                    ):
-                        self._delta_relative_tolerance = type_check(delta_relative_tolerance, float) if delta_relative_tolerance is not None else None
-
-                    @property
-                    def delta_relative_tolerance(self):
-                        return self._delta_relative_tolerance
-
-                    @delta_relative_tolerance.setter
-                    def delta_relative_tolerance(self, value):
-                        ''' 
-                        Relative tolerance on E to switch to approximate.
-                        '''
-                        self._delta_relative_tolerance = type_check(value, float) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"delta_relative_tolerance": self._delta_relative_tolerance,})
-
-
-
             class Box_constraints(object):
                 '''There is no definition
                 \nRequired: []
@@ -20077,35 +18765,20 @@ class Root(object):
         class Augmented_lagrangian(object):
             '''Parameters for the AL for imposing Dirichlet BCs. If the bc are not imposable, we add $w\\|u - bc\\|^2$ to the energy ($u$ is the solution at the Dirichlet nodes and $bc$ are the Dirichlet values). After convergence, we try to impose bc again. The algorithm computes E + a/2*AL^2 - lambda AL, where E is the current energy (elastic, inertia, contact, etc.) and AL is the augmented Lagrangian energy. a starts at `initial_weight` and, in case DBC cannot be imposed, we update a as `a *= scaling` until `max_weight`. See IPC additional material
             \nRequired: []
-            \nOptional: ['nonlinear', 'initial_weight', 'error', 'scaling', 'max_weight', 'eta']'''
+            \nOptional: ['initial_weight', 'scaling', 'max_weight', 'eta', 'nonlinear']'''
             def __init__(
                 self,
-                nonlinear: Optional["Root.Solver.Augmented_lagrangian.Nonlinear"] = None,
                 initial_weight: float = 1000000.0,
-                error: float = 0.01,
                 scaling: float = 2.0,
                 max_weight: float = 100000000.0,
-                eta: float = 0.99
+                eta: float = 0.99,
+                nonlinear: Optional["Root.Solver.Augmented_lagrangian.Nonlinear"] = None
             ):
-                self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear else self.Nonlinear()
                 self._initial_weight = range_check(type_check(initial_weight, float), 0, None) if initial_weight is not None else None
-                self._error = range_check(type_check(error, float), 0, None) if error is not None else None
                 self._scaling = type_check(scaling, float) if scaling is not None else None
                 self._max_weight = type_check(max_weight, float) if max_weight is not None else None
                 self._eta = range_check(type_check(eta, float), 0, 1) if eta is not None else None
-
-            @property
-            def nonlinear(self):
-                return self._nonlinear
-
-            @nonlinear.setter
-            def nonlinear(self, value):
-                ''' 
-                Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
-                \nRequired: []
-                \nOptional: ['solver', 'x_delta_tol', 'rel_x_delta_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'grad_norm_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'line_search', 'box_constraints', 'advanced']
-                '''
-                self._nonlinear = type_check(value, self.Nonlinear) 
+                self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear else self.Nonlinear()
 
             @property
             def initial_weight(self):
@@ -20117,17 +18790,6 @@ class Root(object):
                 Initial weight for AL
                 '''
                 self._initial_weight = range_check(type_check(value, float), 0, None) 
-
-            @property
-            def error(self):
-                return self._error
-
-            @error.setter
-            def error(self, value):
-                ''' 
-                Don't stop AL unless the error is smaller than this number.
-                '''
-                self._error = range_check(type_check(value, float), 0, None) 
 
             @property
             def scaling(self):
@@ -20162,17 +18824,30 @@ class Root(object):
                 '''
                 self._eta = range_check(type_check(value, float), 0, 1) 
 
+            @property
+            def nonlinear(self):
+                return self._nonlinear
+
+            @nonlinear.setter
+            def nonlinear(self, value):
+                ''' 
+                Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
+                \nRequired: []
+                \nOptional: ['solver', 'x_delta_tol', 'grad_norm_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'rel_x_delta_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'line_search', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'box_constraints', 'advanced']
+                '''
+                self._nonlinear = type_check(value, self.Nonlinear) 
+
             def check_required(self):
 
                 return
 
             def as_dict(self):
-                return drop_none({"nonlinear": self._nonlinear.as_dict(),"initial_weight": self._initial_weight,"error": self._error,"scaling": self._scaling,"max_weight": self._max_weight,"eta": self._eta,})
+                return drop_none({"initial_weight": self._initial_weight,"scaling": self._scaling,"max_weight": self._max_weight,"eta": self._eta,"nonlinear": self._nonlinear.as_dict(),})
 
             class Nonlinear(object):
                 '''Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
                 \nRequired: []
-                \nOptional: ['solver', 'x_delta_tol', 'rel_x_delta_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'grad_norm_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'line_search', 'box_constraints', 'advanced']'''
+                \nOptional: ['solver', 'x_delta_tol', 'grad_norm_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'rel_x_delta_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'line_search', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'box_constraints', 'advanced']'''
                 class Norm_type(str, Enum):
                     EUCLIDEAN = 'Euclidean'
                     L2 = 'L2'
@@ -20182,14 +18857,15 @@ class Root(object):
                     self,
                     solver: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Solver"] = None,
                     x_delta_tol: float = 0.0,
-                    rel_x_delta_tol: float = 0.0,
+                    grad_norm_tol: float = 1e-10,
                     rel_grad_norm_tol: float = 1e-10,
                     newton_decrement_tol: float = 0.0,
-                    grad_norm_tol: float = 1e-10,
+                    rel_x_delta_tol: float = 0.0,
                     first_grad_norm_tol: float = 1e-12,
                     norm_type: "Norm_type" = 'L2',
                     max_iterations: int = 500,
                     iterations_per_strategy: object = None,
+                    line_search: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Line_search"] = None,
                     allow_out_of_iterations: bool = False,
                     L_BFGS: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.LBFGS"] = None,
                     L_BFGS_B: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.LBFGSB"] = None,
@@ -20197,20 +18873,20 @@ class Root(object):
                     ADAM: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.ADAM"] = None,
                     StochasticADAM: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.StochasticADAM"] = None,
                     StochasticGradientDescent: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.StochasticGradientDescent"] = None,
-                    line_search: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Line_search"] = None,
                     box_constraints: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Box_constraints"] = None,
                     advanced: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Advanced"] = None
                 ):
                     self._solver = type_check(solver, self.Solver) if isinstance(solver, self.Solver) else self.Solver(solver) if solver is not None else self.Solver()
                     self._x_delta_tol = range_check(type_check(x_delta_tol, float), 0, None) if x_delta_tol is not None else None
-                    self._rel_x_delta_tol = range_check(type_check(rel_x_delta_tol, float), 0, None) if rel_x_delta_tol is not None else None
+                    self._grad_norm_tol = range_check(type_check(grad_norm_tol, float), 0, None) if grad_norm_tol is not None else None
                     self._rel_grad_norm_tol = range_check(type_check(rel_grad_norm_tol, float), 0, None) if rel_grad_norm_tol is not None else None
                     self._newton_decrement_tol = range_check(type_check(newton_decrement_tol, float), 0, None) if newton_decrement_tol is not None else None
-                    self._grad_norm_tol = range_check(type_check(grad_norm_tol, float), 0, None) if grad_norm_tol is not None else None
+                    self._rel_x_delta_tol = range_check(type_check(rel_x_delta_tol, float), 0, None) if rel_x_delta_tol is not None else None
                     self._first_grad_norm_tol = type_check(first_grad_norm_tol, float) if first_grad_norm_tol is not None else None
                     self._norm_type = enum_check(norm_type, self.Norm_type)
                     self._max_iterations = type_check(max_iterations, int) if max_iterations is not None else None
                     self._iterations_per_strategy = inline_check(iterations_per_strategy, [int, list], []) if iterations_per_strategy is not None else None
+                    self._line_search = type_check(line_search, self.Line_search) if line_search else self.Line_search()
                     self._allow_out_of_iterations = type_check(allow_out_of_iterations, bool) if allow_out_of_iterations is not None else None
                     self._L_BFGS = type_check(L_BFGS, self.LBFGS) if L_BFGS else self.LBFGS()
                     self._L_BFGS_B = type_check(L_BFGS_B, self.LBFGSB) if L_BFGS_B else self.LBFGSB()
@@ -20218,7 +18894,6 @@ class Root(object):
                     self._ADAM = type_check(ADAM, self.ADAM) if ADAM else self.ADAM()
                     self._StochasticADAM = type_check(StochasticADAM, self.StochasticADAM) if StochasticADAM else self.StochasticADAM()
                     self._StochasticGradientDescent = type_check(StochasticGradientDescent, self.StochasticGradientDescent) if StochasticGradientDescent else self.StochasticGradientDescent()
-                    self._line_search = type_check(line_search, self.Line_search) if line_search else self.Line_search()
                     self._box_constraints = type_check(box_constraints, self.Box_constraints) if box_constraints else self.Box_constraints()
                     self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
 
@@ -20247,15 +18922,15 @@ class Root(object):
                     self._x_delta_tol = range_check(type_check(value, float), 0, None) 
 
                 @property
-                def rel_x_delta_tol(self):
-                    return self._rel_x_delta_tol
+                def grad_norm_tol(self):
+                    return self._grad_norm_tol
 
-                @rel_x_delta_tol.setter
-                def rel_x_delta_tol(self, value):
+                @grad_norm_tol.setter
+                def grad_norm_tol(self, value):
                     ''' 
-                    Stopping criterion: minimal change of the variables x for the iterations to continue relative to first step in nonlinear solve.
+                    Stopping criterion: Minimal gradient norm for the iterations to continue.
                     '''
-                    self._rel_x_delta_tol = range_check(type_check(value, float), 0, None) 
+                    self._grad_norm_tol = range_check(type_check(value, float), 0, None) 
 
                 @property
                 def rel_grad_norm_tol(self):
@@ -20280,15 +18955,15 @@ class Root(object):
                     self._newton_decrement_tol = range_check(type_check(value, float), 0, None) 
 
                 @property
-                def grad_norm_tol(self):
-                    return self._grad_norm_tol
+                def rel_x_delta_tol(self):
+                    return self._rel_x_delta_tol
 
-                @grad_norm_tol.setter
-                def grad_norm_tol(self, value):
+                @rel_x_delta_tol.setter
+                def rel_x_delta_tol(self, value):
                     ''' 
-                    Stopping criterion: Minimal gradient norm for the iterations to continue.
+                    Stopping criterion: minimal change of the variables x for the iterations to continue relative to first step in nonlinear solve.
                     '''
-                    self._grad_norm_tol = range_check(type_check(value, float), 0, None) 
+                    self._rel_x_delta_tol = range_check(type_check(value, float), 0, None) 
 
                 @property
                 def first_grad_norm_tol(self):
@@ -20335,6 +19010,19 @@ class Root(object):
                     \nOptional: ['int', 'list']
                     '''
                     self._iterations_per_strategy = inline_check(value, [int, list], []) 
+
+                @property
+                def line_search(self):
+                    return self._line_search
+
+                @line_search.setter
+                def line_search(self, value):
+                    ''' 
+                    Settings for line-search in the nonlinear solver
+                    \nRequired: []
+                    \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']
+                    '''
+                    self._line_search = type_check(value, self.Line_search) 
 
                 @property
                 def allow_out_of_iterations(self):
@@ -20426,19 +19114,6 @@ class Root(object):
                     self._StochasticGradientDescent = type_check(value, self.StochasticGradientDescent) 
 
                 @property
-                def line_search(self):
-                    return self._line_search
-
-                @line_search.setter
-                def line_search(self, value):
-                    ''' 
-                    Settings for line-search in the nonlinear solver
-                    \nRequired: []
-                    \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']
-                    '''
-                    self._line_search = type_check(value, self.Line_search) 
-
-                @property
                 def box_constraints(self):
                     return self._box_constraints
 
@@ -20469,7 +19144,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"grad_norm_tol": self._grad_norm_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict(),"L-BFGS-B": self._L_BFGS_B.as_dict(),"Newton": self._Newton.as_dict(),"ADAM": self._ADAM.as_dict(),"StochasticADAM": self._StochasticADAM.as_dict(),"StochasticGradientDescent": self._StochasticGradientDescent.as_dict(),"line_search": self._line_search.as_dict(),"box_constraints": self._box_constraints.as_dict(),"advanced": self._advanced.as_dict(),})
+                    return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"grad_norm_tol": self._grad_norm_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"line_search": self._line_search.as_dict(),"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict(),"L-BFGS-B": self._L_BFGS_B.as_dict(),"Newton": self._Newton.as_dict(),"ADAM": self._ADAM.as_dict(),"StochasticADAM": self._StochasticADAM.as_dict(),"StochasticGradientDescent": self._StochasticGradientDescent.as_dict(),"box_constraints": self._box_constraints.as_dict(),"advanced": self._advanced.as_dict(),})
 
                 class Solver(object):
                     '''This is a polymorphic variable, assign an object from its classes to the value
@@ -21434,6 +20109,220 @@ class Root(object):
 
 
 
+                class Line_search(object):
+                    '''Settings for line-search in the nonlinear solver
+                    \nRequired: []
+                    \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']'''
+                    class Method(str, Enum):
+                        ARMIJO = 'Armijo'
+                        ROBUSTARMIJO = 'RobustArmijo'
+                        BACKTRACKING = 'Backtracking'
+                        NONE = 'None'
+
+                    def __init__(
+                        self,
+                        method: "Method" = 'RobustArmijo',
+                        use_grad_norm_tol: float = 1e-06,
+                        min_step_size: float = 1e-10,
+                        max_step_size_iter: int = 30,
+                        min_step_size_final: float = 1e-20,
+                        max_step_size_iter_final: int = 100,
+                        default_init_step_size: float = 1.0,
+                        step_ratio: float = 0.5,
+                        Armijo: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Line_search.Armijo"] = None,
+                        RobustArmijo: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Line_search.RobustArmijo"] = None
+                    ):
+                        self._method = enum_check(method, self.Method)
+                        self._use_grad_norm_tol = type_check(use_grad_norm_tol, float) if use_grad_norm_tol is not None else None
+                        self._min_step_size = type_check(min_step_size, float) if min_step_size is not None else None
+                        self._max_step_size_iter = type_check(max_step_size_iter, int) if max_step_size_iter is not None else None
+                        self._min_step_size_final = type_check(min_step_size_final, float) if min_step_size_final is not None else None
+                        self._max_step_size_iter_final = type_check(max_step_size_iter_final, int) if max_step_size_iter_final is not None else None
+                        self._default_init_step_size = type_check(default_init_step_size, float) if default_init_step_size is not None else None
+                        self._step_ratio = type_check(step_ratio, float) if step_ratio is not None else None
+                        self._Armijo = type_check(Armijo, self.Armijo) if Armijo else self.Armijo()
+                        self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo else self.RobustArmijo()
+
+                    @property
+                    def method(self):
+                        return self._method
+
+                    @method.setter
+                    def method(self, value):
+                        ''' 
+                        Line-search type
+                        '''
+                        self._method = enum_check(value, self.Method) 
+
+                    @property
+                    def use_grad_norm_tol(self):
+                        return self._use_grad_norm_tol
+
+                    @use_grad_norm_tol.setter
+                    def use_grad_norm_tol(self, value):
+                        ''' 
+                        When the energy is smaller than use_grad_norm_tol, line-search uses norm of gradient instead of energy
+                        '''
+                        self._use_grad_norm_tol = type_check(value, float) 
+
+                    @property
+                    def min_step_size(self):
+                        return self._min_step_size
+
+                    @min_step_size.setter
+                    def min_step_size(self, value):
+                        ''' 
+                        Mimimum step size
+                        '''
+                        self._min_step_size = type_check(value, float) 
+
+                    @property
+                    def max_step_size_iter(self):
+                        return self._max_step_size_iter
+
+                    @max_step_size_iter.setter
+                    def max_step_size_iter(self, value):
+                        ''' 
+                        Number of iterations
+                        '''
+                        self._max_step_size_iter = type_check(value, int) 
+
+                    @property
+                    def min_step_size_final(self):
+                        return self._min_step_size_final
+
+                    @min_step_size_final.setter
+                    def min_step_size_final(self, value):
+                        ''' 
+                        Mimimum step size for last descent strategy
+                        '''
+                        self._min_step_size_final = type_check(value, float) 
+
+                    @property
+                    def max_step_size_iter_final(self):
+                        return self._max_step_size_iter_final
+
+                    @max_step_size_iter_final.setter
+                    def max_step_size_iter_final(self, value):
+                        ''' 
+                        Number of iterations for last descent strategy
+                        '''
+                        self._max_step_size_iter_final = type_check(value, int) 
+
+                    @property
+                    def default_init_step_size(self):
+                        return self._default_init_step_size
+
+                    @default_init_step_size.setter
+                    def default_init_step_size(self, value):
+                        ''' 
+                        Initial step size
+                        '''
+                        self._default_init_step_size = type_check(value, float) 
+
+                    @property
+                    def step_ratio(self):
+                        return self._step_ratio
+
+                    @step_ratio.setter
+                    def step_ratio(self, value):
+                        ''' 
+                        Ratio used to decrease the step
+                        '''
+                        self._step_ratio = type_check(value, float) 
+
+                    @property
+                    def Armijo(self):
+                        return self._Armijo
+
+                    @Armijo.setter
+                    def Armijo(self, value):
+                        ''' 
+                        Options for Armijo.
+                        \nRequired: []
+                        \nOptional: ['c']
+                        '''
+                        self._Armijo = type_check(value, self.Armijo) 
+
+                    @property
+                    def RobustArmijo(self):
+                        return self._RobustArmijo
+
+                    @RobustArmijo.setter
+                    def RobustArmijo(self, value):
+                        ''' 
+                        Options for RobustArmijo.
+                        \nRequired: []
+                        \nOptional: ['delta_relative_tolerance']
+                        '''
+                        self._RobustArmijo = type_check(value, self.RobustArmijo) 
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict(),"RobustArmijo": self._RobustArmijo.as_dict(),})
+
+                    class Armijo(object):
+                        '''Options for Armijo.
+                        \nRequired: []
+                        \nOptional: ['c']'''
+                        def __init__(
+                            self,
+                            c: float = 0.0001
+                        ):
+                            self._c = type_check(c, float) if c is not None else None
+
+                        @property
+                        def c(self):
+                            return self._c
+
+                        @c.setter
+                        def c(self, value):
+                            ''' 
+                            Armijo c parameter.
+                            '''
+                            self._c = type_check(value, float) 
+
+                        def check_required(self):
+
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"c": self._c,})
+
+
+                    class RobustArmijo(object):
+                        '''Options for RobustArmijo.
+                        \nRequired: []
+                        \nOptional: ['delta_relative_tolerance']'''
+                        def __init__(
+                            self,
+                            delta_relative_tolerance: float = 0.1
+                        ):
+                            self._delta_relative_tolerance = type_check(delta_relative_tolerance, float) if delta_relative_tolerance is not None else None
+
+                        @property
+                        def delta_relative_tolerance(self):
+                            return self._delta_relative_tolerance
+
+                        @delta_relative_tolerance.setter
+                        def delta_relative_tolerance(self, value):
+                            ''' 
+                            Relative tolerance on E to switch to approximate.
+                            '''
+                            self._delta_relative_tolerance = type_check(value, float) 
+
+                        def check_required(self):
+
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"delta_relative_tolerance": self._delta_relative_tolerance,})
+
+
+
                 class LBFGS(object):
                     '''Options for LBFGS.
                     \nRequired: []
@@ -21777,220 +20666,6 @@ class Root(object):
                         return drop_none({"erase_component_probability": self._erase_component_probability,})
 
 
-                class Line_search(object):
-                    '''Settings for line-search in the nonlinear solver
-                    \nRequired: []
-                    \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']'''
-                    class Method(str, Enum):
-                        ARMIJO = 'Armijo'
-                        ROBUSTARMIJO = 'RobustArmijo'
-                        BACKTRACKING = 'Backtracking'
-                        NONE = 'None'
-
-                    def __init__(
-                        self,
-                        method: "Method" = 'RobustArmijo',
-                        use_grad_norm_tol: float = 1e-06,
-                        min_step_size: float = 1e-10,
-                        max_step_size_iter: int = 30,
-                        min_step_size_final: float = 1e-20,
-                        max_step_size_iter_final: int = 100,
-                        default_init_step_size: float = 1.0,
-                        step_ratio: float = 0.5,
-                        Armijo: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Line_search.Armijo"] = None,
-                        RobustArmijo: Optional["Root.Solver.Augmented_lagrangian.Nonlinear.Line_search.RobustArmijo"] = None
-                    ):
-                        self._method = enum_check(method, self.Method)
-                        self._use_grad_norm_tol = type_check(use_grad_norm_tol, float) if use_grad_norm_tol is not None else None
-                        self._min_step_size = type_check(min_step_size, float) if min_step_size is not None else None
-                        self._max_step_size_iter = type_check(max_step_size_iter, int) if max_step_size_iter is not None else None
-                        self._min_step_size_final = type_check(min_step_size_final, float) if min_step_size_final is not None else None
-                        self._max_step_size_iter_final = type_check(max_step_size_iter_final, int) if max_step_size_iter_final is not None else None
-                        self._default_init_step_size = type_check(default_init_step_size, float) if default_init_step_size is not None else None
-                        self._step_ratio = type_check(step_ratio, float) if step_ratio is not None else None
-                        self._Armijo = type_check(Armijo, self.Armijo) if Armijo else self.Armijo()
-                        self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo else self.RobustArmijo()
-
-                    @property
-                    def method(self):
-                        return self._method
-
-                    @method.setter
-                    def method(self, value):
-                        ''' 
-                        Line-search type
-                        '''
-                        self._method = enum_check(value, self.Method) 
-
-                    @property
-                    def use_grad_norm_tol(self):
-                        return self._use_grad_norm_tol
-
-                    @use_grad_norm_tol.setter
-                    def use_grad_norm_tol(self, value):
-                        ''' 
-                        When the energy is smaller than use_grad_norm_tol, line-search uses norm of gradient instead of energy
-                        '''
-                        self._use_grad_norm_tol = type_check(value, float) 
-
-                    @property
-                    def min_step_size(self):
-                        return self._min_step_size
-
-                    @min_step_size.setter
-                    def min_step_size(self, value):
-                        ''' 
-                        Mimimum step size
-                        '''
-                        self._min_step_size = type_check(value, float) 
-
-                    @property
-                    def max_step_size_iter(self):
-                        return self._max_step_size_iter
-
-                    @max_step_size_iter.setter
-                    def max_step_size_iter(self, value):
-                        ''' 
-                        Number of iterations
-                        '''
-                        self._max_step_size_iter = type_check(value, int) 
-
-                    @property
-                    def min_step_size_final(self):
-                        return self._min_step_size_final
-
-                    @min_step_size_final.setter
-                    def min_step_size_final(self, value):
-                        ''' 
-                        Mimimum step size for last descent strategy
-                        '''
-                        self._min_step_size_final = type_check(value, float) 
-
-                    @property
-                    def max_step_size_iter_final(self):
-                        return self._max_step_size_iter_final
-
-                    @max_step_size_iter_final.setter
-                    def max_step_size_iter_final(self, value):
-                        ''' 
-                        Number of iterations for last descent strategy
-                        '''
-                        self._max_step_size_iter_final = type_check(value, int) 
-
-                    @property
-                    def default_init_step_size(self):
-                        return self._default_init_step_size
-
-                    @default_init_step_size.setter
-                    def default_init_step_size(self, value):
-                        ''' 
-                        Initial step size
-                        '''
-                        self._default_init_step_size = type_check(value, float) 
-
-                    @property
-                    def step_ratio(self):
-                        return self._step_ratio
-
-                    @step_ratio.setter
-                    def step_ratio(self, value):
-                        ''' 
-                        Ratio used to decrease the step
-                        '''
-                        self._step_ratio = type_check(value, float) 
-
-                    @property
-                    def Armijo(self):
-                        return self._Armijo
-
-                    @Armijo.setter
-                    def Armijo(self, value):
-                        ''' 
-                        Options for Armijo.
-                        \nRequired: []
-                        \nOptional: ['c']
-                        '''
-                        self._Armijo = type_check(value, self.Armijo) 
-
-                    @property
-                    def RobustArmijo(self):
-                        return self._RobustArmijo
-
-                    @RobustArmijo.setter
-                    def RobustArmijo(self, value):
-                        ''' 
-                        Options for RobustArmijo.
-                        \nRequired: []
-                        \nOptional: ['delta_relative_tolerance']
-                        '''
-                        self._RobustArmijo = type_check(value, self.RobustArmijo) 
-
-                    def check_required(self):
-
-                        return
-
-                    def as_dict(self):
-                        return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict(),"RobustArmijo": self._RobustArmijo.as_dict(),})
-
-                    class Armijo(object):
-                        '''Options for Armijo.
-                        \nRequired: []
-                        \nOptional: ['c']'''
-                        def __init__(
-                            self,
-                            c: float = 0.0001
-                        ):
-                            self._c = type_check(c, float) if c is not None else None
-
-                        @property
-                        def c(self):
-                            return self._c
-
-                        @c.setter
-                        def c(self, value):
-                            ''' 
-                            Armijo c parameter.
-                            '''
-                            self._c = type_check(value, float) 
-
-                        def check_required(self):
-
-                            return
-
-                        def as_dict(self):
-                            return drop_none({"c": self._c,})
-
-
-                    class RobustArmijo(object):
-                        '''Options for RobustArmijo.
-                        \nRequired: []
-                        \nOptional: ['delta_relative_tolerance']'''
-                        def __init__(
-                            self,
-                            delta_relative_tolerance: float = 0.1
-                        ):
-                            self._delta_relative_tolerance = type_check(delta_relative_tolerance, float) if delta_relative_tolerance is not None else None
-
-                        @property
-                        def delta_relative_tolerance(self):
-                            return self._delta_relative_tolerance
-
-                        @delta_relative_tolerance.setter
-                        def delta_relative_tolerance(self, value):
-                            ''' 
-                            Relative tolerance on E to switch to approximate.
-                            '''
-                            self._delta_relative_tolerance = type_check(value, float) 
-
-                        def check_required(self):
-
-                            return
-
-                        def as_dict(self):
-                            return drop_none({"delta_relative_tolerance": self._delta_relative_tolerance,})
-
-
-
                 class Box_constraints(object):
                     '''There is no definition
                     \nRequired: []
@@ -22178,33 +20853,22 @@ class Root(object):
         class Contact(object):
             '''Settings for contact handling in the solver.
             \nRequired: []
-            \nOptional: ['initial_barrier_stiffness', 'CCD', 'friction_iterations', 'tangential_adhesion_iterations', 'friction_convergence_tol', 'barrier_stiffness']'''
+            \nOptional: ['CCD', 'friction_iterations', 'tangential_adhesion_iterations', 'friction_convergence_tol', 'barrier_stiffness', 'initial_barrier_stiffness']'''
             def __init__(
                 self,
-                initial_barrier_stiffness: float = 1.0,
                 CCD: Optional["Root.Solver.Contact.CCD"] = None,
                 friction_iterations: int = 1,
                 tangential_adhesion_iterations: int = 1,
                 friction_convergence_tol: float = 0.01,
-                barrier_stiffness: object = None
+                barrier_stiffness: object = None,
+                initial_barrier_stiffness: float = 1.0
             ):
-                self._initial_barrier_stiffness = type_check(initial_barrier_stiffness, float) if initial_barrier_stiffness is not None else None
                 self._CCD = type_check(CCD, self.CCD) if CCD else self.CCD()
                 self._friction_iterations = type_check(friction_iterations, int) if friction_iterations is not None else None
                 self._tangential_adhesion_iterations = type_check(tangential_adhesion_iterations, int) if tangential_adhesion_iterations is not None else None
                 self._friction_convergence_tol = type_check(friction_convergence_tol, float) if friction_convergence_tol is not None else None
                 self._barrier_stiffness = inline_check(barrier_stiffness, [str, float], []) if barrier_stiffness is not None else None
-
-            @property
-            def initial_barrier_stiffness(self):
-                return self._initial_barrier_stiffness
-
-            @initial_barrier_stiffness.setter
-            def initial_barrier_stiffness(self, value):
-                ''' 
-                Initial barrier stiffness if adaptive barrier is used.
-                '''
-                self._initial_barrier_stiffness = type_check(value, float) 
+                self._initial_barrier_stiffness = type_check(initial_barrier_stiffness, float) if initial_barrier_stiffness is not None else None
 
             @property
             def CCD(self):
@@ -22265,12 +20929,23 @@ class Root(object):
                 '''
                 self._barrier_stiffness = inline_check(value, [str, float], []) 
 
+            @property
+            def initial_barrier_stiffness(self):
+                return self._initial_barrier_stiffness
+
+            @initial_barrier_stiffness.setter
+            def initial_barrier_stiffness(self, value):
+                ''' 
+                Initial barrier stiffness if adaptive barrier is used.
+                '''
+                self._initial_barrier_stiffness = type_check(value, float) 
+
             def check_required(self):
 
                 return
 
             def as_dict(self):
-                return drop_none({"initial_barrier_stiffness": self._initial_barrier_stiffness,"CCD": self._CCD.as_dict(),"friction_iterations": self._friction_iterations,"tangential_adhesion_iterations": self._tangential_adhesion_iterations,"friction_convergence_tol": self._friction_convergence_tol,"barrier_stiffness": inline_as_dict(self._barrier_stiffness),})
+                return drop_none({"CCD": self._CCD.as_dict(),"friction_iterations": self._friction_iterations,"tangential_adhesion_iterations": self._tangential_adhesion_iterations,"friction_convergence_tol": self._friction_convergence_tol,"barrier_stiffness": inline_as_dict(self._barrier_stiffness),"initial_barrier_stiffness": self._initial_barrier_stiffness,})
 
             class CCD(object):
                 '''CCD options
@@ -22394,7 +21069,7 @@ class Root(object):
             class Item(object):
                 '''Apply Rayleigh damping to the given Form with a stiffness ratio.
                 \nRequired: ['form', 'stiffness_ratio']
-                \nOptional: ['stiffness', 'lagging_iterations']'''
+                \nOptional: ['lagging_iterations']'''
                 class Form(str, Enum):
                     ELASTICITY = 'elasticity'
                     CONTACT = 'contact'
@@ -22404,12 +21079,10 @@ class Root(object):
                     self,
                     form: "Form" = None,
                     stiffness_ratio: float = None,
-                    stiffness: float = None,
                     lagging_iterations: int = 1
                 ):
                     self._form = enum_check(form, self.Form)
                     self._stiffness_ratio = range_check(type_check(stiffness_ratio, float), 0, None) if stiffness_ratio is not None else None
-                    self._stiffness = range_check(type_check(stiffness, float), 0, None) if stiffness is not None else None
                     self._lagging_iterations = type_check(lagging_iterations, int) if lagging_iterations is not None else None
 
                 @property
@@ -22435,17 +21108,6 @@ class Root(object):
                     self._stiffness_ratio = range_check(type_check(value, float), 0, None) 
 
                 @property
-                def stiffness(self):
-                    return self._stiffness
-
-                @stiffness.setter
-                def stiffness(self, value):
-                    ''' 
-                    Ratio of to damp.
-                    '''
-                    self._stiffness = range_check(type_check(value, float), 0, None) 
-
-                @property
                 def lagging_iterations(self):
                     return self._lagging_iterations
 
@@ -22466,7 +21128,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"form": self._form.value if self._form is not None else None,"stiffness_ratio": self._stiffness_ratio,"stiffness": self._stiffness,"lagging_iterations": self._lagging_iterations,})
+                    return drop_none({"form": self._form.value if self._form is not None else None,"stiffness_ratio": self._stiffness_ratio,"lagging_iterations": self._lagging_iterations,})
 
 
             class Object2(object):
@@ -22538,74 +21200,30 @@ class Root(object):
         class Advanced(object):
             '''Advanced settings for the solver
             \nRequired: []
-            \nOptional: ['check_inversion', 'jacobian_threshold', 'characteristic_length', 'characteristic_force_density', 'cache_size', 'lump_mass_matrix', 'lagged_regularization_weight', 'lagged_regularization_iterations']'''
+            \nOptional: ['cache_size', 'lump_mass_matrix', 'lagged_regularization_weight', 'lagged_regularization_iterations', 'check_inversion', 'jacobian_threshold', 'characteristic_length', 'characteristic_force_density']'''
             class Check_inversion(str, Enum):
                 DISCRETE = 'Discrete'
                 CONSERVATIVE = 'Conservative'
 
             def __init__(
                 self,
-                check_inversion: "Check_inversion" = 'Discrete',
-                jacobian_threshold: float = 0.0,
-                characteristic_length: float = -1.0,
-                characteristic_force_density: float = 10000.0,
                 cache_size: int = 900000,
                 lump_mass_matrix: bool = False,
                 lagged_regularization_weight: float = 0.0,
-                lagged_regularization_iterations: int = 1
+                lagged_regularization_iterations: int = 1,
+                check_inversion: "Check_inversion" = 'Discrete',
+                jacobian_threshold: float = 0.0,
+                characteristic_length: float = -1.0,
+                characteristic_force_density: float = 10000.0
             ):
-                self._check_inversion = enum_check(check_inversion, self.Check_inversion)
-                self._jacobian_threshold = type_check(jacobian_threshold, float) if jacobian_threshold is not None else None
-                self._characteristic_length = type_check(characteristic_length, float) if characteristic_length is not None else None
-                self._characteristic_force_density = type_check(characteristic_force_density, float) if characteristic_force_density is not None else None
                 self._cache_size = type_check(cache_size, int) if cache_size is not None else None
                 self._lump_mass_matrix = type_check(lump_mass_matrix, bool) if lump_mass_matrix is not None else None
                 self._lagged_regularization_weight = type_check(lagged_regularization_weight, float) if lagged_regularization_weight is not None else None
                 self._lagged_regularization_iterations = type_check(lagged_regularization_iterations, int) if lagged_regularization_iterations is not None else None
-
-            @property
-            def check_inversion(self):
-                return self._check_inversion
-
-            @check_inversion.setter
-            def check_inversion(self, value):
-                ''' 
-                The method for checking if any element is flipped.
-                '''
-                self._check_inversion = enum_check(value, self.Check_inversion) 
-
-            @property
-            def jacobian_threshold(self):
-                return self._jacobian_threshold
-
-            @jacobian_threshold.setter
-            def jacobian_threshold(self, value):
-                ''' 
-                .
-                '''
-                self._jacobian_threshold = type_check(value, float) 
-
-            @property
-            def characteristic_length(self):
-                return self._characteristic_length
-
-            @characteristic_length.setter
-            def characteristic_length(self, value):
-                ''' 
-                Characteristic length, used for tolerances. Defaults to bounding box diagonal if not specified.
-                '''
-                self._characteristic_length = type_check(value, float) 
-
-            @property
-            def characteristic_force_density(self):
-                return self._characteristic_force_density
-
-            @characteristic_force_density.setter
-            def characteristic_force_density(self, value):
-                ''' 
-                Characteristic force density, used for tolerances.
-                '''
-                self._characteristic_force_density = type_check(value, float) 
+                self._check_inversion = enum_check(check_inversion, self.Check_inversion)
+                self._jacobian_threshold = type_check(jacobian_threshold, float) if jacobian_threshold is not None else None
+                self._characteristic_length = type_check(characteristic_length, float) if characteristic_length is not None else None
+                self._characteristic_force_density = type_check(characteristic_force_density, float) if characteristic_force_density is not None else None
 
             @property
             def cache_size(self):
@@ -22651,31 +21269,74 @@ class Root(object):
                 '''
                 self._lagged_regularization_iterations = type_check(value, int) 
 
+            @property
+            def check_inversion(self):
+                return self._check_inversion
+
+            @check_inversion.setter
+            def check_inversion(self, value):
+                ''' 
+                The method for checking if any element is flipped.
+                '''
+                self._check_inversion = enum_check(value, self.Check_inversion) 
+
+            @property
+            def jacobian_threshold(self):
+                return self._jacobian_threshold
+
+            @jacobian_threshold.setter
+            def jacobian_threshold(self, value):
+                ''' 
+                .
+                '''
+                self._jacobian_threshold = type_check(value, float) 
+
+            @property
+            def characteristic_length(self):
+                return self._characteristic_length
+
+            @characteristic_length.setter
+            def characteristic_length(self, value):
+                ''' 
+                Characteristic length, used for tolerances. Defaults to bounding box diagonal if not specified.
+                '''
+                self._characteristic_length = type_check(value, float) 
+
+            @property
+            def characteristic_force_density(self):
+                return self._characteristic_force_density
+
+            @characteristic_force_density.setter
+            def characteristic_force_density(self, value):
+                ''' 
+                Characteristic force density, used for tolerances.
+                '''
+                self._characteristic_force_density = type_check(value, float) 
+
             def check_required(self):
 
                 return
 
             def as_dict(self):
-                return drop_none({"check_inversion": self._check_inversion.value if self._check_inversion is not None else None,"jacobian_threshold": self._jacobian_threshold,"characteristic_length": self._characteristic_length,"characteristic_force_density": self._characteristic_force_density,"cache_size": self._cache_size,"lump_mass_matrix": self._lump_mass_matrix,"lagged_regularization_weight": self._lagged_regularization_weight,"lagged_regularization_iterations": self._lagged_regularization_iterations,})
+                return drop_none({"cache_size": self._cache_size,"lump_mass_matrix": self._lump_mass_matrix,"lagged_regularization_weight": self._lagged_regularization_weight,"lagged_regularization_iterations": self._lagged_regularization_iterations,"check_inversion": self._check_inversion.value if self._check_inversion is not None else None,"jacobian_threshold": self._jacobian_threshold,"characteristic_length": self._characteristic_length,"characteristic_force_density": self._characteristic_force_density,})
 
 
 
     class Boundary_conditions(object):
         '''The settings for boundary conditions.
         \nRequired: []
-        \nOptional: ['periodic_boundary', 'rhs', 'dirichlet_boundary', 'neumann_boundary', 'normal_aligned_neumann_boundary', 'pressure_boundary', 'pressure_cavity', 'obstacle_displacements']'''
+        \nOptional: ['rhs', 'dirichlet_boundary', 'neumann_boundary', 'normal_aligned_neumann_boundary', 'pressure_boundary', 'pressure_cavity', 'obstacle_displacements', 'periodic_boundary']'''
         def __init__(
             self,
-            periodic_boundary: Optional["Root.Boundary_conditions.Periodic_boundary"] = None,
             rhs: Optional["Root.Boundary_conditions.Rhs"] = None,
             dirichlet_boundary: Optional["Root.Boundary_conditions.Dirichlet_boundary"] = None,
             neumann_boundary: Optional["Root.Boundary_conditions.Neumann_boundary"] = None,
             normal_aligned_neumann_boundary: Optional["Root.Boundary_conditions.Normal_aligned_neumann_boundary"] = None,
             pressure_boundary: Optional["Root.Boundary_conditions.Pressure_boundary"] = None,
             pressure_cavity: Optional["Root.Boundary_conditions.Pressure_cavity"] = None,
-            obstacle_displacements: Optional["Root.Boundary_conditions.Obstacle_displacements"] = None
+            obstacle_displacements: Optional["Root.Boundary_conditions.Obstacle_displacements"] = None,
+            periodic_boundary: Optional["Root.Boundary_conditions.Periodic_boundary"] = None
         ):
-            self._periodic_boundary = type_check(periodic_boundary, self.Periodic_boundary) if periodic_boundary else self.Periodic_boundary()
             self._rhs = type_check(rhs, self.Rhs) if isinstance(rhs, self.Rhs) else self.Rhs(rhs) if rhs is not None else self.Rhs()
             self._dirichlet_boundary = type_check(dirichlet_boundary, self.Dirichlet_boundary) if dirichlet_boundary else self.Dirichlet_boundary()
             self._neumann_boundary = type_check(neumann_boundary, self.Neumann_boundary) if neumann_boundary else self.Neumann_boundary()
@@ -22683,19 +21344,7 @@ class Root(object):
             self._pressure_boundary = type_check(pressure_boundary, self.Pressure_boundary) if pressure_boundary else self.Pressure_boundary()
             self._pressure_cavity = type_check(pressure_cavity, self.Pressure_cavity) if pressure_cavity else self.Pressure_cavity()
             self._obstacle_displacements = type_check(obstacle_displacements, self.Obstacle_displacements) if obstacle_displacements else self.Obstacle_displacements()
-
-        @property
-        def periodic_boundary(self):
-            return self._periodic_boundary
-
-        @periodic_boundary.setter
-        def periodic_boundary(self, value):
-            ''' 
-            Options for periodic boundary conditions.
-            \nRequired: []
-            \nOptional: ['force_zero_mean', 'enabled', 'tolerance', 'correspondence', 'fixed_macro_strain', 'linear_displacement_offset']
-            '''
-            self._periodic_boundary = type_check(value, self.Periodic_boundary) 
+            self._periodic_boundary = type_check(periodic_boundary, self.Periodic_boundary) if periodic_boundary else self.Periodic_boundary()
 
         @property
         def rhs(self):
@@ -22788,166 +21437,25 @@ class Root(object):
             '''
             self._obstacle_displacements = type_check(value, self.Obstacle_displacements) 
 
+        @property
+        def periodic_boundary(self):
+            return self._periodic_boundary
+
+        @periodic_boundary.setter
+        def periodic_boundary(self, value):
+            ''' 
+            Options for periodic boundary conditions.
+            \nRequired: []
+            \nOptional: ['enabled', 'tolerance', 'correspondence', 'linear_displacement_offset', 'fixed_macro_strain', 'force_zero_mean']
+            '''
+            self._periodic_boundary = type_check(value, self.Periodic_boundary) 
+
         def check_required(self):
 
             return
 
         def as_dict(self):
-            return drop_none({"periodic_boundary": self._periodic_boundary.as_dict(),"rhs": self._rhs.as_dict(),"dirichlet_boundary": self._dirichlet_boundary.as_dict(),"neumann_boundary": self._neumann_boundary.as_dict(),"normal_aligned_neumann_boundary": self._normal_aligned_neumann_boundary.as_dict(),"pressure_boundary": self._pressure_boundary.as_dict(),"pressure_cavity": self._pressure_cavity.as_dict(),"obstacle_displacements": self._obstacle_displacements.as_dict(),})
-
-        class Periodic_boundary(object):
-            '''Options for periodic boundary conditions.
-            \nRequired: []
-            \nOptional: ['force_zero_mean', 'enabled', 'tolerance', 'correspondence', 'fixed_macro_strain', 'linear_displacement_offset']'''
-            def __init__(
-                self,
-                force_zero_mean: bool = False,
-                enabled: bool = False,
-                tolerance: float = 1e-05,
-                correspondence: Optional[Iterable[list]] = None,
-                fixed_macro_strain: Optional[Iterable[int]] = None,
-                linear_displacement_offset: Optional[Iterable[list]] = None
-            ):
-                self._force_zero_mean = type_check(force_zero_mean, bool) if force_zero_mean is not None else None
-                self._enabled = type_check(enabled, bool) if enabled is not None else None
-                self._tolerance = type_check(tolerance, float) if tolerance is not None else None
-                self._correspondence = [] if correspondence is None else [type_check(i, list) for i in correspondence]
-                self._fixed_macro_strain = [] if fixed_macro_strain is None else [type_check(i, int) for i in fixed_macro_strain]
-                self._linear_displacement_offset = [] if linear_displacement_offset is None else [type_check(i, list) for i in linear_displacement_offset]
-
-            @property
-            def force_zero_mean(self):
-                return self._force_zero_mean
-
-            @force_zero_mean.setter
-            def force_zero_mean(self, value):
-                ''' 
-                The periodic solution is not unique, set to true to find the solution with zero mean.
-                '''
-                self._force_zero_mean = type_check(value, bool) 
-
-            @property
-            def enabled(self):
-                return self._enabled
-
-            @enabled.setter
-            def enabled(self, value):
-                ''' 
-                There is no definition
-                '''
-                self._enabled = type_check(value, bool) 
-
-            @property
-            def tolerance(self):
-                return self._tolerance
-
-            @tolerance.setter
-            def tolerance(self, value):
-                ''' 
-                Relative tolerance of deciding periodic correspondence
-                '''
-                self._tolerance = type_check(value, float) 
-
-            @property
-            def correspondence(self):
-                return self._correspondence
-
-            @correspondence.setter
-            def correspondence(self, value):
-                ''' 
-                Periodic directions for periodic boundary conditions. If not specified, default to axis-aligned directions.
-                \nRequired: []
-                \nOptional: ['item']
-                '''
-                self._correspondence = [type_check(i, list) for i in (type_check(value, list) if value else [])]
-
-            def correspondence_add(self, value):
-                '''Add to list '''
-                self._correspondence.append(type_check(value, list))
-
-            def correspondence_clear(self):
-                '''Clear list (make empty)'''
-                self._correspondence.clear()
-
-            def correspondence_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._correspondence.pop(index)
-
-            def correspondence_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._correspondence.remove(item)
-
-
-            @property
-            def fixed_macro_strain(self):
-                return self._fixed_macro_strain
-
-            @fixed_macro_strain.setter
-            def fixed_macro_strain(self, value):
-                ''' 
-                There is no definition
-                \nRequired: []
-                \nOptional: ['item']
-                '''
-                self._fixed_macro_strain = [type_check(i, int) for i in (type_check(value, list) if value else [])]
-
-            def fixed_macro_strain_add(self, value):
-                '''Add to list '''
-                self._fixed_macro_strain.append(type_check(value, int))
-
-            def fixed_macro_strain_clear(self):
-                '''Clear list (make empty)'''
-                self._fixed_macro_strain.clear()
-
-            def fixed_macro_strain_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._fixed_macro_strain.pop(index)
-
-            def fixed_macro_strain_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._fixed_macro_strain.remove(item)
-
-
-            @property
-            def linear_displacement_offset(self):
-                return self._linear_displacement_offset
-
-            @linear_displacement_offset.setter
-            def linear_displacement_offset(self, value):
-                ''' 
-                There is no definition
-                \nRequired: []
-                \nOptional: ['item']
-                '''
-                self._linear_displacement_offset = [type_check(i, list) for i in (type_check(value, list) if value else [])]
-
-            def linear_displacement_offset_add(self, value):
-                '''Add to list '''
-                self._linear_displacement_offset.append(type_check(value, list))
-
-            def linear_displacement_offset_clear(self):
-                '''Clear list (make empty)'''
-                self._linear_displacement_offset.clear()
-
-            def linear_displacement_offset_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._linear_displacement_offset.pop(index)
-
-            def linear_displacement_offset_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._linear_displacement_offset.remove(item)
-
-
-            def check_required(self):
-
-                return
-
-            def as_dict(self):
-                return drop_none({"force_zero_mean": self._force_zero_mean,"enabled": self._enabled,"tolerance": self._tolerance,"correspondence": self._correspondence,"fixed_macro_strain": self._fixed_macro_strain,"linear_displacement_offset": self._linear_displacement_offset,})
-
+            return drop_none({"rhs": self._rhs.as_dict(),"dirichlet_boundary": self._dirichlet_boundary.as_dict(),"neumann_boundary": self._neumann_boundary.as_dict(),"normal_aligned_neumann_boundary": self._normal_aligned_neumann_boundary.as_dict(),"pressure_boundary": self._pressure_boundary.as_dict(),"pressure_cavity": self._pressure_cavity.as_dict(),"obstacle_displacements": self._obstacle_displacements.as_dict(),"periodic_boundary": self._periodic_boundary.as_dict(),})
 
         class Rhs(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
@@ -23134,20 +21642,20 @@ class Root(object):
             class Item(object):
                 '''Dirichlet boundary condition.
                 \nRequired: ['id', 'value']
-                \nOptional: ['interpolation', 'dimension', 'time_reference']'''
+                \nOptional: ['time_reference', 'interpolation', 'dimension']'''
                 def __init__(
                     self,
                     id: object = None,
                     value: Optional["Root.Boundary_conditions.Dirichlet_boundary.Item.Value"] = None,
+                    time_reference: Optional[Iterable[float]] = None,
                     interpolation: Optional["Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation"] = None,
-                    dimension: Optional[Iterable[bool]] = None,
-                    time_reference: Optional[Iterable[float]] = None
+                    dimension: Optional[Iterable[bool]] = None
                 ):
                     self._id = inline_check(id, [int, str], []) if id is not None else None
                     self._value = type_check(value, self.Value) if value else self.Value()
+                    self._time_reference = [] if time_reference is None else [type_check(i, float) for i in time_reference]
                     self._interpolation = type_check(interpolation, self.Interpolation) if interpolation else self.Interpolation()
                     self._dimension = [] if dimension is None else [type_check(i, bool) for i in dimension]
-                    self._time_reference = [] if time_reference is None else [type_check(i, float) for i in time_reference]
 
                 @property
                 def id(self):
@@ -23174,6 +21682,37 @@ class Root(object):
                     \nOptional: ['item', 'string', 'list']
                     '''
                     self._value = type_check(value, self.Value) 
+
+                @property
+                def time_reference(self):
+                    return self._time_reference
+
+                @time_reference.setter
+                def time_reference(self, value):
+                    ''' 
+                    List of times when the Dirichlet boundary condition is specified
+                    \nRequired: []
+                    \nOptional: ['item']
+                    '''
+                    self._time_reference = [type_check(i, float) for i in (type_check(value, list) if value else [])]
+
+                def time_reference_add(self, value):
+                    '''Add to list '''
+                    self._time_reference.append(type_check(value, float))
+
+                def time_reference_clear(self):
+                    '''Clear list (make empty)'''
+                    self._time_reference.clear()
+
+                def time_reference_pop(self, index=-1):
+                    '''Remove by index from list'''
+                    return self._time_reference.pop(index)
+
+                def time_reference_remove(self, item):
+                    '''Safe remove specific item from list'''
+                    if item in self._list:
+                        self._time_reference.remove(item)
+
 
                 @property
                 def interpolation(self):
@@ -23219,37 +21758,6 @@ class Root(object):
                         self._dimension.remove(item)
 
 
-                @property
-                def time_reference(self):
-                    return self._time_reference
-
-                @time_reference.setter
-                def time_reference(self, value):
-                    ''' 
-                    List of times when the Dirichlet boundary condition is specified
-                    \nRequired: []
-                    \nOptional: ['item']
-                    '''
-                    self._time_reference = [type_check(i, float) for i in (type_check(value, list) if value else [])]
-
-                def time_reference_add(self, value):
-                    '''Add to list '''
-                    self._time_reference.append(type_check(value, float))
-
-                def time_reference_clear(self):
-                    '''Clear list (make empty)'''
-                    self._time_reference.clear()
-
-                def time_reference_pop(self, index=-1):
-                    '''Remove by index from list'''
-                    return self._time_reference.pop(index)
-
-                def time_reference_remove(self, item):
-                    '''Safe remove specific item from list'''
-                    if item in self._list:
-                        self._time_reference.remove(item)
-
-
                 def check_required(self):
 
                     if self.id is None:
@@ -23258,7 +21766,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"id": inline_as_dict(self._id),"value": self._value.as_dict(),"interpolation": self._interpolation.as_dict(),"dimension": self._dimension,"time_reference": self._time_reference,})
+                    return drop_none({"id": inline_as_dict(self._id),"value": self._value.as_dict(),"time_reference": self._time_reference,"interpolation": self._interpolation.as_dict(),"dimension": self._dimension,})
 
                 class Value(object):
                     '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
@@ -23604,10 +22112,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
                             return
 
@@ -23729,10 +22237,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
                             return
 
@@ -23854,10 +22362,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
                             return
 
@@ -24324,10 +22832,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
                             return
 
@@ -24449,10 +22957,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
                             return
 
@@ -24574,10 +23082,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
                             return
 
@@ -24978,10 +23486,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.values does not have value")
                             return
 
@@ -25103,10 +23611,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.values does not have value")
                             return
 
@@ -25228,10 +23736,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.values does not have value")
                             return
 
@@ -26060,10 +24568,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.values does not have value")
                             return
 
@@ -26185,10 +24693,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.values does not have value")
                             return
 
@@ -26310,10 +24818,10 @@ class Root(object):
                             if self.type is None:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.type does not have value")
 
-                            if self.points:
+                            if not self.points:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.points does not have value")
 
-                            if self.values:
+                            if not self.values:
                                 print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.values does not have value")
                             return
 
@@ -26322,6 +24830,160 @@ class Root(object):
 
 
 
+
+
+        class Periodic_boundary(object):
+            '''Options for periodic boundary conditions.
+            \nRequired: []
+            \nOptional: ['enabled', 'tolerance', 'correspondence', 'linear_displacement_offset', 'fixed_macro_strain', 'force_zero_mean']'''
+            def __init__(
+                self,
+                enabled: bool = False,
+                tolerance: float = 1e-05,
+                correspondence: Optional[Iterable[list]] = None,
+                linear_displacement_offset: Optional[Iterable[list]] = None,
+                fixed_macro_strain: Optional[Iterable[int]] = None,
+                force_zero_mean: bool = False
+            ):
+                self._enabled = type_check(enabled, bool) if enabled is not None else None
+                self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+                self._correspondence = [] if correspondence is None else [type_check(i, list) for i in correspondence]
+                self._linear_displacement_offset = [] if linear_displacement_offset is None else [type_check(i, list) for i in linear_displacement_offset]
+                self._fixed_macro_strain = [] if fixed_macro_strain is None else [type_check(i, int) for i in fixed_macro_strain]
+                self._force_zero_mean = type_check(force_zero_mean, bool) if force_zero_mean is not None else None
+
+            @property
+            def enabled(self):
+                return self._enabled
+
+            @enabled.setter
+            def enabled(self, value):
+                ''' 
+                There is no definition
+                '''
+                self._enabled = type_check(value, bool) 
+
+            @property
+            def tolerance(self):
+                return self._tolerance
+
+            @tolerance.setter
+            def tolerance(self, value):
+                ''' 
+                Relative tolerance of deciding periodic correspondence
+                '''
+                self._tolerance = type_check(value, float) 
+
+            @property
+            def correspondence(self):
+                return self._correspondence
+
+            @correspondence.setter
+            def correspondence(self, value):
+                ''' 
+                Periodic directions for periodic boundary conditions. If not specified, default to axis-aligned directions.
+                \nRequired: []
+                \nOptional: ['item']
+                '''
+                self._correspondence = [type_check(i, list) for i in (type_check(value, list) if value else [])]
+
+            def correspondence_add(self, value):
+                '''Add to list '''
+                self._correspondence.append(type_check(value, list))
+
+            def correspondence_clear(self):
+                '''Clear list (make empty)'''
+                self._correspondence.clear()
+
+            def correspondence_pop(self, index=-1):
+                '''Remove by index from list'''
+                return self._correspondence.pop(index)
+
+            def correspondence_remove(self, item):
+                '''Safe remove specific item from list'''
+                if item in self._list:
+                    self._correspondence.remove(item)
+
+
+            @property
+            def linear_displacement_offset(self):
+                return self._linear_displacement_offset
+
+            @linear_displacement_offset.setter
+            def linear_displacement_offset(self, value):
+                ''' 
+                There is no definition
+                \nRequired: []
+                \nOptional: ['item']
+                '''
+                self._linear_displacement_offset = [type_check(i, list) for i in (type_check(value, list) if value else [])]
+
+            def linear_displacement_offset_add(self, value):
+                '''Add to list '''
+                self._linear_displacement_offset.append(type_check(value, list))
+
+            def linear_displacement_offset_clear(self):
+                '''Clear list (make empty)'''
+                self._linear_displacement_offset.clear()
+
+            def linear_displacement_offset_pop(self, index=-1):
+                '''Remove by index from list'''
+                return self._linear_displacement_offset.pop(index)
+
+            def linear_displacement_offset_remove(self, item):
+                '''Safe remove specific item from list'''
+                if item in self._list:
+                    self._linear_displacement_offset.remove(item)
+
+
+            @property
+            def fixed_macro_strain(self):
+                return self._fixed_macro_strain
+
+            @fixed_macro_strain.setter
+            def fixed_macro_strain(self, value):
+                ''' 
+                There is no definition
+                \nRequired: []
+                \nOptional: ['item']
+                '''
+                self._fixed_macro_strain = [type_check(i, int) for i in (type_check(value, list) if value else [])]
+
+            def fixed_macro_strain_add(self, value):
+                '''Add to list '''
+                self._fixed_macro_strain.append(type_check(value, int))
+
+            def fixed_macro_strain_clear(self):
+                '''Clear list (make empty)'''
+                self._fixed_macro_strain.clear()
+
+            def fixed_macro_strain_pop(self, index=-1):
+                '''Remove by index from list'''
+                return self._fixed_macro_strain.pop(index)
+
+            def fixed_macro_strain_remove(self, item):
+                '''Safe remove specific item from list'''
+                if item in self._list:
+                    self._fixed_macro_strain.remove(item)
+
+
+            @property
+            def force_zero_mean(self):
+                return self._force_zero_mean
+
+            @force_zero_mean.setter
+            def force_zero_mean(self, value):
+                ''' 
+                The periodic solution is not unique, set to true to find the solution with zero mean.
+                '''
+                self._force_zero_mean = type_check(value, bool) 
+
+            def check_required(self):
+
+                return
+
+            def as_dict(self):
+                return drop_none({"enabled": self._enabled,"tolerance": self._tolerance,"correspondence": self._correspondence,"linear_displacement_offset": self._linear_displacement_offset,"fixed_macro_strain": self._fixed_macro_strain,"force_zero_mean": self._force_zero_mean,})
 
 
 
@@ -26830,14 +25492,27 @@ class Root(object):
     class Constraints(object):
         '''soft and hard constraints
         \nRequired: []
-        \nOptional: ['hard', 'soft']'''
+        \nOptional: ['soft', 'hard']'''
         def __init__(
             self,
-            hard: Optional[Iterable[str]] = None,
-            soft: Optional["Root.Constraints.Soft"] = None
+            soft: Optional["Root.Constraints.Soft"] = None,
+            hard: Optional[Iterable[str]] = None
         ):
-            self._hard = [] if hard is None else [type_check(i, str) for i in hard]
             self._soft = type_check(soft, self.Soft) if soft else self.Soft()
+            self._hard = [] if hard is None else [type_check(i, str) for i in hard]
+
+        @property
+        def soft(self):
+            return self._soft
+
+        @soft.setter
+        def soft(self, value):
+            ''' 
+            list of file containing soft constraints
+            \nRequired: []
+            \nOptional: ['item']
+            '''
+            self._soft = type_check(value, self.Soft) 
 
         @property
         def hard(self):
@@ -26870,25 +25545,12 @@ class Root(object):
                 self._hard.remove(item)
 
 
-        @property
-        def soft(self):
-            return self._soft
-
-        @soft.setter
-        def soft(self, value):
-            ''' 
-            list of file containing soft constraints
-            \nRequired: []
-            \nOptional: ['item']
-            '''
-            self._soft = type_check(value, self.Soft) 
-
         def check_required(self):
 
             return
 
         def as_dict(self):
-            return drop_none({"hard": self._hard,"soft": self._soft.as_dict(),})
+            return drop_none({"soft": self._soft.as_dict(),"hard": self._hard,})
 
         class Soft(object):
             '''list of file containing soft constraints
@@ -26986,28 +25648,28 @@ class Root(object):
     class Output(object):
         '''output settings
         \nRequired: []
-        \nOptional: ['directory', 'stats', 'log', 'json', 'restart_json', 'paraview', 'data', 'reference', 'advanced']'''
+        \nOptional: ['directory', 'log', 'json', 'restart_json', 'paraview', 'data', 'advanced', 'reference', 'stats']'''
         def __init__(
             self,
             directory: str = '',
-            stats: bool = False,
             log: Optional["Root.Output.Log"] = None,
             json: str = '',
             restart_json: str = '',
             paraview: Optional["Root.Output.Paraview"] = None,
             data: Optional["Root.Output.Data"] = None,
+            advanced: Optional["Root.Output.Advanced"] = None,
             reference: Optional["Root.Output.Reference"] = None,
-            advanced: Optional["Root.Output.Advanced"] = None
+            stats: bool = False
         ):
             self._directory = type_check(directory, str) if directory is not None else None
-            self._stats = type_check(stats, bool) if stats is not None else None
             self._log = type_check(log, self.Log) if log else self.Log()
             self._json = type_check(json, str) if json is not None else None
             self._restart_json = type_check(restart_json, str) if restart_json is not None else None
             self._paraview = type_check(paraview, self.Paraview) if paraview else self.Paraview()
             self._data = type_check(data, self.Data) if data else self.Data()
-            self._reference = type_check(reference, self.Reference) if reference else self.Reference()
             self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+            self._reference = type_check(reference, self.Reference) if reference else self.Reference()
+            self._stats = type_check(stats, bool) if stats is not None else None
 
         @property
         def directory(self):
@@ -27019,17 +25681,6 @@ class Root(object):
             Directory for output files.
             '''
             self._directory = type_check(value, str) 
-
-        @property
-        def stats(self):
-            return self._stats
-
-        @stats.setter
-        def stats(self, value):
-            ''' 
-            Saves csv for energy and stats of the non linear solver.
-            '''
-            self._stats = type_check(value, bool) 
 
         @property
         def log(self):
@@ -27075,7 +25726,7 @@ class Root(object):
             ''' 
             Output in paraview format
             \nRequired: []
-            \nOptional: ['file_name', 'vismesh_rel_area', 'skip_frame', 'high_order_mesh', 'volume', 'surface', 'wireframe', 'points', 'fields', 'options']
+            \nOptional: ['file_name', 'vismesh_rel_area', 'skip_frame', 'high_order_mesh', 'volume', 'surface', 'wireframe', 'fields', 'points', 'options']
             '''
             self._paraview = type_check(value, self.Paraview) 
 
@@ -27093,6 +25744,19 @@ class Root(object):
             self._data = type_check(value, self.Data) 
 
         @property
+        def advanced(self):
+            return self._advanced
+
+        @advanced.setter
+        def advanced(self, value):
+            ''' 
+            Additional output options
+            \nRequired: []
+            \nOptional: ['timestep_prefix', 'sol_on_grid', 'compute_error', 'sol_at_node', 'vis_boundary_only', 'curved_mesh_size', 'save_solve_sequence_debug', 'save_ccd_debug_meshes', 'save_time_sequence', 'save_nl_solve_sequence', 'spectrum']
+            '''
+            self._advanced = type_check(value, self.Advanced) 
+
+        @property
         def reference(self):
             return self._reference
 
@@ -27106,24 +25770,22 @@ class Root(object):
             self._reference = type_check(value, self.Reference) 
 
         @property
-        def advanced(self):
-            return self._advanced
+        def stats(self):
+            return self._stats
 
-        @advanced.setter
-        def advanced(self, value):
+        @stats.setter
+        def stats(self, value):
             ''' 
-            Additional output options
-            \nRequired: []
-            \nOptional: ['timestep_prefix', 'sol_on_grid', 'compute_error', 'sol_at_node', 'vis_boundary_only', 'curved_mesh_size', 'save_solve_sequence_debug', 'save_ccd_debug_meshes', 'save_time_sequence', 'save_nl_solve_sequence', 'spectrum']
+            Saves csv for energy and stats of the non linear solver.
             '''
-            self._advanced = type_check(value, self.Advanced) 
+            self._stats = type_check(value, bool) 
 
         def check_required(self):
 
             return
 
         def as_dict(self):
-            return drop_none({"directory": self._directory,"stats": self._stats,"log": self._log.as_dict(),"json": self._json,"restart_json": self._restart_json,"paraview": self._paraview.as_dict(),"data": self._data.as_dict(),"reference": self._reference.as_dict(),"advanced": self._advanced.as_dict(),})
+            return drop_none({"directory": self._directory,"log": self._log.as_dict(),"json": self._json,"restart_json": self._restart_json,"paraview": self._paraview.as_dict(),"data": self._data.as_dict(),"advanced": self._advanced.as_dict(),"reference": self._reference.as_dict(),"stats": self._stats,})
 
         class Log(object):
             '''Setting for the output log.
@@ -27200,7 +25862,7 @@ class Root(object):
         class Paraview(object):
             '''Output in paraview format
             \nRequired: []
-            \nOptional: ['file_name', 'vismesh_rel_area', 'skip_frame', 'high_order_mesh', 'volume', 'surface', 'wireframe', 'points', 'fields', 'options']'''
+            \nOptional: ['file_name', 'vismesh_rel_area', 'skip_frame', 'high_order_mesh', 'volume', 'surface', 'wireframe', 'fields', 'points', 'options']'''
             def __init__(
                 self,
                 file_name: str = '',
@@ -27210,8 +25872,8 @@ class Root(object):
                 volume: bool = True,
                 surface: bool = False,
                 wireframe: bool = False,
-                points: bool = False,
                 fields: Optional[Iterable[str]] = None,
+                points: bool = False,
                 options: Optional["Root.Output.Paraview.Options"] = None
             ):
                 self._file_name = type_check(file_name, str) if file_name is not None else None
@@ -27221,8 +25883,8 @@ class Root(object):
                 self._volume = type_check(volume, bool) if volume is not None else None
                 self._surface = type_check(surface, bool) if surface is not None else None
                 self._wireframe = type_check(wireframe, bool) if wireframe is not None else None
-                self._points = type_check(points, bool) if points is not None else None
                 self._fields = [] if fields is None else [type_check(i, str) for i in fields]
+                self._points = type_check(points, bool) if points is not None else None
                 self._options = type_check(options, self.Options) if options else self.Options()
 
             @property
@@ -27303,17 +25965,6 @@ class Root(object):
                 self._wireframe = type_check(value, bool) 
 
             @property
-            def points(self):
-                return self._points
-
-            @points.setter
-            def points(self, value):
-                ''' 
-                Export the Dirichlet points
-                '''
-                self._points = type_check(value, bool) 
-
-            @property
             def fields(self):
                 return self._fields
 
@@ -27345,6 +25996,17 @@ class Root(object):
 
 
             @property
+            def points(self):
+                return self._points
+
+            @points.setter
+            def points(self, value):
+                ''' 
+                Export the Dirichlet points
+                '''
+                self._points = type_check(value, bool) 
+
+            @property
             def options(self):
                 return self._options
 
@@ -27362,7 +26024,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"file_name": self._file_name,"vismesh_rel_area": self._vismesh_rel_area,"skip_frame": self._skip_frame,"high_order_mesh": self._high_order_mesh,"volume": self._volume,"surface": self._surface,"wireframe": self._wireframe,"points": self._points,"fields": self._fields,"options": self._options.as_dict(),})
+                return drop_none({"file_name": self._file_name,"vismesh_rel_area": self._vismesh_rel_area,"skip_frame": self._skip_frame,"high_order_mesh": self._high_order_mesh,"volume": self._volume,"surface": self._surface,"wireframe": self._wireframe,"fields": self._fields,"points": self._points,"options": self._options.as_dict(),})
 
             class Options(object):
                 '''Optional fields in the output
@@ -27766,88 +26428,6 @@ class Root(object):
 
 
 
-        class Reference(object):
-            '''Write out the analytic/numerical ground-truth solution and or its gradient
-            \nRequired: []
-            \nOptional: ['solution', 'gradient']'''
-            def __init__(
-                self,
-                solution: Optional[Iterable[str]] = None,
-                gradient: Optional[Iterable[str]] = None
-            ):
-                self._solution = [] if solution is None else [type_check(i, str) for i in solution]
-                self._gradient = [] if gradient is None else [type_check(i, str) for i in gradient]
-
-            @property
-            def solution(self):
-                return self._solution
-
-            @solution.setter
-            def solution(self, value):
-                ''' 
-                reference solution used to compute errors
-                \nRequired: []
-                \nOptional: ['item']
-                '''
-                self._solution = [type_check(i, str) for i in (type_check(value, list) if value else [])]
-
-            def solution_add(self, value):
-                '''Add to list '''
-                self._solution.append(type_check(value, str))
-
-            def solution_clear(self):
-                '''Clear list (make empty)'''
-                self._solution.clear()
-
-            def solution_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._solution.pop(index)
-
-            def solution_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._solution.remove(item)
-
-
-            @property
-            def gradient(self):
-                return self._gradient
-
-            @gradient.setter
-            def gradient(self, value):
-                ''' 
-                gradient of the reference solution to compute errors
-                \nRequired: []
-                \nOptional: ['item']
-                '''
-                self._gradient = [type_check(i, str) for i in (type_check(value, list) if value else [])]
-
-            def gradient_add(self, value):
-                '''Add to list '''
-                self._gradient.append(type_check(value, str))
-
-            def gradient_clear(self):
-                '''Clear list (make empty)'''
-                self._gradient.clear()
-
-            def gradient_pop(self, index=-1):
-                '''Remove by index from list'''
-                return self._gradient.pop(index)
-
-            def gradient_remove(self, item):
-                '''Safe remove specific item from list'''
-                if item in self._list:
-                    self._gradient.remove(item)
-
-
-            def check_required(self):
-
-                return
-
-            def as_dict(self):
-                return drop_none({"solution": self._solution,"gradient": self._gradient,})
-
-
         class Advanced(object):
             '''Additional output options
             \nRequired: []
@@ -28005,6 +26585,88 @@ class Root(object):
 
             def as_dict(self):
                 return drop_none({"timestep_prefix": self._timestep_prefix,"sol_on_grid": self._sol_on_grid,"compute_error": self._compute_error,"sol_at_node": self._sol_at_node,"vis_boundary_only": self._vis_boundary_only,"curved_mesh_size": self._curved_mesh_size,"save_solve_sequence_debug": self._save_solve_sequence_debug,"save_ccd_debug_meshes": self._save_ccd_debug_meshes,"save_time_sequence": self._save_time_sequence,"save_nl_solve_sequence": self._save_nl_solve_sequence,"spectrum": self._spectrum,})
+
+
+        class Reference(object):
+            '''Write out the analytic/numerical ground-truth solution and or its gradient
+            \nRequired: []
+            \nOptional: ['solution', 'gradient']'''
+            def __init__(
+                self,
+                solution: Optional[Iterable[str]] = None,
+                gradient: Optional[Iterable[str]] = None
+            ):
+                self._solution = [] if solution is None else [type_check(i, str) for i in solution]
+                self._gradient = [] if gradient is None else [type_check(i, str) for i in gradient]
+
+            @property
+            def solution(self):
+                return self._solution
+
+            @solution.setter
+            def solution(self, value):
+                ''' 
+                reference solution used to compute errors
+                \nRequired: []
+                \nOptional: ['item']
+                '''
+                self._solution = [type_check(i, str) for i in (type_check(value, list) if value else [])]
+
+            def solution_add(self, value):
+                '''Add to list '''
+                self._solution.append(type_check(value, str))
+
+            def solution_clear(self):
+                '''Clear list (make empty)'''
+                self._solution.clear()
+
+            def solution_pop(self, index=-1):
+                '''Remove by index from list'''
+                return self._solution.pop(index)
+
+            def solution_remove(self, item):
+                '''Safe remove specific item from list'''
+                if item in self._list:
+                    self._solution.remove(item)
+
+
+            @property
+            def gradient(self):
+                return self._gradient
+
+            @gradient.setter
+            def gradient(self, value):
+                ''' 
+                gradient of the reference solution to compute errors
+                \nRequired: []
+                \nOptional: ['item']
+                '''
+                self._gradient = [type_check(i, str) for i in (type_check(value, list) if value else [])]
+
+            def gradient_add(self, value):
+                '''Add to list '''
+                self._gradient.append(type_check(value, str))
+
+            def gradient_clear(self):
+                '''Clear list (make empty)'''
+                self._gradient.clear()
+
+            def gradient_pop(self, index=-1):
+                '''Remove by index from list'''
+                return self._gradient.pop(index)
+
+            def gradient_remove(self, item):
+                '''Safe remove specific item from list'''
+                if item in self._list:
+                    self._gradient.remove(item)
+
+
+            def check_required(self):
+
+                return
+
+            def as_dict(self):
+                return drop_none({"solution": self._solution,"gradient": self._gradient,})
 
 
 

@@ -1,3 +1,5 @@
+import contextlib
+import io
 import importlib.util
 import types
 import unittest
@@ -214,6 +216,112 @@ class GeneratorUnitTests(unittest.TestCase):
             generated_module.Root.Integrator.ImplicitNewmark().as_dict(),
         )
 
+    def test_repeated_type_name_variants_use_alternative_required_sets(self):
+        generator = import_generator("json_to_tree_repeated_type_name_required_sets")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["material"],
+            },
+            {
+                "pointer": "/material",
+                "type": "object",
+                "type_name": "LinearElasticity",
+                "required": ["type", "E", "nu"],
+            },
+            {
+                "pointer": "/material",
+                "type": "object",
+                "type_name": "LinearElasticity",
+                "required": ["type", "lambda", "mu"],
+            },
+            {
+                "pointer": "/material/type",
+                "type": "string",
+                "options": ["LinearElasticity"],
+            },
+            {
+                "pointer": "/material/E",
+                "type": "float",
+            },
+            {
+                "pointer": "/material/nu",
+                "type": "float",
+            },
+            {
+                "pointer": "/material/lambda",
+                "type": "float",
+            },
+            {
+                "pointer": "/material/mu",
+                "type": "float",
+            },
+        ])
+
+        generated = generator.generated_class_text(root)
+        generated_module = module_from_generated_text(generated)
+
+        young_poisson = generated_module.Root.Material.LinearElasticity(
+            E=1.0,
+            nu=0.3,
+        )
+        lame = generated_module.Root.Material.LinearElasticity(
+            lambda_=2.0,
+            mu=3.0,
+        )
+        incomplete = generated_module.Root.Material.LinearElasticity(E=1.0)
+
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            young_poisson.check_required()
+            lame.check_required()
+
+        self.assertEqual("", output.getvalue())
+
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            incomplete.check_required()
+
+        self.assertIn(
+            "must satisfy one required field set",
+            output.getvalue(),
+        )
+
+    def test_required_simple_list_check_required_warns_only_when_empty(self):
+        generator = import_generator("json_to_tree_required_simple_list_check")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "required": ["selection"],
+            },
+            {
+                "pointer": "/selection",
+                "type": "object",
+                "required": ["box"],
+            },
+            {
+                "pointer": "/selection/box",
+                "type": "list",
+            },
+            {
+                "pointer": "/selection/box/*",
+                "type": "float",
+            },
+        ])
+
+        generated = generator.generated_class_text(root)
+
+        self.assertIn(
+            'if not self.box:',
+            generated,
+        )
+        self.assertNotIn(
+            'if self.box:\n            print("Requiered variable Root.Selection.box does not have value")',
+            generated,
+        )
+
     def test_child_pointer_before_parent_entry_stays_under_parent(self):
         generator = import_generator("json_to_tree_child_before_parent")
         root = generator.build_tree([
@@ -330,6 +438,73 @@ class GeneratorUnitTests(unittest.TestCase):
             {"time_steps": 10, "dt": 0.1, "t0": 0.0},
             time_by_steps.as_dict(),
         )
+
+    def test_anonymous_object_variants_keep_declared_fields_only(self):
+        generator = import_generator("json_to_tree_anonymous_variant_fields")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["time"],
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "required": ["tend", "dt"],
+                "optional": ["t0"],
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "required": ["time_steps", "dt"],
+                "optional": ["t0"],
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "required": ["time_steps", "tend"],
+                "optional": ["t0"],
+            },
+            {
+                "pointer": "/time/t0",
+                "type": "float",
+                "default": 0.0,
+            },
+            {
+                "pointer": "/time/tend",
+                "type": "float",
+            },
+            {
+                "pointer": "/time/dt",
+                "type": "float",
+            },
+            {
+                "pointer": "/time/time_steps",
+                "type": "int",
+            },
+        ])
+
+        time = root.get_optional("time")
+        object1 = time.get_optional("object1")
+        object2 = time.get_optional("object2")
+        object3 = time.get_optional("object3")
+
+        self.assertNotIn("time_steps", object1._required)
+        self.assertNotIn("time_steps", object1._optional)
+        self.assertNotIn("tend", object2._required)
+        self.assertNotIn("tend", object2._optional)
+        self.assertNotIn("dt", object3._required)
+        self.assertNotIn("dt", object3._optional)
+
+        generated = generator.generated_class_text(root)
+        generated_module = module_from_generated_text(generated)
+
+        with self.assertRaises(TypeError):
+            generated_module.Root.Time.Object1(
+                tend=1.0,
+                dt=0.1,
+                time_steps=10,
+            )
 
     def test_parameter_unions_are_inlined_in_variant_classes(self):
         generator = import_generator("json_to_tree_inline_parameters")
@@ -632,12 +807,29 @@ class GeneratorUnitTests(unittest.TestCase):
         self.assertEqual(["item", "object2"], list(rayleigh._optional))
         self.assertEqual("object", rayleigh.get_optional("item").type)
         self.assertEqual("object", rayleigh.get_optional("object2").type)
+        self.assertNotIn("stiffness", rayleigh.get_optional("item")._required)
+        self.assertNotIn("stiffness", rayleigh.get_optional("item")._optional)
+        self.assertNotIn(
+            "stiffness_ratio",
+            rayleigh.get_optional("object2")._required,
+        )
+        self.assertNotIn(
+            "stiffness_ratio",
+            rayleigh.get_optional("object2")._optional,
+        )
 
         generated = generator.generated_class_text(root)
         self.assertIn("class_check(i, [self.Item, self.Object2])", generated)
         self.assertNotIn("Rayleigh_damping.Item.Object2", generated)
 
         generated_module = module_from_generated_text(generated)
+        with self.assertRaises(TypeError):
+            generated_module.Root.Solver.Rayleigh_damping.Item(
+                form="elasticity",
+                stiffness_ratio=0.25,
+                stiffness=2.0,
+            )
+
         ratio = generated_module.Root.Solver.Rayleigh_damping.Item(
             form="elasticity",
             stiffness_ratio=0.25,
