@@ -331,7 +331,7 @@ class Root(object):
             self,
             items : list = None
         ):
-            self._items = [class_check(i, [self.Item, self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence]) for i in (type_check(items, list) if items else [])]
+            self._items = [class_check(i, [self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence]) for i in (type_check(items, list) if items else [])]
 
         @property
         def items(self):
@@ -340,11 +340,11 @@ class Root(object):
         @items.setter
         def items(self, items : list):
             ''' Replace the list '''
-            self._items = [class_check(i, [self.Item, self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence]) for i in (type_check(items, list) if items else [])]
+            self._items = [class_check(i, [self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence]) for i in (type_check(items, list) if items else [])]
 
         def add(self, item : object):
             ''' Add to the list '''
-            self._items.append(class_check(item, [self.Item, self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence]))
+            self._items.append(class_check(item, [self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence]))
 
         def clear(self):
             '''Clear list (make empty)'''
@@ -370,14 +370,14 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence])) else i for i in self._items])
+            return drop_none([i.as_dict() if isinstance(i, tuple([self.Mesh, self.Mesh_array, self.Plane, self.Ground, self.Mesh_sequence])) else i for i in self._items])
 
         class Mesh(object):
             '''Each geometry object stores a mesh, a set of transformations applied to it after loading, and a set of selections, which can be used to specify boundary conditions, materials, optimization parameters and other quantities that can be associated with a part of an object.
             \nRequired: ['mesh']
             \nOptional: ['type', 'extract', 'unit', 'transformation', 'volume_selection', 'surface_selection', 'curve_selection', 'point_selection', 'n_refs', 'advanced', 'enabled', 'is_obstacle']'''
             class Type(str, Enum):
-                MESH_SEQUENCE = 'mesh_sequence'
+                MESH = 'mesh'
 
             class Extract(str, Enum):
                 VOLUME = 'volume'
@@ -388,7 +388,7 @@ class Root(object):
             def __init__(
                 self,
                 mesh: str = None,
-                type: "Type" = 'mesh_sequence',
+                type: "Type" = 'mesh',
                 extract: "Extract" = 'volume',
                 unit: str = '',
                 transformation: Optional["Root.Geometry.Mesh.Transformation"] = None,
@@ -624,7 +624,7 @@ class Root(object):
 
                 def translation_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._translation:
                         self._translation.remove(item)
 
 
@@ -655,7 +655,7 @@ class Root(object):
 
                 def rotation_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._rotation:
                         self._rotation.remove(item)
 
 
@@ -697,7 +697,7 @@ class Root(object):
 
                 def scale_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._scale:
                         self._scale.remove(item)
 
 
@@ -807,7 +807,7 @@ class Root(object):
 
                     def box_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._box:
                             self._box.remove(item)
 
 
@@ -900,7 +900,7 @@ class Root(object):
 
                     def center_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._center:
                             self._center.remove(item)
 
 
@@ -998,7 +998,7 @@ class Root(object):
 
                     def p1_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p1:
                             self._p1.remove(item)
 
 
@@ -1029,7 +1029,7 @@ class Root(object):
 
                     def p2_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p2:
                             self._p2.remove(item)
 
 
@@ -1117,7 +1117,7 @@ class Root(object):
 
                     def point_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._point:
                             self._point.remove(item)
 
 
@@ -1148,7 +1148,7 @@ class Root(object):
 
                     def normal_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._normal:
                             self._normal.remove(item)
 
 
@@ -1372,7 +1372,7 @@ class Root(object):
 
                     def box_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._box:
                             self._box.remove(item)
 
 
@@ -1465,7 +1465,7 @@ class Root(object):
 
                     def center_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._center:
                             self._center.remove(item)
 
 
@@ -1563,7 +1563,7 @@ class Root(object):
 
                     def p1_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p1:
                             self._p1.remove(item)
 
 
@@ -1594,7 +1594,7 @@ class Root(object):
 
                     def p2_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p2:
                             self._p2.remove(item)
 
 
@@ -1682,7 +1682,7 @@ class Root(object):
 
                     def point_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._point:
                             self._point.remove(item)
 
 
@@ -1713,7 +1713,7 @@ class Root(object):
 
                     def normal_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._normal:
                             self._normal.remove(item)
 
 
@@ -1877,10 +1877,10 @@ class Root(object):
                         \nOptional: ['id_offset']'''
                         def __init__(
                             self,
-                            threshold: None = None,
+                            threshold: object = None,
                             id_offset: int = 0
                         ):
-                            self._threshold = type_check(threshold, None) if threshold is not None else None
+                            self._threshold = threshold
                             self._id_offset = type_check(id_offset, int) if id_offset is not None else None
 
                         @property
@@ -1889,10 +1889,10 @@ class Root(object):
 
                         @threshold.setter
                         def threshold(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._threshold = type_check(value, None) 
+                            self._threshold = value
 
                         @property
                         def id_offset(self):
@@ -1977,7 +1977,7 @@ class Root(object):
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -1986,11 +1986,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]))
+                        self._items.append(class_check(item, [self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -2016,7 +2016,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side])) else i for i in self._items])
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side])) else i for i in self._items])
 
                     class Box(object):
                         '''Assign the ID to all elements with barycenters inside an axis-aligned box given by the list of its 2 corners, one with min, the other with max coordinates along all axes.  If relative option is set to true, the coordinates of the box corners are specified in bilinear/trilinear coordinates  with respect to the bounding box of the geometry.
@@ -2070,7 +2070,7 @@ class Root(object):
 
                         def box_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._box:
                                 self._box.remove(item)
 
 
@@ -2163,7 +2163,7 @@ class Root(object):
 
                         def center_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._center:
                                 self._center.remove(item)
 
 
@@ -2261,7 +2261,7 @@ class Root(object):
 
                         def p1_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._p1:
                                 self._p1.remove(item)
 
 
@@ -2292,7 +2292,7 @@ class Root(object):
 
                         def p2_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._p2:
                                 self._p2.remove(item)
 
 
@@ -2380,7 +2380,7 @@ class Root(object):
 
                         def point_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._point:
                                 self._point.remove(item)
 
 
@@ -2411,7 +2411,7 @@ class Root(object):
 
                         def normal_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._normal:
                                 self._normal.remove(item)
 
 
@@ -2640,7 +2640,7 @@ class Root(object):
             \nRequired: ['mesh', 'array']
             \nOptional: ['type', 'extract', 'unit', 'transformation', 'volume_selection', 'surface_selection', 'curve_selection', 'point_selection', 'n_refs', 'advanced', 'enabled', 'is_obstacle']'''
             class Type(str, Enum):
-                MESH_SEQUENCE = 'mesh_sequence'
+                MESH_ARRAY = 'mesh_array'
 
             class Extract(str, Enum):
                 VOLUME = 'volume'
@@ -2652,7 +2652,7 @@ class Root(object):
                 self,
                 mesh: str = None,
                 array: Optional["Root.Geometry.Mesh_array.Array"] = None,
-                type: "Type" = 'mesh_sequence',
+                type: "Type" = 'mesh_array',
                 extract: "Extract" = 'volume',
                 unit: str = '',
                 transformation: Optional["Root.Geometry.Mesh_array.Transformation"] = None,
@@ -2910,7 +2910,7 @@ class Root(object):
 
                 def size_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._size:
                         self._size.remove(item)
 
 
@@ -2983,7 +2983,7 @@ class Root(object):
 
                 def translation_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._translation:
                         self._translation.remove(item)
 
 
@@ -3014,7 +3014,7 @@ class Root(object):
 
                 def rotation_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._rotation:
                         self._rotation.remove(item)
 
 
@@ -3056,7 +3056,7 @@ class Root(object):
 
                 def scale_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._scale:
                         self._scale.remove(item)
 
 
@@ -3166,7 +3166,7 @@ class Root(object):
 
                     def box_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._box:
                             self._box.remove(item)
 
 
@@ -3259,7 +3259,7 @@ class Root(object):
 
                     def center_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._center:
                             self._center.remove(item)
 
 
@@ -3357,7 +3357,7 @@ class Root(object):
 
                     def p1_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p1:
                             self._p1.remove(item)
 
 
@@ -3388,7 +3388,7 @@ class Root(object):
 
                     def p2_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p2:
                             self._p2.remove(item)
 
 
@@ -3476,7 +3476,7 @@ class Root(object):
 
                     def point_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._point:
                             self._point.remove(item)
 
 
@@ -3507,7 +3507,7 @@ class Root(object):
 
                     def normal_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._normal:
                             self._normal.remove(item)
 
 
@@ -3731,7 +3731,7 @@ class Root(object):
 
                     def box_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._box:
                             self._box.remove(item)
 
 
@@ -3824,7 +3824,7 @@ class Root(object):
 
                     def center_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._center:
                             self._center.remove(item)
 
 
@@ -3922,7 +3922,7 @@ class Root(object):
 
                     def p1_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p1:
                             self._p1.remove(item)
 
 
@@ -3953,7 +3953,7 @@ class Root(object):
 
                     def p2_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._p2:
                             self._p2.remove(item)
 
 
@@ -4041,7 +4041,7 @@ class Root(object):
 
                     def point_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._point:
                             self._point.remove(item)
 
 
@@ -4072,7 +4072,7 @@ class Root(object):
 
                     def normal_remove(self, item):
                         '''Safe remove specific item from list'''
-                        if item in self._list:
+                        if item in self._normal:
                             self._normal.remove(item)
 
 
@@ -4236,10 +4236,10 @@ class Root(object):
                         \nOptional: ['id_offset']'''
                         def __init__(
                             self,
-                            threshold: None = None,
+                            threshold: object = None,
                             id_offset: int = 0
                         ):
-                            self._threshold = type_check(threshold, None) if threshold is not None else None
+                            self._threshold = threshold
                             self._id_offset = type_check(id_offset, int) if id_offset is not None else None
 
                         @property
@@ -4248,10 +4248,10 @@ class Root(object):
 
                         @threshold.setter
                         def threshold(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._threshold = type_check(value, None) 
+                            self._threshold = value
 
                         @property
                         def id_offset(self):
@@ -4336,7 +4336,7 @@ class Root(object):
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -4345,11 +4345,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]))
+                        self._items.append(class_check(item, [self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -4375,7 +4375,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side])) else i for i in self._items])
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Box_side])) else i for i in self._items])
 
                     class Box(object):
                         '''Assign the ID to all elements with barycenters inside an axis-aligned box given by the list of its 2 corners, one with min, the other with max coordinates along all axes.  If relative option is set to true, the coordinates of the box corners are specified in bilinear/trilinear coordinates  with respect to the bounding box of the geometry.
@@ -4429,7 +4429,7 @@ class Root(object):
 
                         def box_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._box:
                                 self._box.remove(item)
 
 
@@ -4522,7 +4522,7 @@ class Root(object):
 
                         def center_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._center:
                                 self._center.remove(item)
 
 
@@ -4620,7 +4620,7 @@ class Root(object):
 
                         def p1_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._p1:
                                 self._p1.remove(item)
 
 
@@ -4651,7 +4651,7 @@ class Root(object):
 
                         def p2_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._p2:
                                 self._p2.remove(item)
 
 
@@ -4739,7 +4739,7 @@ class Root(object):
 
                         def point_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._point:
                                 self._point.remove(item)
 
 
@@ -4770,7 +4770,7 @@ class Root(object):
 
                         def normal_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._normal:
                                 self._normal.remove(item)
 
 
@@ -4999,13 +4999,13 @@ class Root(object):
             \nRequired: ['point', 'normal']
             \nOptional: ['type', 'enabled', 'is_obstacle']'''
             class Type(str, Enum):
-                MESH_SEQUENCE = 'mesh_sequence'
+                PLANE = 'plane'
 
             def __init__(
                 self,
                 point: Optional[Iterable[float]] = None,
                 normal: Optional[Iterable[float]] = None,
-                type: "Type" = 'mesh_sequence',
+                type: "Type" = 'plane',
                 enabled: bool = True,
                 is_obstacle: bool = False
             ):
@@ -5042,7 +5042,7 @@ class Root(object):
 
             def point_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._point:
                     self._point.remove(item)
 
 
@@ -5073,7 +5073,7 @@ class Root(object):
 
             def normal_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._normal:
                     self._normal.remove(item)
 
 
@@ -5128,12 +5128,12 @@ class Root(object):
             \nRequired: ['height']
             \nOptional: ['type', 'enabled', 'is_obstacle']'''
             class Type(str, Enum):
-                MESH_SEQUENCE = 'mesh_sequence'
+                GROUND = 'ground'
 
             def __init__(
                 self,
                 height: float = None,
-                type: "Type" = 'mesh_sequence',
+                type: "Type" = 'ground',
                 enabled: bool = True,
                 is_obstacle: bool = False
             ):
@@ -5406,7 +5406,7 @@ class Root(object):
 
                 def translation_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._translation:
                         self._translation.remove(item)
 
 
@@ -5437,7 +5437,7 @@ class Root(object):
 
                 def rotation_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._rotation:
                         self._rotation.remove(item)
 
 
@@ -5479,7 +5479,7 @@ class Root(object):
 
                 def scale_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._scale:
                         self._scale.remove(item)
 
 
@@ -5582,7 +5582,7 @@ class Root(object):
             self,
             items : list = None
         ):
-            self._items = [class_check(i, [self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
+            self._items = [class_check(i, [self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
 
         @property
         def items(self):
@@ -5591,11 +5591,11 @@ class Root(object):
         @items.setter
         def items(self, items : list):
             ''' Replace the list '''
-            self._items = [class_check(i, [self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
+            self._items = [class_check(i, [self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
 
         def add(self, item : object):
             ''' Add to the list '''
-            self._items.append(class_check(item, [self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]))
+            self._items.append(class_check(item, [self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]))
 
         def clear(self):
             '''Clear list (make empty)'''
@@ -5621,7 +5621,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber])) else i for i in self._items])
+            return drop_none([i.as_dict() if isinstance(i, tuple([self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber])) else i for i in self._items])
 
         class NeoHookean(object):
             '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
@@ -8070,7 +8070,7 @@ class Root(object):
                     self,
                     items : list = None
                 ):
-                    self._items = [class_check(i, [self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
+                    self._items = [class_check(i, [self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
 
                 @property
                 def items(self):
@@ -8079,11 +8079,11 @@ class Root(object):
                 @items.setter
                 def items(self, items : list):
                     ''' Replace the list '''
-                    self._items = [class_check(i, [self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
+                    self._items = [class_check(i, [self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]) for i in (type_check(items, list) if items else [])]
 
                 def add(self, item : object):
                     ''' Add to the list '''
-                    self._items.append(class_check(item, [self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]))
+                    self._items.append(class_check(item, [self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber]))
 
                 def clear(self):
                     '''Clear list (make empty)'''
@@ -8109,7 +8109,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber])) else i for i in self._items])
+                    return drop_none([i.as_dict() if isinstance(i, tuple([self.NeoHookean, self.IsochoricNeoHookean, self.MooneyRivlin, self.MooneyRivlin3Param, self.MooneyRivlin3ParamSymbolic, self.UnconstrainedOgden, self.IncompressibleOgden, self.LinearElasticity, self.HookeLinearElasticity, self.SaintVenant, self.Stokes, self.NavierStokes, self.OperatorSplitting, self.Electrostatics, self.IncompressibleLinearElasticity, self.MaterialSum, self.Laplacian, self.Helmholtz, self.Bilaplacian, self.AMIPS, self.AMIPSAutodiff, self.FixedCorotational, self.VolumePenalty, self.HGOFiber])) else i for i in self._items])
 
                 class NeoHookean(object):
                     '''Material Parameters including ID, Lamé first ($\\lambda$), Lamé second ($\\mu$), density ($\\rho$)
@@ -10498,11 +10498,11 @@ class Root(object):
                         self,
                         type: "Type" = 'MaterialSum',
                         id: object = None,
-                        models: None = None
+                        models: object = None
                     ):
                         self._type = enum_check(type, self.Type)
                         self._id = inline_check(id, [int, list], []) if id is not None else None
-                        self._models = type_check(models, None) if models is not None else None
+                        self._models = models
 
                     @property
                     def type(self):
@@ -10534,10 +10534,10 @@ class Root(object):
 
                     @models.setter
                     def models(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._models = type_check(value, None) 
+                        self._models = value
 
                     def check_required(self):
 
@@ -17146,11 +17146,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            NEWTON = 'Newton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'Newton',
                             residual_tolerance: float = 1e-05
                         ):
                             self._type = enum_check(type, self.Type)
@@ -17193,11 +17193,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            PROJECTEDNEWTON = 'ProjectedNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'ProjectedNewton',
                             residual_tolerance: float = 1e-05
                         ):
                             self._type = enum_check(type, self.Type)
@@ -17240,11 +17240,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            REGULARIZEDNEWTON = 'RegularizedNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'RegularizedNewton',
                             residual_tolerance: float = 1e-05,
                             reg_weight_min: float = 1e-08,
                             reg_weight_max: float = 100000000.0,
@@ -17326,11 +17326,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            REGULARIZEDPROJECTEDNEWTON = 'RegularizedProjectedNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'RegularizedProjectedNewton',
                             residual_tolerance: float = 1e-05,
                             reg_weight_min: float = 1e-08,
                             reg_weight_max: float = 100000000.0,
@@ -17412,11 +17412,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            DENSENEWTON = 'DenseNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'DenseNewton',
                             residual_tolerance: float = 1e-05
                         ):
                             self._type = enum_check(type, self.Type)
@@ -17459,11 +17459,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            DENSEPROJECTEDNEWTON = 'DenseProjectedNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'DenseProjectedNewton',
                             residual_tolerance: float = 1e-05
                         ):
                             self._type = enum_check(type, self.Type)
@@ -17506,11 +17506,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            DENSEREGULARIZEDNEWTON = 'DenseRegularizedNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'DenseRegularizedNewton',
                             residual_tolerance: float = 1e-05,
                             reg_weight_min: float = 1e-08,
                             reg_weight_max: float = 100000000.0,
@@ -17592,11 +17592,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            DENSEREGULARIZEDPROJECTEDNEWTON = 'DenseRegularizedProjectedNewton'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'DenseRegularizedProjectedNewton',
                             residual_tolerance: float = 1e-05,
                             reg_weight_min: float = 1e-08,
                             reg_weight_max: float = 100000000.0,
@@ -17678,11 +17678,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            GRADIENTDESCENT = 'GradientDescent'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM'
+                            type: "Type" = 'GradientDescent'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -17712,11 +17712,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['erase_component_probability']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            STOCHASTICGRADIENTDESCENT = 'StochasticGradientDescent'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'StochasticGradientDescent',
                             erase_component_probability: float = 0.3
                         ):
                             self._type = enum_check(type, self.Type)
@@ -17759,11 +17759,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['history_size']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            L_BFGS = 'L-BFGS'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'L-BFGS',
                             history_size: int = 6
                         ):
                             self._type = enum_check(type, self.Type)
@@ -17806,11 +17806,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            BFGS = 'BFGS'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM'
+                            type: "Type" = 'BFGS'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -17840,11 +17840,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: ['alpha', 'beta_1', 'beta_2', 'epsilon']'''
                         class Type(str, Enum):
-                            STOCHASTICADAM = 'StochasticADAM'
+                            ADAM = 'ADAM'
 
                         def __init__(
                             self,
-                            type: "Type" = 'StochasticADAM',
+                            type: "Type" = 'ADAM',
                             alpha: float = 0.001,
                             beta_1: float = 0.9,
                             beta_2: float = 0.999,
@@ -19233,11 +19233,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                NEWTON = 'Newton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'Newton',
                                 residual_tolerance: float = 1e-05
                             ):
                                 self._type = enum_check(type, self.Type)
@@ -19280,11 +19280,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                PROJECTEDNEWTON = 'ProjectedNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'ProjectedNewton',
                                 residual_tolerance: float = 1e-05
                             ):
                                 self._type = enum_check(type, self.Type)
@@ -19327,11 +19327,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                REGULARIZEDNEWTON = 'RegularizedNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'RegularizedNewton',
                                 residual_tolerance: float = 1e-05,
                                 reg_weight_min: float = 1e-08,
                                 reg_weight_max: float = 100000000.0,
@@ -19413,11 +19413,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                REGULARIZEDPROJECTEDNEWTON = 'RegularizedProjectedNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'RegularizedProjectedNewton',
                                 residual_tolerance: float = 1e-05,
                                 reg_weight_min: float = 1e-08,
                                 reg_weight_max: float = 100000000.0,
@@ -19499,11 +19499,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                DENSENEWTON = 'DenseNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'DenseNewton',
                                 residual_tolerance: float = 1e-05
                             ):
                                 self._type = enum_check(type, self.Type)
@@ -19546,11 +19546,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                DENSEPROJECTEDNEWTON = 'DenseProjectedNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'DenseProjectedNewton',
                                 residual_tolerance: float = 1e-05
                             ):
                                 self._type = enum_check(type, self.Type)
@@ -19593,11 +19593,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                DENSEREGULARIZEDNEWTON = 'DenseRegularizedNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'DenseRegularizedNewton',
                                 residual_tolerance: float = 1e-05,
                                 reg_weight_min: float = 1e-08,
                                 reg_weight_max: float = 100000000.0,
@@ -19679,11 +19679,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                DENSEREGULARIZEDPROJECTEDNEWTON = 'DenseRegularizedProjectedNewton'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'DenseRegularizedProjectedNewton',
                                 residual_tolerance: float = 1e-05,
                                 reg_weight_min: float = 1e-08,
                                 reg_weight_max: float = 100000000.0,
@@ -19765,11 +19765,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: []'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                GRADIENTDESCENT = 'GradientDescent'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM'
+                                type: "Type" = 'GradientDescent'
                             ):
                                 self._type = enum_check(type, self.Type)
 
@@ -19799,11 +19799,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['erase_component_probability']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                STOCHASTICGRADIENTDESCENT = 'StochasticGradientDescent'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'StochasticGradientDescent',
                                 erase_component_probability: float = 0.3
                             ):
                                 self._type = enum_check(type, self.Type)
@@ -19846,11 +19846,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['history_size']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                L_BFGS = 'L-BFGS'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'L-BFGS',
                                 history_size: int = 6
                             ):
                                 self._type = enum_check(type, self.Type)
@@ -19893,11 +19893,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: []'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                BFGS = 'BFGS'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM'
+                                type: "Type" = 'BFGS'
                             ):
                                 self._type = enum_check(type, self.Type)
 
@@ -19927,11 +19927,11 @@ class Root(object):
                             \nRequired: ['type']
                             \nOptional: ['alpha', 'beta_1', 'beta_2', 'epsilon']'''
                             class Type(str, Enum):
-                                STOCHASTICADAM = 'StochasticADAM'
+                                ADAM = 'ADAM'
 
                             def __init__(
                                 self,
-                                type: "Type" = 'StochasticADAM',
+                                type: "Type" = 'ADAM',
                                 alpha: float = 0.001,
                                 beta_1: float = 0.9,
                                 beta_2: float = 0.999,
@@ -21710,7 +21710,7 @@ class Root(object):
 
                 def time_reference_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._time_reference:
                         self._time_reference.remove(item)
 
 
@@ -21754,7 +21754,7 @@ class Root(object):
 
                 def dimension_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._dimension:
                         self._dimension.remove(item)
 
 
@@ -21826,7 +21826,7 @@ class Root(object):
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -21835,11 +21835,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
+                        self._items.append(class_check(item, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -21865,18 +21865,18 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
 
                     class None_(object):
                         '''interpolation of boundary condition
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            NONE = 'none'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'none'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -21906,11 +21906,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR = 'linear'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'linear'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -21940,11 +21940,11 @@ class Root(object):
                         \nRequired: ['type', 'to']
                         \nOptional: ['from']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR_RAMP = 'linear_ramp'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'linear_ramp',
                             to: float = None,
                             from_: float = 0.0
                         ):
@@ -22003,7 +22003,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_CONSTANT = 'piecewise_constant'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -22013,7 +22013,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_constant',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -22061,7 +22061,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -22092,7 +22092,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -22128,7 +22128,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_LINEAR = 'piecewise_linear'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -22138,7 +22138,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_linear',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -22186,7 +22186,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -22217,7 +22217,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -22311,7 +22311,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -22342,7 +22342,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -22546,7 +22546,7 @@ class Root(object):
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -22555,11 +22555,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
+                        self._items.append(class_check(item, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -22585,18 +22585,18 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
 
                     class None_(object):
                         '''interpolation of boundary condition
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            NONE = 'none'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'none'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -22626,11 +22626,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR = 'linear'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'linear'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -22660,11 +22660,11 @@ class Root(object):
                         \nRequired: ['type', 'to']
                         \nOptional: ['from']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR_RAMP = 'linear_ramp'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'linear_ramp',
                             to: float = None,
                             from_: float = 0.0
                         ):
@@ -22723,7 +22723,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_CONSTANT = 'piecewise_constant'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -22733,7 +22733,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_constant',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -22781,7 +22781,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -22812,7 +22812,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -22848,7 +22848,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_LINEAR = 'piecewise_linear'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -22858,7 +22858,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_linear',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -22906,7 +22906,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -22937,7 +22937,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -23031,7 +23031,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -23062,7 +23062,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -23435,7 +23435,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -23466,7 +23466,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -23560,7 +23560,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -23591,7 +23591,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -23685,7 +23685,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -23716,7 +23716,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -23864,7 +23864,7 @@ class Root(object):
 
                 def time_reference_remove(self, item):
                     '''Safe remove specific item from list'''
-                    if item in self._list:
+                    if item in self._time_reference:
                         self._time_reference.remove(item)
 
 
@@ -24282,7 +24282,7 @@ class Root(object):
                         self,
                         items : list = None
                     ):
-                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -24291,11 +24291,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [class_check(i, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
+                        self._items = [class_check(i, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(class_check(item, [self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
+                        self._items.append(class_check(item, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -24321,18 +24321,18 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
+                        return drop_none([i.as_dict() if isinstance(i, tuple([self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])) else i for i in self._items])
 
                     class None_(object):
                         '''interpolation of boundary condition
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            NONE = 'none'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'none'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -24362,11 +24362,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR = 'linear'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'linear'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -24396,11 +24396,11 @@ class Root(object):
                         \nRequired: ['type', 'to']
                         \nOptional: ['from']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR_RAMP = 'linear_ramp'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'linear_ramp',
                             to: float = None,
                             from_: float = 0.0
                         ):
@@ -24459,7 +24459,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_CONSTANT = 'piecewise_constant'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -24469,7 +24469,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_constant',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -24517,7 +24517,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -24548,7 +24548,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -24584,7 +24584,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_LINEAR = 'piecewise_linear'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -24594,7 +24594,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_linear',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -24642,7 +24642,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -24673,7 +24673,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -24767,7 +24767,7 @@ class Root(object):
 
                         def points_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._points:
                                 self._points.remove(item)
 
 
@@ -24798,7 +24798,7 @@ class Root(object):
 
                         def values_remove(self, item):
                             '''Safe remove specific item from list'''
-                            if item in self._list:
+                            if item in self._values:
                                 self._values.remove(item)
 
 
@@ -24901,7 +24901,7 @@ class Root(object):
 
             def correspondence_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._correspondence:
                     self._correspondence.remove(item)
 
 
@@ -24932,7 +24932,7 @@ class Root(object):
 
             def linear_displacement_offset_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._linear_displacement_offset:
                     self._linear_displacement_offset.remove(item)
 
 
@@ -24963,7 +24963,7 @@ class Root(object):
 
             def fixed_macro_strain_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._fixed_macro_strain:
                     self._fixed_macro_strain.remove(item)
 
 
@@ -25541,7 +25541,7 @@ class Root(object):
 
         def hard_remove(self, item):
             '''Safe remove specific item from list'''
-            if item in self._list:
+            if item in self._hard:
                 self._hard.remove(item)
 
 
@@ -25991,7 +25991,7 @@ class Root(object):
 
             def fields_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._fields:
                     self._fields.remove(item)
 
 
@@ -26626,7 +26626,7 @@ class Root(object):
 
             def solution_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._solution:
                     self._solution.remove(item)
 
 
@@ -26657,7 +26657,7 @@ class Root(object):
 
             def gradient_remove(self, item):
                 '''Safe remove specific item from list'''
-                if item in self._list:
+                if item in self._gradient:
                     self._gradient.remove(item)
 
 

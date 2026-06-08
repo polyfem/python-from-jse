@@ -216,8 +216,9 @@ class ClassGenerator(object):
                 elif child.type in PRIMITIVE_TYPE_EXPRESSIONS:
                     allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[child.type])
                 else:
-                    allowed_classes.append("self." + py_class_name(k))
-                    dict_condition.append("self." + py_class_name(k))
+                    if child.type is not None:
+                        allowed_classes.append("self." + py_class_name(k))
+                        dict_condition.append("self." + py_class_name(k))
                     
 
             allowed_classes = ", ".join(allowed_classes)
@@ -259,8 +260,9 @@ class ClassGenerator(object):
                 elif child.type in PRIMITIVE_TYPE_EXPRESSIONS:
                     allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[child.type])
                 else:
-                    allowed_classes.append("self." + py_class_name(k))
-                    dict_condition.append("self." + py_class_name(k))
+                    if child.type is not None:
+                        allowed_classes.append("self." + py_class_name(k))
+                        dict_condition.append("self." + py_class_name(k))
 
             allowed_classes = ", ".join(allowed_classes)
             dict_condition = ", ".join(dict_condition)
@@ -319,12 +321,20 @@ class ClassGenerator(object):
             #default = node.default if node.default else None
             #(child,) = node._optional.values()
             child_type = child.type if child.type != "string" else "str"
-            self._init_input.append(
-                f'{name}: Optional[Iterable[{child_type}]] = None'
-            )
-            self._init_body.append(
-                f'self._{name} = [] if {name} is None else [type_check(i, {child_type}) for i in {name}]'
-            )
+            if child.type is None:
+                self._init_input.append(
+                    f'{name}: Optional[Iterable[object]] = None'
+                )
+                self._init_body.append(
+                    f'self._{name} = [] if {name} is None else list(type_check({name}, list))'
+                )
+            else:
+                self._init_input.append(
+                    f'{name}: Optional[Iterable[{child_type}]] = None'
+                )
+                self._init_body.append(
+                    f'self._{name} = [] if {name} is None else [type_check(i, {child_type}) for i in {name}]'
+                )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
             )
@@ -348,6 +358,16 @@ class ClassGenerator(object):
             )
             self._init_body.append(
                 f'self._{name} = extension_check(type_check({name}, str), {node.extensions}) if {name} is not None else None'
+            )
+            self._as_dict.append(
+                f'"{node.name}": self._{name},'
+            )
+        elif node.type is None:
+            self._init_input.append(
+                    f'{name}: object = {self.default_literal(node, "object")}'
+                )
+            self._init_body.append(
+                f'self._{name} = {name}'
             )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
@@ -462,7 +482,8 @@ class ClassGenerator(object):
                 elif child.type in PRIMITIVE_TYPE_EXPRESSIONS:
                     allowed_classes.append(PRIMITIVE_TYPE_EXPRESSIONS[child.type])
                 else:
-                    allowed_classes.append("self." + py_class_name(k))
+                    if child.type is not None:
+                        allowed_classes.append("self." + py_class_name(k))
             allowed_classes = ", ".join(allowed_classes)
             object_schemas = ", ".join(object_schemas)
             item_check = (
@@ -545,6 +566,22 @@ class ClassGenerator(object):
         for value in node._optional.values():
             child = value
 
+        if node.type is None:
+            self._property_setter.append(
+                f"""
+    @property
+    def {name}(self):
+        return self._{name}
+
+    @{name}.setter
+    def {name}(self, value):
+        '''
+        {doc}
+        '''
+        self._{name} = value"""
+            )
+            return
+
         if type == "object" or type == "polymorphic" or type == "list":
             type_check = f'self.{class_name}'
             required_optional = f"""
@@ -555,11 +592,17 @@ class ClassGenerator(object):
 
         if node.type == "list" and len(node._optional) == 1 and child.type not in ("object", "polymorphic"):
             child_type = child.type if child.type != "string" else "str"
-            inside_setter = f"""self._{name} = [type_check(i, {child_type}) for i in (type_check(value, list) if value else [])]
+            if child.type is None:
+                list_assignment = f"self._{name} = list(type_check(value, list)) if value else []"
+                add_assignment = f"self._{name}.append(value)"
+            else:
+                list_assignment = f"self._{name} = [type_check(i, {child_type}) for i in (type_check(value, list) if value else [])]"
+                add_assignment = f"self._{name}.append(type_check(value, {child_type}))"
+            inside_setter = f"""{list_assignment}
 
     def {name}_add(self, value):
         '''Add to list '''
-        self._{name}.append(type_check(value, {child_type}))
+        {add_assignment}
             
     def {name}_clear(self):
         '''Clear list (make empty)'''
@@ -571,7 +614,7 @@ class ClassGenerator(object):
 
     def {name}_remove(self, item):
         '''Safe remove specific item from list'''
-        if item in self._list:
+        if item in self._{name}:
             self._{name}.remove(item)
         """
         #for strings with options
@@ -1275,7 +1318,7 @@ def build_tree(schema_entries):
             replacement_node = replacement_node or path
             field_name = parts[-1]
             for child in parent._optional.values():
-                if parent.type == "polymorphic" and child.type_name and field_name == "type":
+                if child.type_name and field_name == "type":
                     child.find_var_replace(field_name, replacement_node.clone(field_name))
                 else:
                     child.find_var_replace(field_name, replacement_node)

@@ -322,6 +322,67 @@ class GeneratorUnitTests(unittest.TestCase):
             generated,
         )
 
+    def test_untyped_fields_generate_pass_through_values(self):
+        generator = import_generator("json_to_tree_untyped_field")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["box"],
+            },
+            {
+                "pointer": "/box",
+                "type": "object",
+                "optional": ["threshold"],
+            },
+        ])
+
+        generated = generator.generated_class_text(root)
+
+        self.assertIn("threshold: object = None", generated)
+        self.assertNotIn("threshold: None = None", generated)
+        self.assertNotIn("type_check(threshold, None)", generated)
+        self.assertNotIn("type_check(value, None)", generated)
+
+        generated_module = module_from_generated_text(generated)
+        box = generated_module.Root.Box(threshold=0.25)
+        box.threshold = {"expr": "x > 0"}
+
+        self.assertEqual({"threshold": {"expr": "x > 0"}}, box.as_dict())
+
+    def test_simple_list_remove_uses_field_backing_list(self):
+        generator = import_generator("json_to_tree_simple_list_remove")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["selection"],
+            },
+            {
+                "pointer": "/selection",
+                "type": "object",
+                "optional": ["box"],
+            },
+            {
+                "pointer": "/selection/box",
+                "type": "list",
+            },
+            {
+                "pointer": "/selection/box/*",
+                "type": "float",
+            },
+        ])
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("if item in self._box:", generated)
+        self.assertNotIn("if item in self._list:", generated)
+
+        generated_module = module_from_generated_text(generated)
+        selection = generated_module.Root.Selection(box=[1.0, 2.0, 3.0])
+        selection.box_remove(2.0)
+
+        self.assertEqual({"box": [1.0, 3.0]}, selection.as_dict())
+
     def test_child_pointer_before_parent_entry_stays_under_parent(self):
         generator = import_generator("json_to_tree_child_before_parent")
         root = generator.build_tree([
@@ -857,6 +918,68 @@ class GeneratorUnitTests(unittest.TestCase):
             ],
             rayleigh.as_dict(),
         )
+
+    def test_named_list_variants_do_not_keep_empty_item_placeholder(self):
+        generator = import_generator("json_to_tree_named_list_variants")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["geometry"],
+            },
+            {
+                "pointer": "/geometry",
+                "type": "list",
+            },
+            {
+                "pointer": "/geometry/*",
+                "type": "object",
+                "type_name": "Mesh",
+                "required": ["type", "mesh"],
+            },
+            {
+                "pointer": "/geometry/*",
+                "type": "object",
+                "type_name": "Plane",
+                "required": ["type", "point"],
+            },
+            {
+                "pointer": "/geometry/*/type",
+                "type": "string",
+                "options": ["Mesh", "Plane"],
+            },
+            {
+                "pointer": "/geometry/*/mesh",
+                "type": "string",
+            },
+            {
+                "pointer": "/geometry/*/point",
+                "type": "list",
+            },
+            {
+                "pointer": "/geometry/*/point/*",
+                "type": "float",
+            },
+        ])
+
+        geometry = root.get_optional("geometry")
+
+        self.assertEqual("list", geometry.type)
+        self.assertEqual(["item", "Mesh", "Plane"], list(geometry._optional))
+        self.assertIsNone(geometry.get_optional("item").type)
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("class_check(i, [self.Mesh, self.Plane])", generated)
+        self.assertNotIn("class_check(i, [self.Item, self.Mesh", generated)
+
+        generated_module = module_from_generated_text(generated)
+        mesh = generated_module.Root.Geometry.Mesh(mesh="mesh.obj")
+        plane = generated_module.Root.Geometry.Plane(point=[0.0, 1.0, 2.0])
+        geometry = generated_module.Root.Geometry(items=[mesh])
+
+        self.assertEqual({"type": "Mesh", "mesh": "mesh.obj"}, mesh.as_dict())
+        self.assertEqual({"type": "Plane", "point": [0.0, 1.0, 2.0]}, plane.as_dict())
+        self.assertEqual([{"type": "Mesh", "mesh": "mesh.obj"}], geometry.as_dict())
 
     def test_included_value_list_items_expand_inline_variants(self):
         generator = import_generator("json_to_tree_value_list_items")
