@@ -13389,11 +13389,11 @@ class Root(object):
                     \nRequired: ['type']
                     \nOptional: []'''
                     class Type(str, Enum):
-                        IMPLICITNEWMARK = 'ImplicitNewmark'
+                        IMPLICITEULER = 'ImplicitEuler'
 
                     def __init__(
                         self,
-                        type: "Type" = 'ImplicitNewmark'
+                        type: "Type" = 'ImplicitEuler'
                     ):
                         self._type = enum_check(type, self.Type)
 
@@ -13423,11 +13423,11 @@ class Root(object):
                     \nRequired: ['type']
                     \nOptional: ['steps']'''
                     class Type(str, Enum):
-                        IMPLICITNEWMARK = 'ImplicitNewmark'
+                        BDF = 'BDF'
 
                     def __init__(
                         self,
-                        type: "Type" = 'ImplicitNewmark',
+                        type: "Type" = 'BDF',
                         steps: int = 1
                     ):
                         self._type = enum_check(type, self.Type)
@@ -13652,11 +13652,11 @@ class Root(object):
                     \nRequired: ['type']
                     \nOptional: []'''
                     class Type(str, Enum):
-                        IMPLICITNEWMARK = 'ImplicitNewmark'
+                        IMPLICITEULER = 'ImplicitEuler'
 
                     def __init__(
                         self,
-                        type: "Type" = 'ImplicitNewmark'
+                        type: "Type" = 'ImplicitEuler'
                     ):
                         self._type = enum_check(type, self.Type)
 
@@ -13686,11 +13686,11 @@ class Root(object):
                     \nRequired: ['type']
                     \nOptional: ['steps']'''
                     class Type(str, Enum):
-                        IMPLICITNEWMARK = 'ImplicitNewmark'
+                        BDF = 'BDF'
 
                     def __init__(
                         self,
-                        type: "Type" = 'ImplicitNewmark',
+                        type: "Type" = 'BDF',
                         steps: int = 1
                     ):
                         self._type = enum_check(type, self.Type)
@@ -13915,11 +13915,11 @@ class Root(object):
                     \nRequired: ['type']
                     \nOptional: []'''
                     class Type(str, Enum):
-                        IMPLICITNEWMARK = 'ImplicitNewmark'
+                        IMPLICITEULER = 'ImplicitEuler'
 
                     def __init__(
                         self,
-                        type: "Type" = 'ImplicitNewmark'
+                        type: "Type" = 'ImplicitEuler'
                     ):
                         self._type = enum_check(type, self.Type)
 
@@ -13949,11 +13949,11 @@ class Root(object):
                     \nRequired: ['type']
                     \nOptional: ['steps']'''
                     class Type(str, Enum):
-                        IMPLICITNEWMARK = 'ImplicitNewmark'
+                        BDF = 'BDF'
 
                     def __init__(
                         self,
-                        type: "Type" = 'ImplicitNewmark',
+                        type: "Type" = 'BDF',
                         steps: int = 1
                     ):
                         self._type = enum_check(type, self.Type)
@@ -24738,11 +24738,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            NONE = 'none'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'none'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -24772,11 +24772,11 @@ class Root(object):
                         \nRequired: ['type']
                         \nOptional: []'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR = 'linear'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic'
+                            type: "Type" = 'linear'
                         ):
                             self._type = enum_check(type, self.Type)
 
@@ -24806,11 +24806,11 @@ class Root(object):
                         \nRequired: ['type', 'to']
                         \nOptional: ['from']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            LINEAR_RAMP = 'linear_ramp'
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'linear_ramp',
                             to: float = None,
                             from_: float = 0.0
                         ):
@@ -24869,7 +24869,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_CONSTANT = 'piecewise_constant'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -24879,7 +24879,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_constant',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'
@@ -24994,7 +24994,7 @@ class Root(object):
                         \nRequired: ['type', 'points', 'values']
                         \nOptional: ['extend']'''
                         class Type(str, Enum):
-                            PIECEWISE_CUBIC = 'piecewise_cubic'
+                            PIECEWISE_LINEAR = 'piecewise_linear'
 
                         class Extend(str, Enum):
                             CONSTANT = 'constant'
@@ -25004,7 +25004,7 @@ class Root(object):
 
                         def __init__(
                             self,
-                            type: "Type" = 'piecewise_cubic',
+                            type: "Type" = 'piecewise_linear',
                             points: Optional[Iterable[float]] = None,
                             values: Optional[Iterable[float]] = None,
                             extend: "Extend" = 'constant'

@@ -1235,8 +1235,12 @@ def build_tree(schema_entries):
 
         if (len(parts) > 1 and parts[-2] == '*') or parent.type == "polymorphic":
             replacement_node = replacement_node or path
+            field_name = parts[-1]
             for child in parent._optional.values():
-                child.find_var_replace(parts[-1], replacement_node)
+                if parent.type == "polymorphic" and child.type_name and field_name == "type":
+                    child.find_var_replace(field_name, replacement_node.clone(field_name))
+                else:
+                    child.find_var_replace(field_name, replacement_node)
 
         #print (path.name)
 

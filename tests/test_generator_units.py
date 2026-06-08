@@ -138,6 +138,82 @@ class GeneratorUnitTests(unittest.TestCase):
         self.assertEqual("MooneyRivlin", type_node.default)
         self.assertEqual(["MooneyRivlin"], list(type_node._optional))
 
+    def test_named_object_variants_keep_separate_type_defaults(self):
+        generator = import_generator("json_to_tree_named_variant_type_defaults")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["integrator"],
+            },
+            {
+                "pointer": "/integrator",
+                "type": "string",
+                "default": "ImplicitEuler",
+                "options": ["ImplicitEuler", "BDF1", "ImplicitNewmark"],
+            },
+            {
+                "pointer": "/integrator",
+                "type": "object",
+                "type_name": "ImplicitEuler",
+                "required": ["type"],
+            },
+            {
+                "pointer": "/integrator",
+                "type": "object",
+                "type_name": "BDF",
+                "required": ["type"],
+                "optional": ["steps"],
+            },
+            {
+                "pointer": "/integrator",
+                "type": "object",
+                "type_name": "ImplicitNewmark",
+                "required": ["type"],
+                "optional": ["gamma"],
+            },
+            {
+                "pointer": "/integrator/type",
+                "type": "string",
+                "options": ["ImplicitEuler", "BDF", "ImplicitNewmark"],
+            },
+            {
+                "pointer": "/integrator/steps",
+                "type": "int",
+                "default": 1,
+            },
+            {
+                "pointer": "/integrator/gamma",
+                "type": "float",
+                "default": 0.5,
+            },
+        ])
+
+        integrator = root.get_optional("integrator")
+        implicit_euler_type = integrator.get_optional("ImplicitEuler").get_required("type")
+        bdf_type = integrator.get_optional("BDF").get_required("type")
+        implicit_newmark_type = integrator.get_optional("ImplicitNewmark").get_required("type")
+
+        self.assertEqual("ImplicitEuler", implicit_euler_type.default)
+        self.assertEqual("BDF", bdf_type.default)
+        self.assertEqual("ImplicitNewmark", implicit_newmark_type.default)
+
+        generated = generator.generated_class_text(root)
+        generated_module = module_from_generated_text(generated)
+
+        self.assertEqual(
+            {"type": "ImplicitEuler"},
+            generated_module.Root.Integrator.ImplicitEuler().as_dict(),
+        )
+        self.assertEqual(
+            {"type": "BDF", "steps": 1},
+            generated_module.Root.Integrator.BDF().as_dict(),
+        )
+        self.assertEqual(
+            {"type": "ImplicitNewmark", "gamma": 0.5},
+            generated_module.Root.Integrator.ImplicitNewmark().as_dict(),
+        )
+
     def test_child_pointer_before_parent_entry_stays_under_parent(self):
         generator = import_generator("json_to_tree_child_before_parent")
         root = generator.build_tree([
