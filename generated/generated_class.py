@@ -136,184 +136,184 @@ class Root(object):
         self._constraints = type_check(constraints, self.Constraints) if constraints else self.Constraints()
         self._output = type_check(output, self.Output) if output else self.Output()
         self._input = type_check(input, self.Input) if input else self.Input()
- 
+
     @property
     def geometry(self):
         return self._geometry
 
     @geometry.setter
     def geometry(self, value):
-        ''' 
+        '''
         List of geometry objects.
         \nRequired: []
         \nOptional: ['item', 'mesh', 'mesh_array', 'plane', 'ground', 'mesh_sequence']
         '''
-        self._geometry = range_check(type_check(value, self.Geometry), 1, None) 
- 
+        self._geometry = range_check(type_check(value, self.Geometry), 1, None)
+
     @property
     def materials(self):
         return self._materials
 
     @materials.setter
     def materials(self, value):
-        ''' 
+        '''
         Material Parameters lists including ID pointing to volume selection, Young's modulus ($E$), Poisson's ratio ($\\nu$), Density ($\\rho$), or Lamé constants ($\\lambda$ and $\\mu$).
         \nRequired: []
         \nOptional: ['item', 'NeoHookean', 'IsochoricNeoHookean', 'MooneyRivlin', 'MooneyRivlin3Param', 'MooneyRivlin3ParamSymbolic', 'UnconstrainedOgden', 'IncompressibleOgden', 'LinearElasticity', 'HookeLinearElasticity', 'SaintVenant', 'Stokes', 'NavierStokes', 'OperatorSplitting', 'Electrostatics', 'IncompressibleLinearElasticity', 'MaterialSum', 'Laplacian', 'Helmholtz', 'Bilaplacian', 'AMIPS', 'AMIPSAutodiff', 'FixedCorotational', 'VolumePenalty', 'HGOFiber']
         '''
-        self._materials = type_check(value, self.Materials) 
- 
+        self._materials = type_check(value, self.Materials)
+
     @property
     def units(self):
         return self._units
 
     @units.setter
     def units(self, value):
-        ''' 
+        '''
         Basic units used in the code.
         \nRequired: []
         \nOptional: ['length', 'mass', 'time', 'characteristic_length']
         '''
-        self._units = type_check(value, self.Units) 
- 
+        self._units = type_check(value, self.Units)
+
     @property
     def common(self):
         return self._common
 
     @common.setter
     def common(self, value):
-        ''' 
+        '''
         Path to common settings will patch the current file.
         '''
-        self._common = extension_check(type_check(value, str), ['.json']) 
- 
+        self._common = extension_check(type_check(value, str), ['.json'])
+
     @property
     def root_path(self):
         return self._root_path
 
     @root_path.setter
     def root_path(self, value):
-        ''' 
+        '''
         Path for all relative paths, set automatically to the folder containing this JSON.
         '''
-        self._root_path = type_check(value, str) 
- 
+        self._root_path = type_check(value, str)
+
     @property
     def space(self):
         return self._space
 
     @space.setter
     def space(self, value):
-        ''' 
+        '''
         Options related to the FE space.
         \nRequired: []
         \nOptional: ['discr_order', 'discr_orderq', 'pressure_discr_order', 'basis_type', 'poly_basis_type', 'use_p_ref', 'remesh', 'advanced']
         '''
-        self._space = type_check(value, self.Space) 
- 
+        self._space = type_check(value, self.Space)
+
     @property
     def time(self):
         return self._time
 
     @time.setter
     def time(self, value):
-        ''' 
+        '''
         This is a polymorphic variable, assign an object from its classes to the value
         \nRequired: []
-        \nOptional: ['object1', 'object2', 'object3']
+        \nOptional: ['TendDt', 'TimeStepsDt', 'TimeStepsTend']
         '''
-        self._time = type_check(value, self.Time) if isinstance(value, self.Time) else self.Time(value) 
- 
+        self._time = type_check(value, self.Time) if isinstance(value, self.Time) else self.Time(value)
+
     @property
     def contact(self):
         return self._contact
 
     @contact.setter
     def contact(self, value):
-        ''' 
+        '''
         Contact handling parameters.
         \nRequired: []
         \nOptional: ['enabled', 'dhat', 'dhat_percentage', 'epsv', 'friction_coefficient', 'use_convergent_formulation', 'use_area_weighting', 'use_improved_max_operator', 'use_physical_barrier', 'collision_mesh', 'use_gcp_formulation', 'alpha_n', 'alpha_t', 'min_distance_ratio', 'use_adaptive_dhat', 'periodic', 'adhesion']
         '''
-        self._contact = type_check(value, self.Contact) 
- 
+        self._contact = type_check(value, self.Contact)
+
     @property
     def solver(self):
         return self._solver
 
     @solver.setter
     def solver(self, value):
-        ''' 
+        '''
         The settings for the solver including linear solver, nonlinear solver, and some advanced options.
         \nRequired: []
         \nOptional: ['max_threads', 'linear', 'adjoint_linear', 'nonlinear', 'augmented_lagrangian', 'contact', 'rayleigh_damping', 'advanced']
         '''
-        self._solver = type_check(value, self.Solver) 
- 
+        self._solver = type_check(value, self.Solver)
+
     @property
     def boundary_conditions(self):
         return self._boundary_conditions
 
     @boundary_conditions.setter
     def boundary_conditions(self, value):
-        ''' 
+        '''
         The settings for boundary conditions.
         \nRequired: []
         \nOptional: ['rhs', 'dirichlet_boundary', 'neumann_boundary', 'normal_aligned_neumann_boundary', 'pressure_boundary', 'pressure_cavity', 'obstacle_displacements', 'periodic_boundary']
         '''
-        self._boundary_conditions = type_check(value, self.Boundary_conditions) 
- 
+        self._boundary_conditions = type_check(value, self.Boundary_conditions)
+
     @property
     def initial_conditions(self):
         return self._initial_conditions
 
     @initial_conditions.setter
     def initial_conditions(self, value):
-        ''' 
+        '''
         Initial conditions for the time-dependent problem, imposed on the main variable, its derivative or second derivative
         \nRequired: []
         \nOptional: ['solution', 'velocity', 'acceleration']
         '''
-        self._initial_conditions = type_check(value, self.Initial_conditions) 
- 
+        self._initial_conditions = type_check(value, self.Initial_conditions)
+
     @property
     def constraints(self):
         return self._constraints
 
     @constraints.setter
     def constraints(self, value):
-        ''' 
+        '''
         soft and hard constraints
         \nRequired: []
         \nOptional: ['soft', 'hard']
         '''
-        self._constraints = type_check(value, self.Constraints) 
- 
+        self._constraints = type_check(value, self.Constraints)
+
     @property
     def output(self):
         return self._output
 
     @output.setter
     def output(self, value):
-        ''' 
+        '''
         output settings
         \nRequired: []
         \nOptional: ['directory', 'log', 'json', 'restart_json', 'paraview', 'data', 'advanced', 'reference', 'stats']
         '''
-        self._output = type_check(value, self.Output) 
- 
+        self._output = type_check(value, self.Output)
+
     @property
     def input(self):
         return self._input
 
     @input.setter
     def input(self, value):
-        ''' 
+        '''
         input data
         \nRequired: []
         \nOptional: ['data']
         '''
-        self._input = type_check(value, self.Input) 
+        self._input = type_check(value, self.Input)
 
     def check_required(self):
         self.geometry.check_required()
@@ -421,10 +421,10 @@ class Root(object):
 
             @mesh.setter
             def mesh(self, value):
-                ''' 
+                '''
                 Path of the mesh file to load.
                 '''
-                self._mesh = extension_check(type_check(value, str), ['.obj', '.msh', '.stl', '.ply', '.mesh']) 
+                self._mesh = extension_check(type_check(value, str), ['.obj', '.msh', '.stl', '.ply', '.mesh'])
 
             @property
             def type(self):
@@ -432,10 +432,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of geometry, currently only one supported. In future we will add stuff like planes, spheres, etc.
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def extract(self):
@@ -443,10 +443,10 @@ class Root(object):
 
             @extract.setter
             def extract(self, value):
-                ''' 
+                '''
                 Used to extract stuff from the mesh. Eg extract surface extracts the surface from a tet mesh.
                 '''
-                self._extract = enum_check(value, self.Extract) 
+                self._extract = enum_check(value, self.Extract)
 
             @property
             def unit(self):
@@ -454,10 +454,10 @@ class Root(object):
 
             @unit.setter
             def unit(self, value):
-                ''' 
+                '''
                 Units of the geometric model.
                 '''
-                self._unit = type_check(value, str) 
+                self._unit = type_check(value, str)
 
             @property
             def transformation(self):
@@ -465,12 +465,12 @@ class Root(object):
 
             @transformation.setter
             def transformation(self, value):
-                ''' 
+                '''
                 Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
                 \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']
                 '''
-                self._transformation = type_check(value, self.Transformation) 
+                self._transformation = type_check(value, self.Transformation)
 
             @property
             def volume_selection(self):
@@ -478,12 +478,12 @@ class Root(object):
 
             @volume_selection.setter
             def volume_selection(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'file', 'box', 'sphere', 'cylinder', 'plane', 'axis', 'id_offset', 'list']
                 '''
-                self._volume_selection = type_check(value, self.Volume_selection) if isinstance(value, self.Volume_selection) else self.Volume_selection(value) 
+                self._volume_selection = type_check(value, self.Volume_selection) if isinstance(value, self.Volume_selection) else self.Volume_selection(value)
 
             @property
             def surface_selection(self):
@@ -491,12 +491,12 @@ class Root(object):
 
             @surface_selection.setter
             def surface_selection(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'file', 'box', 'sphere', 'cylinder', 'plane', 'axis', 'list']
                 '''
-                self._surface_selection = type_check(value, self.Surface_selection) if isinstance(value, self.Surface_selection) else self.Surface_selection(value) 
+                self._surface_selection = type_check(value, self.Surface_selection) if isinstance(value, self.Surface_selection) else self.Surface_selection(value)
 
             @property
             def curve_selection(self):
@@ -504,12 +504,12 @@ class Root(object):
 
             @curve_selection.setter
             def curve_selection(self, value):
-                ''' 
+                '''
                 Selection of curves
                 \nRequired: []
                 \nOptional: []
                 '''
-                self._curve_selection = type_check(value, self.Curve_selection) 
+                self._curve_selection = type_check(value, self.Curve_selection)
 
             @property
             def point_selection(self):
@@ -517,12 +517,12 @@ class Root(object):
 
             @point_selection.setter
             def point_selection(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['list', 'int', 'file']
                 '''
-                self._point_selection = type_check(value, self.Point_selection) if isinstance(value, self.Point_selection) else self.Point_selection(value) 
+                self._point_selection = type_check(value, self.Point_selection) if isinstance(value, self.Point_selection) else self.Point_selection(value)
 
             @property
             def n_refs(self):
@@ -530,10 +530,10 @@ class Root(object):
 
             @n_refs.setter
             def n_refs(self, value):
-                ''' 
+                '''
                 number of uniform refinements
                 '''
-                self._n_refs = type_check(value, int) 
+                self._n_refs = type_check(value, int)
 
             @property
             def advanced(self):
@@ -541,12 +541,12 @@ class Root(object):
 
             @advanced.setter
             def advanced(self, value):
-                ''' 
+                '''
                 Advanced options for geometry
                 \nRequired: []
                 \nOptional: ['normalize_mesh', 'force_linear_geometry', 'refinement_location', 'min_component']
                 '''
-                self._advanced = type_check(value, self.Advanced) 
+                self._advanced = type_check(value, self.Advanced)
 
             @property
             def enabled(self):
@@ -554,10 +554,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 Skips the geometry if false
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def is_obstacle(self):
@@ -565,10 +565,10 @@ class Root(object):
 
             @is_obstacle.setter
             def is_obstacle(self, value):
-                ''' 
+                '''
                 The geometry elements are not included in deforming geometry, only in collision computations
                 '''
-                self._is_obstacle = type_check(value, bool) 
+                self._is_obstacle = type_check(value, bool)
 
             def check_required(self):
 
@@ -603,7 +603,7 @@ class Root(object):
 
                 @translation.setter
                 def translation(self, value):
-                    ''' 
+                    '''
                     Translate (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -634,7 +634,7 @@ class Root(object):
 
                 @rotation.setter
                 def rotation(self, value):
-                    ''' 
+                    '''
                     Rotate, in 2D, one number, the rotation angle, in 3D, three or four Euler angles, axis+angle, or a unit quaternion. Depends on rotation mode.
                     \nRequired: []
                     \nOptional: ['item']
@@ -665,10 +665,10 @@ class Root(object):
 
                 @rotation_mode.setter
                 def rotation_mode(self, value):
-                    ''' 
+                    '''
                     Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
                     '''
-                    self._rotation_mode = type_check(value, str) 
+                    self._rotation_mode = type_check(value, str)
 
                 @property
                 def scale(self):
@@ -676,7 +676,7 @@ class Root(object):
 
                 @scale.setter
                 def scale(self, value):
-                    ''' 
+                    '''
                     Scale by specified factors along axes (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -707,12 +707,12 @@ class Root(object):
 
                 @dimensions.setter
                 def dimensions(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['float', 'list']
                     '''
-                    self._dimensions = inline_check(value, [float, list], []) 
+                    self._dimensions = inline_check(value, [float, list], [])
 
                 def check_required(self):
 
@@ -738,10 +738,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Id_offset, list]) 
+                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Id_offset, list])
 
                 def check_required(self):
 
@@ -775,10 +775,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def box(self):
@@ -786,7 +786,7 @@ class Root(object):
 
                     @box.setter
                     def box(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -817,10 +817,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -857,10 +857,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -868,10 +868,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def center(self):
@@ -879,7 +879,7 @@ class Root(object):
 
                     @center.setter
                     def center(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -910,10 +910,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -955,10 +955,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -966,10 +966,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def p1(self):
@@ -977,7 +977,7 @@ class Root(object):
 
                     @p1.setter
                     def p1(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1008,7 +1008,7 @@ class Root(object):
 
                     @p2.setter
                     def p2(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1039,10 +1039,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1085,10 +1085,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def point(self):
@@ -1096,7 +1096,7 @@ class Root(object):
 
                     @point.setter
                     def point(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1127,7 +1127,7 @@ class Root(object):
 
                     @normal.setter
                     def normal(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1158,10 +1158,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1201,10 +1201,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def axis(self):
@@ -1212,12 +1212,12 @@ class Root(object):
 
                     @axis.setter
                     def axis(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'string']
                         '''
-                        self._axis = inline_check(value, [int, str], []) 
+                        self._axis = inline_check(value, [int, str], [])
 
                     @property
                     def position(self):
@@ -1225,10 +1225,10 @@ class Root(object):
 
                     @position.setter
                     def position(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._position = type_check(value, float) 
+                        self._position = type_check(value, float)
 
                     @property
                     def relative(self):
@@ -1236,10 +1236,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1273,10 +1273,10 @@ class Root(object):
 
                     @id_offset.setter
                     def id_offset(self, value):
-                        ''' 
+                        '''
                         Offsets the volume IDs loaded from the mesh.
                         '''
-                        self._id_offset = type_check(value, int) 
+                        self._id_offset = type_check(value, int)
 
                     def check_required(self):
 
@@ -1285,6 +1285,13 @@ class Root(object):
                     def as_dict(self):
                         return drop_none({"id_offset": self._id_offset,})
 
+
+                Object3 = Box
+                Object4 = Sphere
+                Object5 = Cylinder
+                Object6 = Plane
+                Object7 = Axis
+                Object8 = Id_offset
 
 
             class Surface_selection(object):
@@ -1303,10 +1310,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, list, self.List]) 
+                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, list, self.List])
 
                 def check_required(self):
 
@@ -1340,10 +1347,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def box(self):
@@ -1351,7 +1358,7 @@ class Root(object):
 
                     @box.setter
                     def box(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1382,10 +1389,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1422,10 +1429,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -1433,10 +1440,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def center(self):
@@ -1444,7 +1451,7 @@ class Root(object):
 
                     @center.setter
                     def center(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1475,10 +1482,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1520,10 +1527,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -1531,10 +1538,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def p1(self):
@@ -1542,7 +1549,7 @@ class Root(object):
 
                     @p1.setter
                     def p1(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1573,7 +1580,7 @@ class Root(object):
 
                     @p2.setter
                     def p2(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1604,10 +1611,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1650,10 +1657,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def point(self):
@@ -1661,7 +1668,7 @@ class Root(object):
 
                     @point.setter
                     def point(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1692,7 +1699,7 @@ class Root(object):
 
                     @normal.setter
                     def normal(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -1723,10 +1730,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1766,10 +1773,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def axis(self):
@@ -1777,12 +1784,12 @@ class Root(object):
 
                     @axis.setter
                     def axis(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'string']
                         '''
-                        self._axis = inline_check(value, [int, str], []) 
+                        self._axis = inline_check(value, [int, str], [])
 
                     @property
                     def position(self):
@@ -1790,10 +1797,10 @@ class Root(object):
 
                     @position.setter
                     def position(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._position = type_check(value, float) 
+                        self._position = type_check(value, float)
 
                     @property
                     def relative(self):
@@ -1801,10 +1808,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -1903,7 +1910,7 @@ class Root(object):
                             '''
                             ID offset of box side selection.
                             '''
-                            self._id_offset = type_check(value, int) 
+                            self._id_offset = type_check(value, int)
 
                         def check_required(self):
 
@@ -1915,6 +1922,14 @@ class Root(object):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
 
+                    Item = Box_side
+
+
+                Object3 = Box
+                Object4 = Sphere
+                Object5 = Cylinder
+                Object6 = Plane
+                Object7 = Axis
 
 
             class Curve_selection(object):
@@ -1952,10 +1967,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [list, int, str, self.List]) 
+                    self._value = class_check(value, [list, int, str, self.List])
 
                 def check_required(self):
 
@@ -2038,10 +2053,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def box(self):
@@ -2049,7 +2064,7 @@ class Root(object):
 
                         @box.setter
                         def box(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -2080,10 +2095,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -2120,10 +2135,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def radius(self):
@@ -2131,10 +2146,10 @@ class Root(object):
 
                         @radius.setter
                         def radius(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._radius = type_check(value, float) 
+                            self._radius = type_check(value, float)
 
                         @property
                         def center(self):
@@ -2142,7 +2157,7 @@ class Root(object):
 
                         @center.setter
                         def center(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -2173,10 +2188,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -2218,10 +2233,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def radius(self):
@@ -2229,10 +2244,10 @@ class Root(object):
 
                         @radius.setter
                         def radius(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._radius = type_check(value, float) 
+                            self._radius = type_check(value, float)
 
                         @property
                         def p1(self):
@@ -2240,7 +2255,7 @@ class Root(object):
 
                         @p1.setter
                         def p1(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -2271,7 +2286,7 @@ class Root(object):
 
                         @p2.setter
                         def p2(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -2302,10 +2317,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -2348,10 +2363,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def point(self):
@@ -2359,7 +2374,7 @@ class Root(object):
 
                         @point.setter
                         def point(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -2390,7 +2405,7 @@ class Root(object):
 
                         @normal.setter
                         def normal(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -2421,10 +2436,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -2464,10 +2479,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def axis(self):
@@ -2475,12 +2490,12 @@ class Root(object):
 
                         @axis.setter
                         def axis(self, value):
-                            ''' 
+                            '''
                             This is a polymorphic variable, assign an object from its classes to the value
                             \nRequired: []
                             \nOptional: ['int', 'string']
                             '''
-                            self._axis = inline_check(value, [int, str], []) 
+                            self._axis = inline_check(value, [int, str], [])
 
                         @property
                         def position(self):
@@ -2488,10 +2503,10 @@ class Root(object):
 
                         @position.setter
                         def position(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._position = type_check(value, float) 
+                            self._position = type_check(value, float)
 
                         @property
                         def relative(self):
@@ -2499,10 +2514,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -2538,7 +2553,7 @@ class Root(object):
 
                         @threshold.setter
                         def threshold(self, value):
-                            ''' 
+                            '''
                             Threshold for box side selection.
                             '''
                             self._threshold = type_check(value, float)
@@ -2549,10 +2564,10 @@ class Root(object):
 
                         @id_offset.setter
                         def id_offset(self, value):
-                            ''' 
+                            '''
                             ID offset of box side selection.
                             '''
-                            self._id_offset = type_check(value, int) 
+                            self._id_offset = type_check(value, int)
 
                         def check_required(self):
 
@@ -2563,6 +2578,13 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
+
+                    Item = Box
+                    Object2 = Sphere
+                    Object3 = Cylinder
+                    Object4 = Plane
+                    Object5 = Axis
+                    Object6 = Box_side
 
 
 
@@ -2588,10 +2610,10 @@ class Root(object):
 
                 @normalize_mesh.setter
                 def normalize_mesh(self, value):
-                    ''' 
+                    '''
                     Rescale the mesh to it fits in the biunit cube
                     '''
-                    self._normalize_mesh = type_check(value, bool) 
+                    self._normalize_mesh = type_check(value, bool)
 
                 @property
                 def force_linear_geometry(self):
@@ -2599,10 +2621,10 @@ class Root(object):
 
                 @force_linear_geometry.setter
                 def force_linear_geometry(self, value):
-                    ''' 
+                    '''
                     Discard high-order nodes for curved geometries
                     '''
-                    self._force_linear_geometry = type_check(value, bool) 
+                    self._force_linear_geometry = type_check(value, bool)
 
                 @property
                 def refinement_location(self):
@@ -2610,10 +2632,10 @@ class Root(object):
 
                 @refinement_location.setter
                 def refinement_location(self, value):
-                    ''' 
+                    '''
                     parametric location of the refinement
                     '''
-                    self._refinement_location = type_check(value, float) 
+                    self._refinement_location = type_check(value, float)
 
                 @property
                 def min_component(self):
@@ -2621,10 +2643,10 @@ class Root(object):
 
                 @min_component.setter
                 def min_component(self, value):
-                    ''' 
+                    '''
                     Size of the minimum component for collision
                     '''
-                    self._min_component = type_check(value, int) 
+                    self._min_component = type_check(value, int)
 
                 def check_required(self):
 
@@ -2686,10 +2708,10 @@ class Root(object):
 
             @mesh.setter
             def mesh(self, value):
-                ''' 
+                '''
                 Path of the mesh file to load.
                 '''
-                self._mesh = extension_check(type_check(value, str), ['.obj', '.msh', '.stl', '.ply', '.mesh']) 
+                self._mesh = extension_check(type_check(value, str), ['.obj', '.msh', '.stl', '.ply', '.mesh'])
 
             @property
             def array(self):
@@ -2697,12 +2719,12 @@ class Root(object):
 
             @array.setter
             def array(self, value):
-                ''' 
+                '''
                 Array of meshes
                 \nRequired: ['offset', 'size']
                 \nOptional: ['relative']
                 '''
-                self._array = type_check(value, self.Array) 
+                self._array = type_check(value, self.Array)
 
             @property
             def type(self):
@@ -2710,10 +2732,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of geometry, currently only one supported. In future we will add stuff like planes, spheres, etc.
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def extract(self):
@@ -2721,10 +2743,10 @@ class Root(object):
 
             @extract.setter
             def extract(self, value):
-                ''' 
+                '''
                 Used to extract stuff from the mesh. Eg extract surface extracts the surface from a tet mesh.
                 '''
-                self._extract = enum_check(value, self.Extract) 
+                self._extract = enum_check(value, self.Extract)
 
             @property
             def unit(self):
@@ -2732,10 +2754,10 @@ class Root(object):
 
             @unit.setter
             def unit(self, value):
-                ''' 
+                '''
                 Units of the geometric model.
                 '''
-                self._unit = type_check(value, str) 
+                self._unit = type_check(value, str)
 
             @property
             def transformation(self):
@@ -2743,12 +2765,12 @@ class Root(object):
 
             @transformation.setter
             def transformation(self, value):
-                ''' 
+                '''
                 Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
                 \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']
                 '''
-                self._transformation = type_check(value, self.Transformation) 
+                self._transformation = type_check(value, self.Transformation)
 
             @property
             def volume_selection(self):
@@ -2756,12 +2778,12 @@ class Root(object):
 
             @volume_selection.setter
             def volume_selection(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'file', 'box', 'sphere', 'cylinder', 'plane', 'axis', 'id_offset', 'list']
                 '''
-                self._volume_selection = type_check(value, self.Volume_selection) if isinstance(value, self.Volume_selection) else self.Volume_selection(value) 
+                self._volume_selection = type_check(value, self.Volume_selection) if isinstance(value, self.Volume_selection) else self.Volume_selection(value)
 
             @property
             def surface_selection(self):
@@ -2769,12 +2791,12 @@ class Root(object):
 
             @surface_selection.setter
             def surface_selection(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'file', 'box', 'sphere', 'cylinder', 'plane', 'axis', 'list']
                 '''
-                self._surface_selection = type_check(value, self.Surface_selection) if isinstance(value, self.Surface_selection) else self.Surface_selection(value) 
+                self._surface_selection = type_check(value, self.Surface_selection) if isinstance(value, self.Surface_selection) else self.Surface_selection(value)
 
             @property
             def curve_selection(self):
@@ -2782,12 +2804,12 @@ class Root(object):
 
             @curve_selection.setter
             def curve_selection(self, value):
-                ''' 
+                '''
                 Selection of curves
                 \nRequired: []
                 \nOptional: []
                 '''
-                self._curve_selection = type_check(value, self.Curve_selection) 
+                self._curve_selection = type_check(value, self.Curve_selection)
 
             @property
             def point_selection(self):
@@ -2795,12 +2817,12 @@ class Root(object):
 
             @point_selection.setter
             def point_selection(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['list', 'int', 'file']
                 '''
-                self._point_selection = type_check(value, self.Point_selection) if isinstance(value, self.Point_selection) else self.Point_selection(value) 
+                self._point_selection = type_check(value, self.Point_selection) if isinstance(value, self.Point_selection) else self.Point_selection(value)
 
             @property
             def n_refs(self):
@@ -2808,10 +2830,10 @@ class Root(object):
 
             @n_refs.setter
             def n_refs(self, value):
-                ''' 
+                '''
                 number of uniform refinements
                 '''
-                self._n_refs = type_check(value, int) 
+                self._n_refs = type_check(value, int)
 
             @property
             def advanced(self):
@@ -2819,12 +2841,12 @@ class Root(object):
 
             @advanced.setter
             def advanced(self, value):
-                ''' 
+                '''
                 Advanced options for geometry
                 \nRequired: []
                 \nOptional: ['normalize_mesh', 'force_linear_geometry', 'refinement_location', 'min_component']
                 '''
-                self._advanced = type_check(value, self.Advanced) 
+                self._advanced = type_check(value, self.Advanced)
 
             @property
             def enabled(self):
@@ -2832,10 +2854,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 Skips the geometry if false
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def is_obstacle(self):
@@ -2843,10 +2865,10 @@ class Root(object):
 
             @is_obstacle.setter
             def is_obstacle(self, value):
-                ''' 
+                '''
                 The geometry elements are not included in deforming geometry, only in collision computations
                 '''
-                self._is_obstacle = type_check(value, bool) 
+                self._is_obstacle = type_check(value, bool)
 
             def check_required(self):
 
@@ -2878,10 +2900,10 @@ class Root(object):
 
                 @offset.setter
                 def offset(self, value):
-                    ''' 
+                    '''
                     Offset of the mesh in the array.
                     '''
-                    self._offset = type_check(value, float) 
+                    self._offset = type_check(value, float)
 
                 @property
                 def size(self):
@@ -2889,7 +2911,7 @@ class Root(object):
 
                 @size.setter
                 def size(self, value):
-                    ''' 
+                    '''
                     Size of the array (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -2920,10 +2942,10 @@ class Root(object):
 
                 @relative.setter
                 def relative(self, value):
-                    ''' 
+                    '''
                     Is the offset value relative to the mesh's dimensions.
                     '''
-                    self._relative = type_check(value, bool) 
+                    self._relative = type_check(value, bool)
 
                 def check_required(self):
 
@@ -2962,7 +2984,7 @@ class Root(object):
 
                 @translation.setter
                 def translation(self, value):
-                    ''' 
+                    '''
                     Translate (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -2993,7 +3015,7 @@ class Root(object):
 
                 @rotation.setter
                 def rotation(self, value):
-                    ''' 
+                    '''
                     Rotate, in 2D, one number, the rotation angle, in 3D, three or four Euler angles, axis+angle, or a unit quaternion. Depends on rotation mode.
                     \nRequired: []
                     \nOptional: ['item']
@@ -3024,10 +3046,10 @@ class Root(object):
 
                 @rotation_mode.setter
                 def rotation_mode(self, value):
-                    ''' 
+                    '''
                     Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
                     '''
-                    self._rotation_mode = type_check(value, str) 
+                    self._rotation_mode = type_check(value, str)
 
                 @property
                 def scale(self):
@@ -3035,7 +3057,7 @@ class Root(object):
 
                 @scale.setter
                 def scale(self, value):
-                    ''' 
+                    '''
                     Scale by specified factors along axes (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -3066,12 +3088,12 @@ class Root(object):
 
                 @dimensions.setter
                 def dimensions(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['float', 'list']
                     '''
-                    self._dimensions = inline_check(value, [float, list], []) 
+                    self._dimensions = inline_check(value, [float, list], [])
 
                 def check_required(self):
 
@@ -3097,10 +3119,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Id_offset, list]) 
+                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, self.Id_offset, list])
 
                 def check_required(self):
 
@@ -3134,10 +3156,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def box(self):
@@ -3145,7 +3167,7 @@ class Root(object):
 
                     @box.setter
                     def box(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3176,10 +3198,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3216,10 +3238,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -3227,10 +3249,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def center(self):
@@ -3238,7 +3260,7 @@ class Root(object):
 
                     @center.setter
                     def center(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3269,10 +3291,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3314,10 +3336,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -3325,10 +3347,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def p1(self):
@@ -3336,7 +3358,7 @@ class Root(object):
 
                     @p1.setter
                     def p1(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3367,7 +3389,7 @@ class Root(object):
 
                     @p2.setter
                     def p2(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3398,10 +3420,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3444,10 +3466,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def point(self):
@@ -3455,7 +3477,7 @@ class Root(object):
 
                     @point.setter
                     def point(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3486,7 +3508,7 @@ class Root(object):
 
                     @normal.setter
                     def normal(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3517,10 +3539,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3560,10 +3582,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def axis(self):
@@ -3571,12 +3593,12 @@ class Root(object):
 
                     @axis.setter
                     def axis(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'string']
                         '''
-                        self._axis = inline_check(value, [int, str], []) 
+                        self._axis = inline_check(value, [int, str], [])
 
                     @property
                     def position(self):
@@ -3584,10 +3606,10 @@ class Root(object):
 
                     @position.setter
                     def position(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._position = type_check(value, float) 
+                        self._position = type_check(value, float)
 
                     @property
                     def relative(self):
@@ -3595,10 +3617,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3632,10 +3654,10 @@ class Root(object):
 
                     @id_offset.setter
                     def id_offset(self, value):
-                        ''' 
+                        '''
                         Offsets the volume IDs loaded from the mesh.
                         '''
-                        self._id_offset = type_check(value, int) 
+                        self._id_offset = type_check(value, int)
 
                     def check_required(self):
 
@@ -3644,6 +3666,13 @@ class Root(object):
                     def as_dict(self):
                         return drop_none({"id_offset": self._id_offset,})
 
+
+                Object3 = Box
+                Object4 = Sphere
+                Object5 = Cylinder
+                Object6 = Plane
+                Object7 = Axis
+                Object8 = Id_offset
 
 
             class Surface_selection(object):
@@ -3662,10 +3691,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, list, self.List]) 
+                    self._value = class_check(value, [int, str, self.Box, self.Sphere, self.Cylinder, self.Plane, self.Axis, list, self.List])
 
                 def check_required(self):
 
@@ -3699,10 +3728,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def box(self):
@@ -3710,7 +3739,7 @@ class Root(object):
 
                     @box.setter
                     def box(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3741,10 +3770,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3781,10 +3810,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -3792,10 +3821,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def center(self):
@@ -3803,7 +3832,7 @@ class Root(object):
 
                     @center.setter
                     def center(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3834,10 +3863,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -3879,10 +3908,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def radius(self):
@@ -3890,10 +3919,10 @@ class Root(object):
 
                     @radius.setter
                     def radius(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._radius = type_check(value, float) 
+                        self._radius = type_check(value, float)
 
                     @property
                     def p1(self):
@@ -3901,7 +3930,7 @@ class Root(object):
 
                     @p1.setter
                     def p1(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3932,7 +3961,7 @@ class Root(object):
 
                     @p2.setter
                     def p2(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -3963,10 +3992,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -4009,10 +4038,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def point(self):
@@ -4020,7 +4049,7 @@ class Root(object):
 
                     @point.setter
                     def point(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -4051,7 +4080,7 @@ class Root(object):
 
                     @normal.setter
                     def normal(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         \nRequired: []
                         \nOptional: ['item']
@@ -4082,10 +4111,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -4125,10 +4154,10 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._id = type_check(value, int) 
+                        self._id = type_check(value, int)
 
                     @property
                     def axis(self):
@@ -4136,12 +4165,12 @@ class Root(object):
 
                     @axis.setter
                     def axis(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'string']
                         '''
-                        self._axis = inline_check(value, [int, str], []) 
+                        self._axis = inline_check(value, [int, str], [])
 
                     @property
                     def position(self):
@@ -4149,10 +4178,10 @@ class Root(object):
 
                     @position.setter
                     def position(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._position = type_check(value, float) 
+                        self._position = type_check(value, float)
 
                     @property
                     def relative(self):
@@ -4160,10 +4189,10 @@ class Root(object):
 
                     @relative.setter
                     def relative(self, value):
-                        ''' 
+                        '''
                         There is no definition
                         '''
-                        self._relative = type_check(value, bool) 
+                        self._relative = type_check(value, bool)
 
                     def check_required(self):
 
@@ -4259,10 +4288,10 @@ class Root(object):
 
                         @id_offset.setter
                         def id_offset(self, value):
-                            ''' 
+                            '''
                             ID offset of box side selection.
                             '''
-                            self._id_offset = type_check(value, int) 
+                            self._id_offset = type_check(value, int)
 
                         def check_required(self):
 
@@ -4274,6 +4303,14 @@ class Root(object):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
 
+                    Item = Box_side
+
+
+                Object3 = Box
+                Object4 = Sphere
+                Object5 = Cylinder
+                Object6 = Plane
+                Object7 = Axis
 
 
             class Curve_selection(object):
@@ -4311,10 +4348,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [list, int, str, self.List]) 
+                    self._value = class_check(value, [list, int, str, self.List])
 
                 def check_required(self):
 
@@ -4397,10 +4434,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def box(self):
@@ -4408,7 +4445,7 @@ class Root(object):
 
                         @box.setter
                         def box(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -4439,10 +4476,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -4479,10 +4516,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def radius(self):
@@ -4490,10 +4527,10 @@ class Root(object):
 
                         @radius.setter
                         def radius(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._radius = type_check(value, float) 
+                            self._radius = type_check(value, float)
 
                         @property
                         def center(self):
@@ -4501,7 +4538,7 @@ class Root(object):
 
                         @center.setter
                         def center(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -4532,10 +4569,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -4577,10 +4614,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def radius(self):
@@ -4588,10 +4625,10 @@ class Root(object):
 
                         @radius.setter
                         def radius(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._radius = type_check(value, float) 
+                            self._radius = type_check(value, float)
 
                         @property
                         def p1(self):
@@ -4599,7 +4636,7 @@ class Root(object):
 
                         @p1.setter
                         def p1(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -4630,7 +4667,7 @@ class Root(object):
 
                         @p2.setter
                         def p2(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -4661,10 +4698,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -4707,10 +4744,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def point(self):
@@ -4718,7 +4755,7 @@ class Root(object):
 
                         @point.setter
                         def point(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -4749,7 +4786,7 @@ class Root(object):
 
                         @normal.setter
                         def normal(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             \nRequired: []
                             \nOptional: ['item']
@@ -4780,10 +4817,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -4823,10 +4860,10 @@ class Root(object):
 
                         @id.setter
                         def id(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._id = type_check(value, int) 
+                            self._id = type_check(value, int)
 
                         @property
                         def axis(self):
@@ -4834,12 +4871,12 @@ class Root(object):
 
                         @axis.setter
                         def axis(self, value):
-                            ''' 
+                            '''
                             This is a polymorphic variable, assign an object from its classes to the value
                             \nRequired: []
                             \nOptional: ['int', 'string']
                             '''
-                            self._axis = inline_check(value, [int, str], []) 
+                            self._axis = inline_check(value, [int, str], [])
 
                         @property
                         def position(self):
@@ -4847,10 +4884,10 @@ class Root(object):
 
                         @position.setter
                         def position(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._position = type_check(value, float) 
+                            self._position = type_check(value, float)
 
                         @property
                         def relative(self):
@@ -4858,10 +4895,10 @@ class Root(object):
 
                         @relative.setter
                         def relative(self, value):
-                            ''' 
+                            '''
                             There is no definition
                             '''
-                            self._relative = type_check(value, bool) 
+                            self._relative = type_check(value, bool)
 
                         def check_required(self):
 
@@ -4897,10 +4934,10 @@ class Root(object):
 
                         @threshold.setter
                         def threshold(self, value):
-                            ''' 
+                            '''
                             Threshold for box side selection.
                             '''
-                            self._threshold = type_check(value, float) 
+                            self._threshold = type_check(value, float)
 
                         @property
                         def id_offset(self):
@@ -4908,10 +4945,10 @@ class Root(object):
 
                         @id_offset.setter
                         def id_offset(self, value):
-                            ''' 
+                            '''
                             ID offset of box side selection.
                             '''
-                            self._id_offset = type_check(value, int) 
+                            self._id_offset = type_check(value, int)
 
                         def check_required(self):
 
@@ -4922,6 +4959,13 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
+
+                    Item = Box
+                    Object2 = Sphere
+                    Object3 = Cylinder
+                    Object4 = Plane
+                    Object5 = Axis
+                    Object6 = Box_side
 
 
 
@@ -4947,10 +4991,10 @@ class Root(object):
 
                 @normalize_mesh.setter
                 def normalize_mesh(self, value):
-                    ''' 
+                    '''
                     Rescale the mesh to it fits in the biunit cube
                     '''
-                    self._normalize_mesh = type_check(value, bool) 
+                    self._normalize_mesh = type_check(value, bool)
 
                 @property
                 def force_linear_geometry(self):
@@ -4958,10 +5002,10 @@ class Root(object):
 
                 @force_linear_geometry.setter
                 def force_linear_geometry(self, value):
-                    ''' 
+                    '''
                     Discard high-order nodes for curved geometries
                     '''
-                    self._force_linear_geometry = type_check(value, bool) 
+                    self._force_linear_geometry = type_check(value, bool)
 
                 @property
                 def refinement_location(self):
@@ -4969,10 +5013,10 @@ class Root(object):
 
                 @refinement_location.setter
                 def refinement_location(self, value):
-                    ''' 
+                    '''
                     parametric location of the refinement
                     '''
-                    self._refinement_location = type_check(value, float) 
+                    self._refinement_location = type_check(value, float)
 
                 @property
                 def min_component(self):
@@ -4980,10 +5024,10 @@ class Root(object):
 
                 @min_component.setter
                 def min_component(self, value):
-                    ''' 
+                    '''
                     Size of the minimum component for collision
                     '''
-                    self._min_component = type_check(value, int) 
+                    self._min_component = type_check(value, int)
 
                 def check_required(self):
 
@@ -5021,7 +5065,7 @@ class Root(object):
 
             @point.setter
             def point(self, value):
-                ''' 
+                '''
                 Point on plane (two entries for 2D problems or three entries for 3D problems).
                 \nRequired: []
                 \nOptional: ['item']
@@ -5052,7 +5096,7 @@ class Root(object):
 
             @normal.setter
             def normal(self, value):
-                ''' 
+                '''
                 Normal of plane (two entries for 2D problems or three entries for 3D problems).
                 \nRequired: []
                 \nOptional: ['item']
@@ -5083,10 +5127,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of geometry, currently only one supported. In future we will add stuff like planes, spheres, etc.
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def enabled(self):
@@ -5094,10 +5138,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 Skips the geometry if false
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def is_obstacle(self):
@@ -5105,10 +5149,10 @@ class Root(object):
 
             @is_obstacle.setter
             def is_obstacle(self, value):
-                ''' 
+                '''
                 The geometry elements are not included in deforming geometry, only in collision computations
                 '''
-                self._is_obstacle = type_check(value, bool) 
+                self._is_obstacle = type_check(value, bool)
 
             def check_required(self):
 
@@ -5148,10 +5192,10 @@ class Root(object):
 
             @height.setter
             def height(self, value):
-                ''' 
+                '''
                 Height of ground plane.
                 '''
-                self._height = type_check(value, float) 
+                self._height = type_check(value, float)
 
             @property
             def type(self):
@@ -5159,10 +5203,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of geometry, currently only one supported. In future we will add stuff like planes, spheres, etc.
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def enabled(self):
@@ -5170,10 +5214,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 Skips the geometry if false
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def is_obstacle(self):
@@ -5181,10 +5225,10 @@ class Root(object):
 
             @is_obstacle.setter
             def is_obstacle(self, value):
-                ''' 
+                '''
                 The geometry elements are not included in deforming geometry, only in collision computations
                 '''
-                self._is_obstacle = type_check(value, bool) 
+                self._is_obstacle = type_check(value, bool)
 
             def check_required(self):
 
@@ -5239,12 +5283,12 @@ class Root(object):
 
             @mesh_sequence.setter
             def mesh_sequence(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['string', 'list']
                 '''
-                self._mesh_sequence = inline_check(value, [str, list], []) 
+                self._mesh_sequence = inline_check(value, [str, list], [])
 
             @property
             def fps(self):
@@ -5252,10 +5296,10 @@ class Root(object):
 
             @fps.setter
             def fps(self, value):
-                ''' 
+                '''
                 Frames of the mesh sequence per second.
                 '''
-                self._fps = type_check(value, int) 
+                self._fps = type_check(value, int)
 
             @property
             def type(self):
@@ -5263,10 +5307,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of geometry, currently only one supported. In future we will add stuff like planes, spheres, etc.
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def extract(self):
@@ -5274,10 +5318,10 @@ class Root(object):
 
             @extract.setter
             def extract(self, value):
-                ''' 
+                '''
                 Used to extract stuff from the mesh. Eg extract surface extracts the surface from a tet mesh.
                 '''
-                self._extract = enum_check(value, self.Extract) 
+                self._extract = enum_check(value, self.Extract)
 
             @property
             def unit(self):
@@ -5285,10 +5329,10 @@ class Root(object):
 
             @unit.setter
             def unit(self, value):
-                ''' 
+                '''
                 Units of the geometric model.
                 '''
-                self._unit = type_check(value, str) 
+                self._unit = type_check(value, str)
 
             @property
             def transformation(self):
@@ -5296,12 +5340,12 @@ class Root(object):
 
             @transformation.setter
             def transformation(self, value):
-                ''' 
+                '''
                 Geometric transformations applied to the geometry after loading it.
                 \nRequired: []
                 \nOptional: ['translation', 'rotation', 'rotation_mode', 'scale', 'dimensions']
                 '''
-                self._transformation = type_check(value, self.Transformation) 
+                self._transformation = type_check(value, self.Transformation)
 
             @property
             def n_refs(self):
@@ -5309,10 +5353,10 @@ class Root(object):
 
             @n_refs.setter
             def n_refs(self, value):
-                ''' 
+                '''
                 number of uniform refinements
                 '''
-                self._n_refs = type_check(value, int) 
+                self._n_refs = type_check(value, int)
 
             @property
             def advanced(self):
@@ -5320,12 +5364,12 @@ class Root(object):
 
             @advanced.setter
             def advanced(self, value):
-                ''' 
+                '''
                 Advanced options for geometry
                 \nRequired: []
                 \nOptional: ['normalize_mesh', 'force_linear_geometry', 'refinement_location', 'min_component']
                 '''
-                self._advanced = type_check(value, self.Advanced) 
+                self._advanced = type_check(value, self.Advanced)
 
             @property
             def enabled(self):
@@ -5333,10 +5377,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 Skips the geometry if false
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def is_obstacle(self):
@@ -5344,10 +5388,10 @@ class Root(object):
 
             @is_obstacle.setter
             def is_obstacle(self, value):
-                ''' 
+                '''
                 The geometry elements are not included in deforming geometry, only in collision computations
                 '''
-                self._is_obstacle = type_check(value, bool) 
+                self._is_obstacle = type_check(value, bool)
 
             def check_required(self):
 
@@ -5385,7 +5429,7 @@ class Root(object):
 
                 @translation.setter
                 def translation(self, value):
-                    ''' 
+                    '''
                     Translate (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -5416,7 +5460,7 @@ class Root(object):
 
                 @rotation.setter
                 def rotation(self, value):
-                    ''' 
+                    '''
                     Rotate, in 2D, one number, the rotation angle, in 3D, three or four Euler angles, axis+angle, or a unit quaternion. Depends on rotation mode.
                     \nRequired: []
                     \nOptional: ['item']
@@ -5447,10 +5491,10 @@ class Root(object):
 
                 @rotation_mode.setter
                 def rotation_mode(self, value):
-                    ''' 
+                    '''
                     Type of rotation, supported are any permutation of [xyz]+, axis_angle, quaternion, or rotation_vector.
                     '''
-                    self._rotation_mode = type_check(value, str) 
+                    self._rotation_mode = type_check(value, str)
 
                 @property
                 def scale(self):
@@ -5458,7 +5502,7 @@ class Root(object):
 
                 @scale.setter
                 def scale(self, value):
-                    ''' 
+                    '''
                     Scale by specified factors along axes (two entries for 2D problems or three entries for 3D problems).
                     \nRequired: []
                     \nOptional: ['item']
@@ -5489,12 +5533,12 @@ class Root(object):
 
                 @dimensions.setter
                 def dimensions(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['float', 'list']
                     '''
-                    self._dimensions = inline_check(value, [float, list], []) 
+                    self._dimensions = inline_check(value, [float, list], [])
 
                 def check_required(self):
 
@@ -5526,10 +5570,10 @@ class Root(object):
 
                 @normalize_mesh.setter
                 def normalize_mesh(self, value):
-                    ''' 
+                    '''
                     Rescale the mesh to it fits in the biunit cube
                     '''
-                    self._normalize_mesh = type_check(value, bool) 
+                    self._normalize_mesh = type_check(value, bool)
 
                 @property
                 def force_linear_geometry(self):
@@ -5537,10 +5581,10 @@ class Root(object):
 
                 @force_linear_geometry.setter
                 def force_linear_geometry(self, value):
-                    ''' 
+                    '''
                     Discard high-order nodes for curved geometries
                     '''
-                    self._force_linear_geometry = type_check(value, bool) 
+                    self._force_linear_geometry = type_check(value, bool)
 
                 @property
                 def refinement_location(self):
@@ -5548,10 +5592,10 @@ class Root(object):
 
                 @refinement_location.setter
                 def refinement_location(self, value):
-                    ''' 
+                    '''
                     parametric location of the refinement
                     '''
-                    self._refinement_location = type_check(value, float) 
+                    self._refinement_location = type_check(value, float)
 
                 @property
                 def min_component(self):
@@ -5559,10 +5603,10 @@ class Root(object):
 
                 @min_component.setter
                 def min_component(self, value):
-                    ''' 
+                    '''
                     Size of the minimum component for collision
                     '''
-                    self._min_component = type_check(value, int) 
+                    self._min_component = type_check(value, int)
 
                 def check_required(self):
 
@@ -5572,6 +5616,12 @@ class Root(object):
                     return drop_none({"normalize_mesh": self._normalize_mesh,"force_linear_geometry": self._force_linear_geometry,"refinement_location": self._refinement_location,"min_component": self._min_component,})
 
 
+
+        Item = Mesh
+        Object2 = Mesh_array
+        Object3 = Plane
+        Object4 = Ground
+        Object5 = Mesh_sequence
 
 
     class Materials(object):
@@ -5658,10 +5708,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -5669,12 +5719,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -5682,12 +5732,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def lambda_(self):
@@ -5695,12 +5745,12 @@ class Root(object):
 
             @lambda_.setter
             def lambda_(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def mu(self):
@@ -5708,12 +5758,12 @@ class Root(object):
 
             @mu.setter
             def mu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -5721,12 +5771,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -5734,12 +5784,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def phi(self):
@@ -5747,12 +5797,12 @@ class Root(object):
 
             @phi.setter
             def phi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def psi(self):
@@ -5760,12 +5810,12 @@ class Root(object):
 
             @psi.setter
             def psi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -5812,10 +5862,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -5823,12 +5873,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -5836,12 +5886,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def lambda_(self):
@@ -5849,12 +5899,12 @@ class Root(object):
 
             @lambda_.setter
             def lambda_(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def mu(self):
@@ -5862,12 +5912,12 @@ class Root(object):
 
             @mu.setter
             def mu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -5875,12 +5925,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -5888,12 +5938,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def phi(self):
@@ -5901,12 +5951,12 @@ class Root(object):
 
             @phi.setter
             def phi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def psi(self):
@@ -5914,12 +5964,12 @@ class Root(object):
 
             @psi.setter
             def psi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -5960,10 +6010,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def c1(self):
@@ -5971,12 +6021,12 @@ class Root(object):
 
             @c1.setter
             def c1(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def c2(self):
@@ -5984,12 +6034,12 @@ class Root(object):
 
             @c2.setter
             def c2(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def k(self):
@@ -5997,12 +6047,12 @@ class Root(object):
 
             @k.setter
             def k(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -6010,12 +6060,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -6023,12 +6073,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -6080,10 +6130,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def c1(self):
@@ -6091,12 +6141,12 @@ class Root(object):
 
             @c1.setter
             def c1(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def c2(self):
@@ -6104,12 +6154,12 @@ class Root(object):
 
             @c2.setter
             def c2(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def c3(self):
@@ -6117,12 +6167,12 @@ class Root(object):
 
             @c3.setter
             def c3(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def d1(self):
@@ -6130,12 +6180,12 @@ class Root(object):
 
             @d1.setter
             def d1(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -6143,12 +6193,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -6156,12 +6206,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -6216,10 +6266,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def c1(self):
@@ -6227,12 +6277,12 @@ class Root(object):
 
             @c1.setter
             def c1(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def c2(self):
@@ -6240,12 +6290,12 @@ class Root(object):
 
             @c2.setter
             def c2(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def c3(self):
@@ -6253,12 +6303,12 @@ class Root(object):
 
             @c3.setter
             def c3(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def d1(self):
@@ -6266,12 +6316,12 @@ class Root(object):
 
             @d1.setter
             def d1(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -6279,12 +6329,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -6292,12 +6342,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -6338,7 +6388,7 @@ class Root(object):
                 rho: object = None
             ):
                 self._type = enum_check(type, self.Type)
-                self._alphas = inline_check(alphas, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if alphas is not None else None
+                self._alphas = inline_check(alphas, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if alphas is not None else None
                 self._mus = type_check(mus, self.Mus) if mus else self.Mus()
                 self._Ds = type_check(Ds, self.Ds) if Ds else self.Ds()
                 self._id = inline_check(id, [int, list], []) if id is not None else None
@@ -6350,10 +6400,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def alphas(self):
@@ -6361,12 +6411,12 @@ class Root(object):
 
             @alphas.setter
             def alphas(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3', 'object4']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._alphas = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._alphas = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def mus(self):
@@ -6374,12 +6424,12 @@ class Root(object):
 
             @mus.setter
             def mus(self, value):
-                ''' 
+                '''
                 Ogden mu
                 \nRequired: []
-                \nOptional: ['item', 'string']
+                \nOptional: ['item', 'string', 'ValueWithUnit']
                 '''
-                self._mus = type_check(value, self.Mus) 
+                self._mus = type_check(value, self.Mus)
 
             @property
             def Ds(self):
@@ -6387,12 +6437,12 @@ class Root(object):
 
             @Ds.setter
             def Ds(self, value):
-                ''' 
+                '''
                 Ogden D
                 \nRequired: []
-                \nOptional: ['item', 'string']
+                \nOptional: ['item', 'string', 'ValueWithUnit']
                 '''
-                self._Ds = type_check(value, self.Ds) 
+                self._Ds = type_check(value, self.Ds)
 
             @property
             def id(self):
@@ -6400,12 +6450,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -6413,12 +6463,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -6437,7 +6487,7 @@ class Root(object):
             class Mus(object):
                 '''Ogden mu
                 \nRequired: []
-                \nOptional: ['item', 'string']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit']'''
                 def __init__(
                     self,
                     items : list = None
@@ -6487,7 +6537,7 @@ class Root(object):
             class Ds(object):
                 '''Ogden D
                 \nRequired: []
-                \nOptional: ['item', 'string']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit']'''
                 def __init__(
                     self,
                     items : list = None
@@ -6564,10 +6614,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def c(self):
@@ -6575,12 +6625,12 @@ class Root(object):
 
             @c.setter
             def c(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3', 'list']
+                \nOptional: ['float', 'string', 'ValueWithUnit', 'list']
                 '''
-                self._c = type_check(value, self.C) if isinstance(value, self.C) else self.C(value) 
+                self._c = type_check(value, self.C) if isinstance(value, self.C) else self.C(value)
 
             @property
             def m(self):
@@ -6588,12 +6638,12 @@ class Root(object):
 
             @m.setter
             def m(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3', 'list']
+                \nOptional: ['float', 'string', 'ValueWithUnit', 'list']
                 '''
-                self._m = type_check(value, self.M) if isinstance(value, self.M) else self.M(value) 
+                self._m = type_check(value, self.M) if isinstance(value, self.M) else self.M(value)
 
             @property
             def k(self):
@@ -6601,12 +6651,12 @@ class Root(object):
 
             @k.setter
             def k(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -6614,12 +6664,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -6627,12 +6677,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -6651,12 +6701,12 @@ class Root(object):
             class C(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3', 'list']'''
+                \nOptional: ['float', 'string', 'ValueWithUnit', 'list']'''
                 def __init__(
                     self,
                     value : object = None
                 ):
-                    self._value = class_check(value, [float, str, self.Object3, list, self.List]) if value is not None else None
+                    self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List]) if value is not None else None
 
                 @property
                 def value(self):
@@ -6664,10 +6714,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [float, str, self.Object3, list, self.List]) 
+                    self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List])
 
                 def check_required(self):
 
@@ -6679,9 +6729,9 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.List])) else self._value)
+                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.ValueWithUnit, self.List])) else self._value)
 
-                class Object3(object):
+                class ValueWithUnit(object):
                     '''Value with unit
                     \nRequired: ['value', 'unit']
                     \nOptional: []'''
@@ -6699,12 +6749,12 @@ class Root(object):
 
                     @value.setter
                     def value(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['float', 'string']
                         '''
-                        self._value = inline_check(value, [float, str], []) 
+                        self._value = inline_check(value, [float, str], [])
 
                     @property
                     def unit(self):
@@ -6712,18 +6762,18 @@ class Root(object):
 
                     @unit.setter
                     def unit(self, value):
-                        ''' 
+                        '''
                         The unit of the Value
                         '''
-                        self._unit = type_check(value, str) 
+                        self._unit = type_check(value, str)
 
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.C.Object3.value does not have value")
+                            print("Requiered variable Root.Materials.IncompressibleOgden.C.ValueWithUnit.value does not have value")
 
                         if self.unit is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.C.Object3.unit does not have value")
+                            print("Requiered variable Root.Materials.IncompressibleOgden.C.ValueWithUnit.unit does not have value")
                         return
 
                     def as_dict(self):
@@ -6733,7 +6783,7 @@ class Root(object):
                 class List(object):
                     '''Coefficient(s) of Incompressible Ogden
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -6780,16 +6830,18 @@ class Root(object):
                         return drop_none([inline_as_dict(i) for i in self._items])
 
 
+                Object3 = ValueWithUnit
+
 
             class M(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3', 'list']'''
+                \nOptional: ['float', 'string', 'ValueWithUnit', 'list']'''
                 def __init__(
                     self,
                     value : object = None
                 ):
-                    self._value = class_check(value, [float, str, self.Object3, list, self.List]) if value is not None else None
+                    self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List]) if value is not None else None
 
                 @property
                 def value(self):
@@ -6797,10 +6849,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [float, str, self.Object3, list, self.List]) 
+                    self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List])
 
                 def check_required(self):
 
@@ -6812,9 +6864,9 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.List])) else self._value)
+                    return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.ValueWithUnit, self.List])) else self._value)
 
-                class Object3(object):
+                class ValueWithUnit(object):
                     '''Value with unit
                     \nRequired: ['value', 'unit']
                     \nOptional: []'''
@@ -6832,12 +6884,12 @@ class Root(object):
 
                     @value.setter
                     def value(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['float', 'string']
                         '''
-                        self._value = inline_check(value, [float, str], []) 
+                        self._value = inline_check(value, [float, str], [])
 
                     @property
                     def unit(self):
@@ -6845,18 +6897,18 @@ class Root(object):
 
                     @unit.setter
                     def unit(self, value):
-                        ''' 
+                        '''
                         The unit of the Value
                         '''
-                        self._unit = type_check(value, str) 
+                        self._unit = type_check(value, str)
 
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.M.Object3.value does not have value")
+                            print("Requiered variable Root.Materials.IncompressibleOgden.M.ValueWithUnit.value does not have value")
 
                         if self.unit is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.M.Object3.unit does not have value")
+                            print("Requiered variable Root.Materials.IncompressibleOgden.M.ValueWithUnit.unit does not have value")
                         return
 
                     def as_dict(self):
@@ -6866,7 +6918,7 @@ class Root(object):
                 class List(object):
                     '''Exponent(s) of Incompressible Ogden
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -6913,6 +6965,8 @@ class Root(object):
                         return drop_none([inline_as_dict(i) for i in self._items])
 
 
+                Object3 = ValueWithUnit
+
 
 
         class LinearElasticity(object):
@@ -6950,10 +7004,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -6961,12 +7015,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -6974,12 +7028,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def lambda_(self):
@@ -6987,12 +7041,12 @@ class Root(object):
 
             @lambda_.setter
             def lambda_(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def mu(self):
@@ -7000,12 +7054,12 @@ class Root(object):
 
             @mu.setter
             def mu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -7013,12 +7067,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7026,12 +7080,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def phi(self):
@@ -7039,12 +7093,12 @@ class Root(object):
 
             @phi.setter
             def phi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def psi(self):
@@ -7052,12 +7106,12 @@ class Root(object):
 
             @psi.setter
             def psi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -7100,10 +7154,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -7111,12 +7165,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -7124,12 +7178,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def elasticity_tensor(self):
@@ -7137,12 +7191,12 @@ class Root(object):
 
             @elasticity_tensor.setter
             def elasticity_tensor(self, value):
-                ''' 
+                '''
                 Symmetric elasticity tensor
                 \nRequired: []
-                \nOptional: ['item', 'string']
+                \nOptional: ['item', 'string', 'ValueWithUnit']
                 '''
-                self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
+                self._elasticity_tensor = type_check(value, self.Elasticity_tensor)
 
             @property
             def id(self):
@@ -7150,12 +7204,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7163,12 +7217,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def fiber_direction(self):
@@ -7176,12 +7230,12 @@ class Root(object):
 
             @fiber_direction.setter
             def fiber_direction(self, value):
-                ''' 
+                '''
                 Fiber direction
                 \nRequired: []
-                \nOptional: ['item', 'string', 'list']
+                \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                 '''
-                self._fiber_direction = type_check(value, self.Fiber_direction) 
+                self._fiber_direction = type_check(value, self.Fiber_direction)
 
             def check_required(self):
 
@@ -7195,7 +7249,7 @@ class Root(object):
             class Elasticity_tensor(object):
                 '''Symmetric elasticity tensor
                 \nRequired: []
-                \nOptional: ['item', 'string']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit']'''
                 def __init__(
                     self,
                     items : list = None
@@ -7245,12 +7299,12 @@ class Root(object):
             class Fiber_direction(object):
                 '''Fiber direction
                 \nRequired: []
-                \nOptional: ['item', 'string', 'list']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                 def __init__(
                     self,
                     items : list = None
                 ):
-                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 @property
                 def items(self):
@@ -7259,11 +7313,11 @@ class Root(object):
                 @items.setter
                 def items(self, items : list):
                     ''' Replace the list '''
-                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 def add(self, item : object):
                     ''' Add to the list '''
-                    self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                    self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                 def clear(self):
                     '''Clear list (make empty)'''
@@ -7328,10 +7382,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -7339,12 +7393,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -7352,12 +7406,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def elasticity_tensor(self):
@@ -7365,12 +7419,12 @@ class Root(object):
 
             @elasticity_tensor.setter
             def elasticity_tensor(self, value):
-                ''' 
+                '''
                 Symmetric elasticity tensor
                 \nRequired: []
-                \nOptional: ['item', 'string']
+                \nOptional: ['item', 'string', 'ValueWithUnit']
                 '''
-                self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
+                self._elasticity_tensor = type_check(value, self.Elasticity_tensor)
 
             @property
             def id(self):
@@ -7378,12 +7432,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7391,12 +7445,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def phi(self):
@@ -7404,12 +7458,12 @@ class Root(object):
 
             @phi.setter
             def phi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def fiber_direction(self):
@@ -7417,12 +7471,12 @@ class Root(object):
 
             @fiber_direction.setter
             def fiber_direction(self, value):
-                ''' 
+                '''
                 Fiber direction
                 \nRequired: []
-                \nOptional: ['item', 'string', 'list']
+                \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                 '''
-                self._fiber_direction = type_check(value, self.Fiber_direction) 
+                self._fiber_direction = type_check(value, self.Fiber_direction)
 
             @property
             def psi(self):
@@ -7430,12 +7484,12 @@ class Root(object):
 
             @psi.setter
             def psi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -7449,7 +7503,7 @@ class Root(object):
             class Elasticity_tensor(object):
                 '''Symmetric elasticity tensor
                 \nRequired: []
-                \nOptional: ['item', 'string']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit']'''
                 def __init__(
                     self,
                     items : list = None
@@ -7499,12 +7553,12 @@ class Root(object):
             class Fiber_direction(object):
                 '''Fiber direction
                 \nRequired: []
-                \nOptional: ['item', 'string', 'list']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                 def __init__(
                     self,
                     items : list = None
                 ):
-                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 @property
                 def items(self):
@@ -7513,11 +7567,11 @@ class Root(object):
                 @items.setter
                 def items(self, items : list):
                     ''' Replace the list '''
-                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 def add(self, item : object):
                     ''' Add to the list '''
-                    self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                    self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                 def clear(self):
                     '''Clear list (make empty)'''
@@ -7572,10 +7626,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def viscosity(self):
@@ -7583,12 +7637,12 @@ class Root(object):
 
             @viscosity.setter
             def viscosity(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -7596,12 +7650,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7609,12 +7663,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -7654,10 +7708,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def viscosity(self):
@@ -7665,12 +7719,12 @@ class Root(object):
 
             @viscosity.setter
             def viscosity(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -7678,12 +7732,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7691,12 +7745,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -7736,10 +7790,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def viscosity(self):
@@ -7747,12 +7801,12 @@ class Root(object):
 
             @viscosity.setter
             def viscosity(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -7760,12 +7814,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7773,12 +7827,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -7818,10 +7872,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def epsilon(self):
@@ -7829,12 +7883,12 @@ class Root(object):
 
             @epsilon.setter
             def epsilon(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._epsilon = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._epsilon = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -7842,12 +7896,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7855,12 +7909,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -7906,10 +7960,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -7917,12 +7971,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -7930,12 +7984,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def lambda_(self):
@@ -7943,12 +7997,12 @@ class Root(object):
 
             @lambda_.setter
             def lambda_(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def mu(self):
@@ -7956,12 +8010,12 @@ class Root(object):
 
             @mu.setter
             def mu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -7969,12 +8023,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -7982,12 +8036,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -8022,10 +8076,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def id(self):
@@ -8033,12 +8087,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def models(self):
@@ -8046,12 +8100,12 @@ class Root(object):
 
             @models.setter
             def models(self, value):
-                ''' 
+                '''
                 List of models
                 \nRequired: []
                 \nOptional: ['item', 'NeoHookean', 'IsochoricNeoHookean', 'MooneyRivlin', 'MooneyRivlin3Param', 'MooneyRivlin3ParamSymbolic', 'UnconstrainedOgden', 'IncompressibleOgden', 'LinearElasticity', 'HookeLinearElasticity', 'SaintVenant', 'Stokes', 'NavierStokes', 'OperatorSplitting', 'Electrostatics', 'IncompressibleLinearElasticity', 'MaterialSum', 'Laplacian', 'Helmholtz', 'Bilaplacian', 'AMIPS', 'AMIPSAutodiff', 'FixedCorotational', 'VolumePenalty', 'HGOFiber']
                 '''
-                self._models = type_check(value, self.Models) 
+                self._models = type_check(value, self.Models)
 
             def check_required(self):
 
@@ -8146,10 +8200,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -8157,12 +8211,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -8170,12 +8224,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def lambda_(self):
@@ -8183,12 +8237,12 @@ class Root(object):
 
                     @lambda_.setter
                     def lambda_(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def mu(self):
@@ -8196,12 +8250,12 @@ class Root(object):
 
                     @mu.setter
                     def mu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -8209,12 +8263,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -8222,12 +8276,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def phi(self):
@@ -8235,12 +8289,12 @@ class Root(object):
 
                     @phi.setter
                     def phi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def psi(self):
@@ -8248,12 +8302,12 @@ class Root(object):
 
                     @psi.setter
                     def psi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -8300,10 +8354,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -8311,12 +8365,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -8324,12 +8378,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def lambda_(self):
@@ -8337,12 +8391,12 @@ class Root(object):
 
                     @lambda_.setter
                     def lambda_(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def mu(self):
@@ -8350,12 +8404,12 @@ class Root(object):
 
                     @mu.setter
                     def mu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -8363,12 +8417,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -8376,12 +8430,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def phi(self):
@@ -8389,12 +8443,12 @@ class Root(object):
 
                     @phi.setter
                     def phi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def psi(self):
@@ -8402,12 +8456,12 @@ class Root(object):
 
                     @psi.setter
                     def psi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -8448,10 +8502,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def c1(self):
@@ -8459,12 +8513,12 @@ class Root(object):
 
                     @c1.setter
                     def c1(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def c2(self):
@@ -8472,12 +8526,12 @@ class Root(object):
 
                     @c2.setter
                     def c2(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def k(self):
@@ -8485,12 +8539,12 @@ class Root(object):
 
                     @k.setter
                     def k(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -8498,12 +8552,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -8511,12 +8565,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -8568,10 +8622,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def c1(self):
@@ -8579,12 +8633,12 @@ class Root(object):
 
                     @c1.setter
                     def c1(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def c2(self):
@@ -8592,12 +8646,12 @@ class Root(object):
 
                     @c2.setter
                     def c2(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def c3(self):
@@ -8605,12 +8659,12 @@ class Root(object):
 
                     @c3.setter
                     def c3(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def d1(self):
@@ -8618,12 +8672,12 @@ class Root(object):
 
                     @d1.setter
                     def d1(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -8631,12 +8685,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -8644,12 +8698,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -8704,10 +8758,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def c1(self):
@@ -8715,12 +8769,12 @@ class Root(object):
 
                     @c1.setter
                     def c1(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def c2(self):
@@ -8728,12 +8782,12 @@ class Root(object):
 
                     @c2.setter
                     def c2(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def c3(self):
@@ -8741,12 +8795,12 @@ class Root(object):
 
                     @c3.setter
                     def c3(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._c3 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def d1(self):
@@ -8754,12 +8808,12 @@ class Root(object):
 
                     @d1.setter
                     def d1(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._d1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -8767,12 +8821,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -8780,12 +8834,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -8826,7 +8880,7 @@ class Root(object):
                         rho: object = None
                     ):
                         self._type = enum_check(type, self.Type)
-                        self._alphas = inline_check(alphas, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if alphas is not None else None
+                        self._alphas = inline_check(alphas, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) if alphas is not None else None
                         self._mus = type_check(mus, self.Mus) if mus else self.Mus()
                         self._Ds = type_check(Ds, self.Ds) if Ds else self.Ds()
                         self._id = inline_check(id, [int, list], []) if id is not None else None
@@ -8838,10 +8892,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def alphas(self):
@@ -8849,12 +8903,12 @@ class Root(object):
 
                     @alphas.setter
                     def alphas(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3', 'object4']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._alphas = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._alphas = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def mus(self):
@@ -8862,12 +8916,12 @@ class Root(object):
 
                     @mus.setter
                     def mus(self, value):
-                        ''' 
+                        '''
                         Ogden mu
                         \nRequired: []
-                        \nOptional: ['item', 'string']
+                        \nOptional: ['item', 'string', 'ValueWithUnit']
                         '''
-                        self._mus = type_check(value, self.Mus) 
+                        self._mus = type_check(value, self.Mus)
 
                     @property
                     def Ds(self):
@@ -8875,12 +8929,12 @@ class Root(object):
 
                     @Ds.setter
                     def Ds(self, value):
-                        ''' 
+                        '''
                         Ogden D
                         \nRequired: []
-                        \nOptional: ['item', 'string']
+                        \nOptional: ['item', 'string', 'ValueWithUnit']
                         '''
-                        self._Ds = type_check(value, self.Ds) 
+                        self._Ds = type_check(value, self.Ds)
 
                     @property
                     def id(self):
@@ -8888,12 +8942,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -8901,12 +8955,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -8925,7 +8979,7 @@ class Root(object):
                     class Mus(object):
                         '''Ogden mu
                         \nRequired: []
-                        \nOptional: ['item', 'string']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit']'''
                         def __init__(
                             self,
                             items : list = None
@@ -8975,7 +9029,7 @@ class Root(object):
                     class Ds(object):
                         '''Ogden D
                         \nRequired: []
-                        \nOptional: ['item', 'string']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit']'''
                         def __init__(
                             self,
                             items : list = None
@@ -9052,10 +9106,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def c(self):
@@ -9063,12 +9117,12 @@ class Root(object):
 
                     @c.setter
                     def c(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3', 'list']
+                        \nOptional: ['float', 'string', 'ValueWithUnit', 'list']
                         '''
-                        self._c = type_check(value, self.C) if isinstance(value, self.C) else self.C(value) 
+                        self._c = type_check(value, self.C) if isinstance(value, self.C) else self.C(value)
 
                     @property
                     def m(self):
@@ -9076,12 +9130,12 @@ class Root(object):
 
                     @m.setter
                     def m(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3', 'list']
+                        \nOptional: ['float', 'string', 'ValueWithUnit', 'list']
                         '''
-                        self._m = type_check(value, self.M) if isinstance(value, self.M) else self.M(value) 
+                        self._m = type_check(value, self.M) if isinstance(value, self.M) else self.M(value)
 
                     @property
                     def k(self):
@@ -9089,12 +9143,12 @@ class Root(object):
 
                     @k.setter
                     def k(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -9102,12 +9156,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -9115,12 +9169,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -9139,12 +9193,12 @@ class Root(object):
                     class C(object):
                         '''This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3', 'list']'''
+                        \nOptional: ['float', 'string', 'ValueWithUnit', 'list']'''
                         def __init__(
                             self,
                             value : object = None
                         ):
-                            self._value = class_check(value, [float, str, self.Object3, list, self.List]) if value is not None else None
+                            self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List]) if value is not None else None
 
                         @property
                         def value(self):
@@ -9152,10 +9206,10 @@ class Root(object):
 
                         @value.setter
                         def value(self, value):
-                            ''' 
+                            '''
                             This is a polymorphic variable, assign an object from its classes to the value
                             '''
-                            self._value = class_check(value, [float, str, self.Object3, list, self.List]) 
+                            self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List])
 
                         def check_required(self):
 
@@ -9167,9 +9221,9 @@ class Root(object):
                             return
 
                         def as_dict(self):
-                            return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.List])) else self._value)
+                            return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.ValueWithUnit, self.List])) else self._value)
 
-                        class Object3(object):
+                        class ValueWithUnit(object):
                             '''Value with unit
                             \nRequired: ['value', 'unit']
                             \nOptional: []'''
@@ -9187,12 +9241,12 @@ class Root(object):
 
                             @value.setter
                             def value(self, value):
-                                ''' 
+                                '''
                                 This is a polymorphic variable, assign an object from its classes to the value
                                 \nRequired: []
                                 \nOptional: ['float', 'string']
                                 '''
-                                self._value = inline_check(value, [float, str], []) 
+                                self._value = inline_check(value, [float, str], [])
 
                             @property
                             def unit(self):
@@ -9200,18 +9254,18 @@ class Root(object):
 
                             @unit.setter
                             def unit(self, value):
-                                ''' 
+                                '''
                                 The unit of the Value
                                 '''
-                                self._unit = type_check(value, str) 
+                                self._unit = type_check(value, str)
 
                             def check_required(self):
 
                                 if self.value is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.Object3.value does not have value")
+                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.ValueWithUnit.value does not have value")
 
                                 if self.unit is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.Object3.unit does not have value")
+                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.ValueWithUnit.unit does not have value")
                                 return
 
                             def as_dict(self):
@@ -9221,7 +9275,7 @@ class Root(object):
                         class List(object):
                             '''Coefficient(s) of Incompressible Ogden
                             \nRequired: []
-                            \nOptional: ['item', 'string']'''
+                            \nOptional: ['item', 'string', 'ValueWithUnit']'''
                             def __init__(
                                 self,
                                 items : list = None
@@ -9268,16 +9322,18 @@ class Root(object):
                                 return drop_none([inline_as_dict(i) for i in self._items])
 
 
+                        Object3 = ValueWithUnit
+
 
                     class M(object):
                         '''This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3', 'list']'''
+                        \nOptional: ['float', 'string', 'ValueWithUnit', 'list']'''
                         def __init__(
                             self,
                             value : object = None
                         ):
-                            self._value = class_check(value, [float, str, self.Object3, list, self.List]) if value is not None else None
+                            self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List]) if value is not None else None
 
                         @property
                         def value(self):
@@ -9285,10 +9341,10 @@ class Root(object):
 
                         @value.setter
                         def value(self, value):
-                            ''' 
+                            '''
                             This is a polymorphic variable, assign an object from its classes to the value
                             '''
-                            self._value = class_check(value, [float, str, self.Object3, list, self.List]) 
+                            self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List])
 
                         def check_required(self):
 
@@ -9300,9 +9356,9 @@ class Root(object):
                             return
 
                         def as_dict(self):
-                            return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.List])) else self._value)
+                            return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.ValueWithUnit, self.List])) else self._value)
 
-                        class Object3(object):
+                        class ValueWithUnit(object):
                             '''Value with unit
                             \nRequired: ['value', 'unit']
                             \nOptional: []'''
@@ -9320,12 +9376,12 @@ class Root(object):
 
                             @value.setter
                             def value(self, value):
-                                ''' 
+                                '''
                                 This is a polymorphic variable, assign an object from its classes to the value
                                 \nRequired: []
                                 \nOptional: ['float', 'string']
                                 '''
-                                self._value = inline_check(value, [float, str], []) 
+                                self._value = inline_check(value, [float, str], [])
 
                             @property
                             def unit(self):
@@ -9333,18 +9389,18 @@ class Root(object):
 
                             @unit.setter
                             def unit(self, value):
-                                ''' 
+                                '''
                                 The unit of the Value
                                 '''
-                                self._unit = type_check(value, str) 
+                                self._unit = type_check(value, str)
 
                             def check_required(self):
 
                                 if self.value is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.Object3.value does not have value")
+                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.ValueWithUnit.value does not have value")
 
                                 if self.unit is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.Object3.unit does not have value")
+                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.ValueWithUnit.unit does not have value")
                                 return
 
                             def as_dict(self):
@@ -9354,7 +9410,7 @@ class Root(object):
                         class List(object):
                             '''Exponent(s) of Incompressible Ogden
                             \nRequired: []
-                            \nOptional: ['item', 'string']'''
+                            \nOptional: ['item', 'string', 'ValueWithUnit']'''
                             def __init__(
                                 self,
                                 items : list = None
@@ -9401,6 +9457,8 @@ class Root(object):
                                 return drop_none([inline_as_dict(i) for i in self._items])
 
 
+                        Object3 = ValueWithUnit
+
 
 
                 class LinearElasticity(object):
@@ -9438,10 +9496,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -9449,12 +9507,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -9462,12 +9520,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def lambda_(self):
@@ -9475,12 +9533,12 @@ class Root(object):
 
                     @lambda_.setter
                     def lambda_(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def mu(self):
@@ -9488,12 +9546,12 @@ class Root(object):
 
                     @mu.setter
                     def mu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -9501,12 +9559,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -9514,12 +9572,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def phi(self):
@@ -9527,12 +9585,12 @@ class Root(object):
 
                     @phi.setter
                     def phi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def psi(self):
@@ -9540,12 +9598,12 @@ class Root(object):
 
                     @psi.setter
                     def psi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -9588,10 +9646,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -9599,12 +9657,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -9612,12 +9670,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def elasticity_tensor(self):
@@ -9625,12 +9683,12 @@ class Root(object):
 
                     @elasticity_tensor.setter
                     def elasticity_tensor(self, value):
-                        ''' 
+                        '''
                         Symmetric elasticity tensor
                         \nRequired: []
-                        \nOptional: ['item', 'string']
+                        \nOptional: ['item', 'string', 'ValueWithUnit']
                         '''
-                        self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
+                        self._elasticity_tensor = type_check(value, self.Elasticity_tensor)
 
                     @property
                     def id(self):
@@ -9638,12 +9696,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -9651,12 +9709,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def fiber_direction(self):
@@ -9664,12 +9722,12 @@ class Root(object):
 
                     @fiber_direction.setter
                     def fiber_direction(self, value):
-                        ''' 
+                        '''
                         Fiber direction
                         \nRequired: []
-                        \nOptional: ['item', 'string', 'list']
+                        \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                         '''
-                        self._fiber_direction = type_check(value, self.Fiber_direction) 
+                        self._fiber_direction = type_check(value, self.Fiber_direction)
 
                     def check_required(self):
 
@@ -9683,7 +9741,7 @@ class Root(object):
                     class Elasticity_tensor(object):
                         '''Symmetric elasticity tensor
                         \nRequired: []
-                        \nOptional: ['item', 'string']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit']'''
                         def __init__(
                             self,
                             items : list = None
@@ -9733,12 +9791,12 @@ class Root(object):
                     class Fiber_direction(object):
                         '''Fiber direction
                         \nRequired: []
-                        \nOptional: ['item', 'string', 'list']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                         def __init__(
                             self,
                             items : list = None
                         ):
-                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         @property
                         def items(self):
@@ -9747,11 +9805,11 @@ class Root(object):
                         @items.setter
                         def items(self, items : list):
                             ''' Replace the list '''
-                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         def add(self, item : object):
                             ''' Add to the list '''
-                            self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                            self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                         def clear(self):
                             '''Clear list (make empty)'''
@@ -9816,10 +9874,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -9827,12 +9885,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -9840,12 +9898,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def elasticity_tensor(self):
@@ -9853,12 +9911,12 @@ class Root(object):
 
                     @elasticity_tensor.setter
                     def elasticity_tensor(self, value):
-                        ''' 
+                        '''
                         Symmetric elasticity tensor
                         \nRequired: []
-                        \nOptional: ['item', 'string']
+                        \nOptional: ['item', 'string', 'ValueWithUnit']
                         '''
-                        self._elasticity_tensor = type_check(value, self.Elasticity_tensor) 
+                        self._elasticity_tensor = type_check(value, self.Elasticity_tensor)
 
                     @property
                     def id(self):
@@ -9866,12 +9924,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -9879,12 +9937,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def phi(self):
@@ -9892,12 +9950,12 @@ class Root(object):
 
                     @phi.setter
                     def phi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def fiber_direction(self):
@@ -9905,12 +9963,12 @@ class Root(object):
 
                     @fiber_direction.setter
                     def fiber_direction(self, value):
-                        ''' 
+                        '''
                         Fiber direction
                         \nRequired: []
-                        \nOptional: ['item', 'string', 'list']
+                        \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                         '''
-                        self._fiber_direction = type_check(value, self.Fiber_direction) 
+                        self._fiber_direction = type_check(value, self.Fiber_direction)
 
                     @property
                     def psi(self):
@@ -9918,12 +9976,12 @@ class Root(object):
 
                     @psi.setter
                     def psi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -9937,7 +9995,7 @@ class Root(object):
                     class Elasticity_tensor(object):
                         '''Symmetric elasticity tensor
                         \nRequired: []
-                        \nOptional: ['item', 'string']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit']'''
                         def __init__(
                             self,
                             items : list = None
@@ -9987,12 +10045,12 @@ class Root(object):
                     class Fiber_direction(object):
                         '''Fiber direction
                         \nRequired: []
-                        \nOptional: ['item', 'string', 'list']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                         def __init__(
                             self,
                             items : list = None
                         ):
-                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         @property
                         def items(self):
@@ -10001,11 +10059,11 @@ class Root(object):
                         @items.setter
                         def items(self, items : list):
                             ''' Replace the list '''
-                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         def add(self, item : object):
                             ''' Add to the list '''
-                            self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                            self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                         def clear(self):
                             '''Clear list (make empty)'''
@@ -10060,10 +10118,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def viscosity(self):
@@ -10071,12 +10129,12 @@ class Root(object):
 
                     @viscosity.setter
                     def viscosity(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10084,12 +10142,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10097,12 +10155,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10142,10 +10200,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def viscosity(self):
@@ -10153,12 +10211,12 @@ class Root(object):
 
                     @viscosity.setter
                     def viscosity(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10166,12 +10224,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10179,12 +10237,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10224,10 +10282,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def viscosity(self):
@@ -10235,12 +10293,12 @@ class Root(object):
 
                     @viscosity.setter
                     def viscosity(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._viscosity = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10248,12 +10306,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10261,12 +10319,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10306,10 +10364,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def epsilon(self):
@@ -10317,12 +10375,12 @@ class Root(object):
 
                     @epsilon.setter
                     def epsilon(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._epsilon = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._epsilon = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10330,12 +10388,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10343,12 +10401,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10394,10 +10452,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -10405,12 +10463,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -10418,12 +10476,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def lambda_(self):
@@ -10431,12 +10489,12 @@ class Root(object):
 
                     @lambda_.setter
                     def lambda_(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def mu(self):
@@ -10444,12 +10502,12 @@ class Root(object):
 
                     @mu.setter
                     def mu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10457,12 +10515,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10470,12 +10528,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10510,10 +10568,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def id(self):
@@ -10521,12 +10579,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def models(self):
@@ -10572,10 +10630,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def id(self):
@@ -10583,12 +10641,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10596,12 +10654,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10638,10 +10696,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def k(self):
@@ -10649,12 +10707,12 @@ class Root(object):
 
                     @k.setter
                     def k(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10662,12 +10720,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10675,12 +10733,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10718,10 +10776,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def id(self):
@@ -10729,12 +10787,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10742,12 +10800,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10784,10 +10842,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def use_rest_pose(self):
@@ -10795,10 +10853,10 @@ class Root(object):
 
                     @use_rest_pose.setter
                     def use_rest_pose(self, value):
-                        ''' 
+                        '''
                         Use amips wrt to rest pose or the regular element
                         '''
-                        self._use_rest_pose = type_check(value, bool) 
+                        self._use_rest_pose = type_check(value, bool)
 
                     @property
                     def id(self):
@@ -10806,12 +10864,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10819,12 +10877,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10859,10 +10917,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def id(self):
@@ -10870,12 +10928,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -10883,12 +10941,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -10935,10 +10993,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def E(self):
@@ -10946,12 +11004,12 @@ class Root(object):
 
                     @E.setter
                     def E(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def nu(self):
@@ -10959,12 +11017,12 @@ class Root(object):
 
                     @nu.setter
                     def nu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def lambda_(self):
@@ -10972,12 +11030,12 @@ class Root(object):
 
                     @lambda_.setter
                     def lambda_(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def mu(self):
@@ -10985,12 +11043,12 @@ class Root(object):
 
                     @mu.setter
                     def mu(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -10998,12 +11056,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -11011,12 +11069,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def phi(self):
@@ -11024,12 +11082,12 @@ class Root(object):
 
                     @phi.setter
                     def phi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def psi(self):
@@ -11037,12 +11095,12 @@ class Root(object):
 
                     @psi.setter
                     def psi(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -11079,10 +11137,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def k(self):
@@ -11090,12 +11148,12 @@ class Root(object):
 
                     @k.setter
                     def k(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -11103,12 +11161,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -11116,12 +11174,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     def check_required(self):
 
@@ -11165,10 +11223,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of material
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def k1(self):
@@ -11176,12 +11234,12 @@ class Root(object):
 
                     @k1.setter
                     def k1(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._k1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._k1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def k2(self):
@@ -11189,12 +11247,12 @@ class Root(object):
 
                     @k2.setter
                     def k2(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._k2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._k2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def id(self):
@@ -11202,12 +11260,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def rho(self):
@@ -11215,12 +11273,12 @@ class Root(object):
 
                     @rho.setter
                     def rho(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
-                        \nOptional: ['float', 'string', 'object3']
+                        \nOptional: ['float', 'string', 'ValueWithUnit']
                         '''
-                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                        self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                     @property
                     def fiber_direction(self):
@@ -11228,12 +11286,12 @@ class Root(object):
 
                     @fiber_direction.setter
                     def fiber_direction(self, value):
-                        ''' 
+                        '''
                         Fiber direction
                         \nRequired: []
-                        \nOptional: ['item', 'string', 'list']
+                        \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                         '''
-                        self._fiber_direction = type_check(value, self.Fiber_direction) 
+                        self._fiber_direction = type_check(value, self.Fiber_direction)
 
                     def check_required(self):
 
@@ -11253,12 +11311,12 @@ class Root(object):
                     class Fiber_direction(object):
                         '''Fiber direction
                         \nRequired: []
-                        \nOptional: ['item', 'string', 'list']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                         def __init__(
                             self,
                             items : list = None
                         ):
-                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         @property
                         def items(self):
@@ -11267,11 +11325,11 @@ class Root(object):
                         @items.setter
                         def items(self, items : list):
                             ''' Replace the list '''
-                            self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                            self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                         def add(self, item : object):
                             ''' Add to the list '''
-                            self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                            self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                         def clear(self):
                             '''Clear list (make empty)'''
@@ -11301,6 +11359,31 @@ class Root(object):
 
 
 
+                Item = NeoHookean
+                Object2 = IsochoricNeoHookean
+                Object3 = MooneyRivlin
+                Object4 = MooneyRivlin3Param
+                Object5 = MooneyRivlin3ParamSymbolic
+                Object6 = UnconstrainedOgden
+                Object7 = IncompressibleOgden
+                Object8 = LinearElasticity
+                Object9 = HookeLinearElasticity
+                Object10 = SaintVenant
+                Object11 = Stokes
+                Object12 = NavierStokes
+                Object13 = OperatorSplitting
+                Object14 = Electrostatics
+                Object15 = IncompressibleLinearElasticity
+                Object16 = MaterialSum
+                Object17 = Laplacian
+                Object18 = Helmholtz
+                Object19 = Bilaplacian
+                Object20 = AMIPS
+                Object21 = AMIPSAutodiff
+                Object22 = FixedCorotational
+                Object23 = VolumePenalty
+                Object24 = HGOFiber
+
 
 
         class Laplacian(object):
@@ -11326,10 +11409,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def id(self):
@@ -11337,12 +11420,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11350,12 +11433,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11392,10 +11475,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def k(self):
@@ -11403,12 +11486,12 @@ class Root(object):
 
             @k.setter
             def k(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -11416,12 +11499,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11429,12 +11512,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11472,10 +11555,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def id(self):
@@ -11483,12 +11566,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11496,12 +11579,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11538,10 +11621,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def use_rest_pose(self):
@@ -11549,10 +11632,10 @@ class Root(object):
 
             @use_rest_pose.setter
             def use_rest_pose(self, value):
-                ''' 
+                '''
                 Use amips wrt to rest pose or the regular element
                 '''
-                self._use_rest_pose = type_check(value, bool) 
+                self._use_rest_pose = type_check(value, bool)
 
             @property
             def id(self):
@@ -11560,12 +11643,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11573,12 +11656,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11613,10 +11696,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def id(self):
@@ -11624,12 +11707,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11637,12 +11720,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11689,10 +11772,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def E(self):
@@ -11700,12 +11783,12 @@ class Root(object):
 
             @E.setter
             def E(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._E = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def nu(self):
@@ -11713,12 +11796,12 @@ class Root(object):
 
             @nu.setter
             def nu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._nu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def lambda_(self):
@@ -11726,12 +11809,12 @@ class Root(object):
 
             @lambda_.setter
             def lambda_(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._lambda_ = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def mu(self):
@@ -11739,12 +11822,12 @@ class Root(object):
 
             @mu.setter
             def mu(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._mu = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -11752,12 +11835,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11765,12 +11848,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def phi(self):
@@ -11778,12 +11861,12 @@ class Root(object):
 
             @phi.setter
             def phi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._phi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def psi(self):
@@ -11791,12 +11874,12 @@ class Root(object):
 
             @psi.setter
             def psi(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._psi = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11833,10 +11916,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def k(self):
@@ -11844,12 +11927,12 @@ class Root(object):
 
             @k.setter
             def k(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._k = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -11857,12 +11940,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11870,12 +11953,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             def check_required(self):
 
@@ -11919,10 +12002,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of material
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             @property
             def k1(self):
@@ -11930,12 +12013,12 @@ class Root(object):
 
             @k1.setter
             def k1(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._k1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._k1 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def k2(self):
@@ -11943,12 +12026,12 @@ class Root(object):
 
             @k2.setter
             def k2(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._k2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._k2 = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def id(self):
@@ -11956,12 +12039,12 @@ class Root(object):
 
             @id.setter
             def id(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._id = inline_check(value, [int, list], []) 
+                self._id = inline_check(value, [int, list], [])
 
             @property
             def rho(self):
@@ -11969,12 +12052,12 @@ class Root(object):
 
             @rho.setter
             def rho(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
-                \nOptional: ['float', 'string', 'object3']
+                \nOptional: ['float', 'string', 'ValueWithUnit']
                 '''
-                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                self._rho = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
             @property
             def fiber_direction(self):
@@ -11982,12 +12065,12 @@ class Root(object):
 
             @fiber_direction.setter
             def fiber_direction(self, value):
-                ''' 
+                '''
                 Fiber direction
                 \nRequired: []
-                \nOptional: ['item', 'string', 'list']
+                \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                 '''
-                self._fiber_direction = type_check(value, self.Fiber_direction) 
+                self._fiber_direction = type_check(value, self.Fiber_direction)
 
             def check_required(self):
 
@@ -12007,12 +12090,12 @@ class Root(object):
             class Fiber_direction(object):
                 '''Fiber direction
                 \nRequired: []
-                \nOptional: ['item', 'string', 'list']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                 def __init__(
                     self,
                     items : list = None
                 ):
-                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 @property
                 def items(self):
@@ -12021,11 +12104,11 @@ class Root(object):
                 @items.setter
                 def items(self, items : list):
                     ''' Replace the list '''
-                    self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                    self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                 def add(self, item : object):
                     ''' Add to the list '''
-                    self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                    self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                 def clear(self):
                     '''Clear list (make empty)'''
@@ -12055,6 +12138,31 @@ class Root(object):
 
 
 
+        Item = NeoHookean
+        Object2 = IsochoricNeoHookean
+        Object3 = MooneyRivlin
+        Object4 = MooneyRivlin3Param
+        Object5 = MooneyRivlin3ParamSymbolic
+        Object6 = UnconstrainedOgden
+        Object7 = IncompressibleOgden
+        Object8 = LinearElasticity
+        Object9 = HookeLinearElasticity
+        Object10 = SaintVenant
+        Object11 = Stokes
+        Object12 = NavierStokes
+        Object13 = OperatorSplitting
+        Object14 = Electrostatics
+        Object15 = IncompressibleLinearElasticity
+        Object16 = MaterialSum
+        Object17 = Laplacian
+        Object18 = Helmholtz
+        Object19 = Bilaplacian
+        Object20 = AMIPS
+        Object21 = AMIPSAutodiff
+        Object22 = FixedCorotational
+        Object23 = VolumePenalty
+        Object24 = HGOFiber
+
 
     class Units(object):
         '''Basic units used in the code.
@@ -12078,10 +12186,10 @@ class Root(object):
 
         @length.setter
         def length(self, value):
-            ''' 
+            '''
             Length unit.
             '''
-            self._length = type_check(value, str) 
+            self._length = type_check(value, str)
 
         @property
         def mass(self):
@@ -12089,10 +12197,10 @@ class Root(object):
 
         @mass.setter
         def mass(self, value):
-            ''' 
+            '''
             Mass unit.
             '''
-            self._mass = type_check(value, str) 
+            self._mass = type_check(value, str)
 
         @property
         def time(self):
@@ -12100,10 +12208,10 @@ class Root(object):
 
         @time.setter
         def time(self, value):
-            ''' 
+            '''
             Time unit.
             '''
-            self._time = type_check(value, str) 
+            self._time = type_check(value, str)
 
         @property
         def characteristic_length(self):
@@ -12111,10 +12219,10 @@ class Root(object):
 
         @characteristic_length.setter
         def characteristic_length(self, value):
-            ''' 
+            '''
             Characteristic length, used for tolerances.
             '''
-            self._characteristic_length = type_check(value, float) 
+            self._characteristic_length = type_check(value, float)
 
         def check_required(self):
 
@@ -12165,12 +12273,12 @@ class Root(object):
 
         @discr_order.setter
         def discr_order(self, value):
-            ''' 
+            '''
             This is a polymorphic variable, assign an object from its classes to the value
             \nRequired: []
             \nOptional: ['int', 'file', 'list']
             '''
-            self._discr_order = type_check(value, self.Discr_order) if isinstance(value, self.Discr_order) else self.Discr_order(value) 
+            self._discr_order = type_check(value, self.Discr_order) if isinstance(value, self.Discr_order) else self.Discr_order(value)
 
         @property
         def discr_orderq(self):
@@ -12178,10 +12286,10 @@ class Root(object):
 
         @discr_orderq.setter
         def discr_orderq(self, value):
-            ''' 
+            '''
             Lagrange element order at height dimension for the space for the main unknown, for prism.
             '''
-            self._discr_orderq = type_check(value, int) 
+            self._discr_orderq = type_check(value, int)
 
         @property
         def pressure_discr_order(self):
@@ -12189,10 +12297,10 @@ class Root(object):
 
         @pressure_discr_order.setter
         def pressure_discr_order(self, value):
-            ''' 
+            '''
              Lagrange element order for the space for the pressure unknown, for all elements.
             '''
-            self._pressure_discr_order = type_check(value, int) 
+            self._pressure_discr_order = type_check(value, int)
 
         @property
         def basis_type(self):
@@ -12200,10 +12308,10 @@ class Root(object):
 
         @basis_type.setter
         def basis_type(self, value):
-            ''' 
+            '''
             Type of basis to use for non polygonal element, one of Lagrange, Spline, or Serendipity. Spline or Serendipity work only for quad/hex meshes
             '''
-            self._basis_type = enum_check(value, self.Basis_type) 
+            self._basis_type = enum_check(value, self.Basis_type)
 
         @property
         def poly_basis_type(self):
@@ -12211,10 +12319,10 @@ class Root(object):
 
         @poly_basis_type.setter
         def poly_basis_type(self, value):
-            ''' 
+            '''
             Type of basis to use for a polygonal element, one of MFSHarmonic, MeanValue, or Wachspress see 'PolySpline..' paper for details.
             '''
-            self._poly_basis_type = enum_check(value, self.Poly_basis_type) 
+            self._poly_basis_type = enum_check(value, self.Poly_basis_type)
 
         @property
         def use_p_ref(self):
@@ -12222,10 +12330,10 @@ class Root(object):
 
         @use_p_ref.setter
         def use_p_ref(self, value):
-            ''' 
+            '''
             Perform a priori p-refinement based on element shape, as described in 'Decoupling..' paper.
             '''
-            self._use_p_ref = type_check(value, bool) 
+            self._use_p_ref = type_check(value, bool)
 
         @property
         def remesh(self):
@@ -12233,12 +12341,12 @@ class Root(object):
 
         @remesh.setter
         def remesh(self, value):
-            ''' 
+            '''
             Settings for adaptive remeshing
             \nRequired: []
             \nOptional: ['enabled', 'split', 'collapse', 'swap', 'smooth', 'local_relaxation', 'type']
             '''
-            self._remesh = type_check(value, self.Remesh) 
+            self._remesh = type_check(value, self.Remesh)
 
         @property
         def advanced(self):
@@ -12246,12 +12354,12 @@ class Root(object):
 
         @advanced.setter
         def advanced(self, value):
-            ''' 
+            '''
             Advanced settings for the FE space.
             \nRequired: []
             \nOptional: ['discr_order_max', 'isoparametric', 'bc_method', 'n_boundary_samples', 'quadrature_order', 'mass_quadrature_order', 'use_corner_quadrature', 'integral_constraints', 'n_harmonic_samples', 'force_no_ref_for_harmonic', 'B', 'h1_formula', 'count_flipped_els', 'count_flipped_els_continuous', 'use_particle_advection']
             '''
-            self._advanced = type_check(value, self.Advanced) 
+            self._advanced = type_check(value, self.Advanced)
 
         def check_required(self):
 
@@ -12276,10 +12384,10 @@ class Root(object):
 
             @value.setter
             def value(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 '''
-                self._value = class_check(value, [int, str, list, self.List]) 
+                self._value = class_check(value, [int, str, list, self.List])
 
             def check_required(self):
 
@@ -12360,12 +12468,12 @@ class Root(object):
 
                     @id.setter
                     def id(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['int', 'list']
                         '''
-                        self._id = inline_check(value, [int, list], []) 
+                        self._id = inline_check(value, [int, list], [])
 
                     @property
                     def order(self):
@@ -12373,10 +12481,10 @@ class Root(object):
 
                     @order.setter
                     def order(self, value):
-                        ''' 
+                        '''
                         Lagrange element order for the space for the main unknown, for all elements.
                         '''
-                        self._order = type_check(value, int) 
+                        self._order = type_check(value, int)
 
                     def check_required(self):
 
@@ -12425,10 +12533,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 Whether to do adaptive remeshing
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def split(self):
@@ -12436,12 +12544,12 @@ class Root(object):
 
             @split.setter
             def split(self, value):
-                ''' 
+                '''
                 Settings for adaptive remeshing edge splitting operations
                 \nRequired: []
                 \nOptional: ['enabled', 'acceptance_tolerance', 'culling_threshold', 'max_depth', 'min_edge_length']
                 '''
-                self._split = type_check(value, self.Split) 
+                self._split = type_check(value, self.Split)
 
             @property
             def collapse(self):
@@ -12449,12 +12557,12 @@ class Root(object):
 
             @collapse.setter
             def collapse(self, value):
-                ''' 
+                '''
                 Settings for adaptive remeshing edge collapse operations
                 \nRequired: []
                 \nOptional: ['enabled', 'acceptance_tolerance', 'culling_threshold', 'max_depth', 'rel_max_edge_length', 'abs_max_edge_length']
                 '''
-                self._collapse = type_check(value, self.Collapse) 
+                self._collapse = type_check(value, self.Collapse)
 
             @property
             def swap(self):
@@ -12462,12 +12570,12 @@ class Root(object):
 
             @swap.setter
             def swap(self, value):
-                ''' 
+                '''
                 Settings for adaptive remeshing edge/face swap operations
                 \nRequired: []
                 \nOptional: ['enabled', 'acceptance_tolerance', 'max_depth']
                 '''
-                self._swap = type_check(value, self.Swap) 
+                self._swap = type_check(value, self.Swap)
 
             @property
             def smooth(self):
@@ -12475,12 +12583,12 @@ class Root(object):
 
             @smooth.setter
             def smooth(self, value):
-                ''' 
+                '''
                 Settings for adaptive remeshing vertex smoothing operations
                 \nRequired: []
                 \nOptional: ['enabled', 'acceptance_tolerance', 'max_iters']
                 '''
-                self._smooth = type_check(value, self.Smooth) 
+                self._smooth = type_check(value, self.Smooth)
 
             @property
             def local_relaxation(self):
@@ -12488,12 +12596,12 @@ class Root(object):
 
             @local_relaxation.setter
             def local_relaxation(self, value):
-                ''' 
+                '''
                 Settings for adaptive remeshing local relaxation
                 \nRequired: []
                 \nOptional: ['local_mesh_n_ring', 'local_mesh_rel_area', 'max_nl_iterations']
                 '''
-                self._local_relaxation = type_check(value, self.Local_relaxation) 
+                self._local_relaxation = type_check(value, self.Local_relaxation)
 
             @property
             def type(self):
@@ -12501,10 +12609,10 @@ class Root(object):
 
             @type.setter
             def type(self, value):
-                ''' 
+                '''
                 Type of adaptive remeshing to use.
                 '''
-                self._type = enum_check(value, self.Type) 
+                self._type = enum_check(value, self.Type)
 
             def check_required(self):
 
@@ -12537,10 +12645,10 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     Whether to do edge splitting in adaptive remeshing
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 @property
                 def acceptance_tolerance(self):
@@ -12548,10 +12656,10 @@ class Root(object):
 
                 @acceptance_tolerance.setter
                 def acceptance_tolerance(self, value):
-                    ''' 
+                    '''
                     Accept split operation if energy decreased by at least x
                     '''
-                    self._acceptance_tolerance = range_check(type_check(value, float), 0, None) 
+                    self._acceptance_tolerance = range_check(type_check(value, float), 0, None)
 
                 @property
                 def culling_threshold(self):
@@ -12559,10 +12667,10 @@ class Root(object):
 
                 @culling_threshold.setter
                 def culling_threshold(self, value):
-                    ''' 
+                    '''
                     Split operation culling threshold on energy
                     '''
-                    self._culling_threshold = range_check(type_check(value, float), 0, 1) 
+                    self._culling_threshold = range_check(type_check(value, float), 0, 1)
 
                 @property
                 def max_depth(self):
@@ -12570,10 +12678,10 @@ class Root(object):
 
                 @max_depth.setter
                 def max_depth(self, value):
-                    ''' 
+                    '''
                     Maximum depth split per time-step
                     '''
-                    self._max_depth = range_check(type_check(value, int), 1, None) 
+                    self._max_depth = range_check(type_check(value, int), 1, None)
 
                 @property
                 def min_edge_length(self):
@@ -12581,10 +12689,10 @@ class Root(object):
 
                 @min_edge_length.setter
                 def min_edge_length(self, value):
-                    ''' 
+                    '''
                     Minimum edge length to split
                     '''
-                    self._min_edge_length = range_check(type_check(value, float), 0, None) 
+                    self._min_edge_length = range_check(type_check(value, float), 0, None)
 
                 def check_required(self):
 
@@ -12620,10 +12728,10 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     Whether to do edge collapse in adaptive remeshing
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 @property
                 def acceptance_tolerance(self):
@@ -12631,10 +12739,10 @@ class Root(object):
 
                 @acceptance_tolerance.setter
                 def acceptance_tolerance(self, value):
-                    ''' 
+                    '''
                     Accept collapse operation if energy decreased by at least x
                     '''
-                    self._acceptance_tolerance = range_check(type_check(value, float), None, 0) 
+                    self._acceptance_tolerance = range_check(type_check(value, float), None, 0)
 
                 @property
                 def culling_threshold(self):
@@ -12642,10 +12750,10 @@ class Root(object):
 
                 @culling_threshold.setter
                 def culling_threshold(self, value):
-                    ''' 
+                    '''
                     Collapse operation culling threshold on energy
                     '''
-                    self._culling_threshold = range_check(type_check(value, float), 0, 1) 
+                    self._culling_threshold = range_check(type_check(value, float), 0, 1)
 
                 @property
                 def max_depth(self):
@@ -12653,10 +12761,10 @@ class Root(object):
 
                 @max_depth.setter
                 def max_depth(self, value):
-                    ''' 
+                    '''
                     Maximum depth collapse per time-step
                     '''
-                    self._max_depth = range_check(type_check(value, int), 1, None) 
+                    self._max_depth = range_check(type_check(value, int), 1, None)
 
                 @property
                 def rel_max_edge_length(self):
@@ -12664,10 +12772,10 @@ class Root(object):
 
                 @rel_max_edge_length.setter
                 def rel_max_edge_length(self, value):
-                    ''' 
+                    '''
                     Length of maximum edge length to collapse relative to initial minimum edge length
                     '''
-                    self._rel_max_edge_length = range_check(type_check(value, float), 0, None) 
+                    self._rel_max_edge_length = range_check(type_check(value, float), 0, None)
 
                 @property
                 def abs_max_edge_length(self):
@@ -12675,10 +12783,10 @@ class Root(object):
 
                 @abs_max_edge_length.setter
                 def abs_max_edge_length(self, value):
-                    ''' 
+                    '''
                     Length of maximum edge length to collapse in absolute units of distance
                     '''
-                    self._abs_max_edge_length = range_check(type_check(value, float), 0, None) 
+                    self._abs_max_edge_length = range_check(type_check(value, float), 0, None)
 
                 def check_required(self):
 
@@ -12708,10 +12816,10 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     Whether to do edge/face swap in adaptive remeshing
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 @property
                 def acceptance_tolerance(self):
@@ -12719,10 +12827,10 @@ class Root(object):
 
                 @acceptance_tolerance.setter
                 def acceptance_tolerance(self, value):
-                    ''' 
+                    '''
                     Accept swap operation if energy decreased by at least x
                     '''
-                    self._acceptance_tolerance = range_check(type_check(value, float), None, 0) 
+                    self._acceptance_tolerance = range_check(type_check(value, float), None, 0)
 
                 @property
                 def max_depth(self):
@@ -12730,10 +12838,10 @@ class Root(object):
 
                 @max_depth.setter
                 def max_depth(self, value):
-                    ''' 
+                    '''
                     Maximum depth swap per time-step
                     '''
-                    self._max_depth = range_check(type_check(value, int), 1, None) 
+                    self._max_depth = range_check(type_check(value, int), 1, None)
 
                 def check_required(self):
 
@@ -12763,10 +12871,10 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     Whether to do vertex smoothing in adaptive remeshing
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 @property
                 def acceptance_tolerance(self):
@@ -12774,10 +12882,10 @@ class Root(object):
 
                 @acceptance_tolerance.setter
                 def acceptance_tolerance(self, value):
-                    ''' 
+                    '''
                     Accept smooth operation if energy decreased by at least x
                     '''
-                    self._acceptance_tolerance = range_check(type_check(value, float), None, 0) 
+                    self._acceptance_tolerance = range_check(type_check(value, float), None, 0)
 
                 @property
                 def max_iters(self):
@@ -12785,10 +12893,10 @@ class Root(object):
 
                 @max_iters.setter
                 def max_iters(self, value):
-                    ''' 
+                    '''
                     Maximum number of smoothing iterations per time-step
                     '''
-                    self._max_iters = range_check(type_check(value, int), 1, None) 
+                    self._max_iters = range_check(type_check(value, int), 1, None)
 
                 def check_required(self):
 
@@ -12818,10 +12926,10 @@ class Root(object):
 
                 @local_mesh_n_ring.setter
                 def local_mesh_n_ring(self, value):
-                    ''' 
+                    '''
                     Size of n-ring for local relaxation
                     '''
-                    self._local_mesh_n_ring = type_check(value, int) 
+                    self._local_mesh_n_ring = type_check(value, int)
 
                 @property
                 def local_mesh_rel_area(self):
@@ -12829,10 +12937,10 @@ class Root(object):
 
                 @local_mesh_rel_area.setter
                 def local_mesh_rel_area(self, value):
-                    ''' 
+                    '''
                     Minimum area for local relaxation
                     '''
-                    self._local_mesh_rel_area = type_check(value, float) 
+                    self._local_mesh_rel_area = type_check(value, float)
 
                 @property
                 def max_nl_iterations(self):
@@ -12840,10 +12948,10 @@ class Root(object):
 
                 @max_nl_iterations.setter
                 def max_nl_iterations(self, value):
-                    ''' 
+                    '''
                     Maximum number of nonlinear solver iterations before acceptance check
                     '''
-                    self._max_nl_iterations = type_check(value, int) 
+                    self._max_nl_iterations = type_check(value, int)
 
                 def check_required(self):
 
@@ -12902,10 +13010,10 @@ class Root(object):
 
             @discr_order_max.setter
             def discr_order_max(self, value):
-                ''' 
+                '''
                 Maximal discretization order in adaptive p-refinement and hp-refinement
                 '''
-                self._discr_order_max = type_check(value, int) 
+                self._discr_order_max = type_check(value, int)
 
             @property
             def isoparametric(self):
@@ -12913,10 +13021,10 @@ class Root(object):
 
             @isoparametric.setter
             def isoparametric(self, value):
-                ''' 
+                '''
                 Forces geometric map basis to be the same degree as the main variable basis, irrespective of the degree associated with the geom. map degrees associated with the elements of the geometry.
                 '''
-                self._isoparametric = type_check(value, bool) 
+                self._isoparametric = type_check(value, bool)
 
             @property
             def bc_method(self):
@@ -12924,10 +13032,10 @@ class Root(object):
 
             @bc_method.setter
             def bc_method(self, value):
-                ''' 
+                '''
                 Method for imposing analytic Dirichet boundary conditions. If 'lsq' (least-squares fit), then the bc function is sampled at quadrature points, and the FEspace nodal values on the boundary are determined by minimizing L2 norm of the difference. If 'sample', then the analytic bc function is sampled at the boundary nodes.
                 '''
-                self._bc_method = enum_check(value, self.Bc_method) 
+                self._bc_method = enum_check(value, self.Bc_method)
 
             @property
             def n_boundary_samples(self):
@@ -12935,10 +13043,10 @@ class Root(object):
 
             @n_boundary_samples.setter
             def n_boundary_samples(self, value):
-                ''' 
+                '''
                 Per-element number of boundary samples for analytic Dirichlet and Neumann boundary conditions.
                 '''
-                self._n_boundary_samples = type_check(value, int) 
+                self._n_boundary_samples = type_check(value, int)
 
             @property
             def quadrature_order(self):
@@ -12946,10 +13054,10 @@ class Root(object):
 
             @quadrature_order.setter
             def quadrature_order(self, value):
-                ''' 
+                '''
                 Minimal quadrature order to use in matrix and rhs assembly; the actual order is determined as min(2*(p-1)+1,quadrature_order).
                 '''
-                self._quadrature_order = type_check(value, int) 
+                self._quadrature_order = type_check(value, int)
 
             @property
             def mass_quadrature_order(self):
@@ -12957,10 +13065,10 @@ class Root(object):
 
             @mass_quadrature_order.setter
             def mass_quadrature_order(self, value):
-                ''' 
+                '''
                 Minimal quadrature order to use in mass matrix assembler; the actual order is determined as min(2*p+1,quadrature_order)
                 '''
-                self._mass_quadrature_order = type_check(value, int) 
+                self._mass_quadrature_order = type_check(value, int)
 
             @property
             def use_corner_quadrature(self):
@@ -12968,10 +13076,10 @@ class Root(object):
 
             @use_corner_quadrature.setter
             def use_corner_quadrature(self, value):
-                ''' 
+                '''
                 Use quadrature rules that always include all the vertices of the element.
                 '''
-                self._use_corner_quadrature = type_check(value, bool) 
+                self._use_corner_quadrature = type_check(value, bool)
 
             @property
             def integral_constraints(self):
@@ -12979,10 +13087,10 @@ class Root(object):
 
             @integral_constraints.setter
             def integral_constraints(self, value):
-                ''' 
+                '''
                 Number of constraints for non-conforming polygonal basis;  0, 1, or 2; see 'PolySpline..' paper for details.
                 '''
-                self._integral_constraints = type_check(value, int) 
+                self._integral_constraints = type_check(value, int)
 
             @property
             def n_harmonic_samples(self):
@@ -12990,10 +13098,10 @@ class Root(object):
 
             @n_harmonic_samples.setter
             def n_harmonic_samples(self, value):
-                ''' 
+                '''
                 If MFSHarmonics is used for a polygonal element, number of collocation samples used in the basis construction;see 'PolySpline..' paper for details.
                 '''
-                self._n_harmonic_samples = type_check(value, int) 
+                self._n_harmonic_samples = type_check(value, int)
 
             @property
             def force_no_ref_for_harmonic(self):
@@ -13001,10 +13109,10 @@ class Root(object):
 
             @force_no_ref_for_harmonic.setter
             def force_no_ref_for_harmonic(self, value):
-                ''' 
+                '''
                 If true, do not do uniform global refinement if the mesh contains polygonal elements.
                 '''
-                self._force_no_ref_for_harmonic = type_check(value, bool) 
+                self._force_no_ref_for_harmonic = type_check(value, bool)
 
             @property
             def B(self):
@@ -13012,10 +13120,10 @@ class Root(object):
 
             @B.setter
             def B(self, value):
-                ''' 
+                '''
                 The target deviation of the error on elements from perfect element error, for a priori geometry-dependent p-refinement, see 'Decoupling .. ' paper.
                 '''
-                self._B = type_check(value, int) 
+                self._B = type_check(value, int)
 
             @property
             def h1_formula(self):
@@ -13023,10 +13131,10 @@ class Root(object):
 
             @h1_formula.setter
             def h1_formula(self, value):
-                ''' 
+                '''
                 There is no definition
                 '''
-                self._h1_formula = type_check(value, bool) 
+                self._h1_formula = type_check(value, bool)
 
             @property
             def count_flipped_els(self):
@@ -13034,10 +13142,10 @@ class Root(object):
 
             @count_flipped_els.setter
             def count_flipped_els(self, value):
-                ''' 
+                '''
                 Count the number of elements with Jacobian of the geometric map not positive at quadrature points.
                 '''
-                self._count_flipped_els = type_check(value, bool) 
+                self._count_flipped_els = type_check(value, bool)
 
             @property
             def count_flipped_els_continuous(self):
@@ -13045,10 +13153,10 @@ class Root(object):
 
             @count_flipped_els_continuous.setter
             def count_flipped_els_continuous(self, value):
-                ''' 
+                '''
                 Count the number of elements with Jacobian of the geometric map not positive at any point.
                 '''
-                self._count_flipped_els_continuous = type_check(value, bool) 
+                self._count_flipped_els_continuous = type_check(value, bool)
 
             @property
             def use_particle_advection(self):
@@ -13056,10 +13164,10 @@ class Root(object):
 
             @use_particle_advection.setter
             def use_particle_advection(self, value):
-                ''' 
+                '''
                 Use particle advection in splitting method for solving NS equation.
                 '''
-                self._use_particle_advection = type_check(value, bool) 
+                self._use_particle_advection = type_check(value, bool)
 
             def check_required(self):
 
@@ -13073,12 +13181,12 @@ class Root(object):
     class Time(object):
         '''This is a polymorphic variable, assign an object from its classes to the value
         \nRequired: []
-        \nOptional: ['object1', 'object2', 'object3']'''
+        \nOptional: ['TendDt', 'TimeStepsDt', 'TimeStepsTend']'''
         def __init__(
             self,
             value : object = None
         ):
-            self._value = class_check(value, [self.Object1, self.Object2, self.Object3]) if value is not None else None
+            self._value = class_check(value, [self.TendDt, self.TimeStepsDt, self.TimeStepsTend]) if value is not None else None
 
         @property
         def value(self):
@@ -13086,10 +13194,10 @@ class Root(object):
 
         @value.setter
         def value(self, value):
-            ''' 
+            '''
             This is a polymorphic variable, assign an object from its classes to the value
             '''
-            self._value = class_check(value, [self.Object1, self.Object2, self.Object3]) 
+            self._value = class_check(value, [self.TendDt, self.TimeStepsDt, self.TimeStepsTend])
 
         def check_required(self):
 
@@ -13101,9 +13209,9 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object1, self.Object2, self.Object3])) else self._value)
+            return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.TendDt, self.TimeStepsDt, self.TimeStepsTend])) else self._value)
 
-        class Object1(object):
+        class TendDt(object):
             '''The time parameters: start time `t0`, end time `tend`, time step `dt`.
             \nRequired: ['tend', 'dt']
             \nOptional: ['t0', 'integrator', 'quasistatic']'''
@@ -13112,7 +13220,7 @@ class Root(object):
                 tend: float = None,
                 dt: float = None,
                 t0: float = 0.0,
-                integrator: Optional["Root.Time.Object1.Integrator"] = None,
+                integrator: Optional["Root.Time.TendDt.Integrator"] = None,
                 quasistatic: bool = False
             ):
                 self._tend = range_check(type_check(tend, float), 0, None) if tend is not None else None
@@ -13127,10 +13235,10 @@ class Root(object):
 
             @tend.setter
             def tend(self, value):
-                ''' 
+                '''
                 Ending time
                 '''
-                self._tend = range_check(type_check(value, float), 0, None) 
+                self._tend = range_check(type_check(value, float), 0, None)
 
             @property
             def dt(self):
@@ -13138,10 +13246,10 @@ class Root(object):
 
             @dt.setter
             def dt(self, value):
-                ''' 
+                '''
                 Time step size $\\Delta t$
                 '''
-                self._dt = range_check(type_check(value, float), 0, None) 
+                self._dt = range_check(type_check(value, float), 0, None)
 
             @property
             def t0(self):
@@ -13149,10 +13257,10 @@ class Root(object):
 
             @t0.setter
             def t0(self, value):
-                ''' 
+                '''
                 Startning time
                 '''
-                self._t0 = range_check(type_check(value, float), 0, None) 
+                self._t0 = range_check(type_check(value, float), 0, None)
 
             @property
             def integrator(self):
@@ -13160,12 +13268,12 @@ class Root(object):
 
             @integrator.setter
             def integrator(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['string', 'ImplicitEuler', 'BDF', 'ImplicitNewmark']
                 '''
-                self._integrator = type_check(value, self.Integrator) if isinstance(value, self.Integrator) else self.Integrator(value) 
+                self._integrator = type_check(value, self.Integrator) if isinstance(value, self.Integrator) else self.Integrator(value)
 
             @property
             def quasistatic(self):
@@ -13173,18 +13281,18 @@ class Root(object):
 
             @quasistatic.setter
             def quasistatic(self, value):
-                ''' 
+                '''
                 Ignore inertia in time dependent. Used for doing incremental load.
                 '''
-                self._quasistatic = type_check(value, bool) 
+                self._quasistatic = type_check(value, bool)
 
             def check_required(self):
 
                 if self.tend is None:
-                    print("Requiered variable Root.Time.Object1.tend does not have value")
+                    print("Requiered variable Root.Time.TendDt.tend does not have value")
 
                 if self.dt is None:
-                    print("Requiered variable Root.Time.Object1.dt does not have value")
+                    print("Requiered variable Root.Time.TendDt.dt does not have value")
                 return
 
             def as_dict(self):
@@ -13206,15 +13314,15 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [str, self.ImplicitEuler, self.BDF, self.ImplicitNewmark]) 
+                    self._value = class_check(value, [str, self.ImplicitEuler, self.BDF, self.ImplicitNewmark])
 
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Time.Object1.Integrator.value does not have value")
+                        print("Requiered variable Root.Time.TendDt.Integrator.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -13242,15 +13350,15 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object1.Integrator.ImplicitEuler.type does not have value")
+                            print("Requiered variable Root.Time.TendDt.Integrator.ImplicitEuler.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13278,10 +13386,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def steps(self):
@@ -13289,15 +13397,15 @@ class Root(object):
 
                     @steps.setter
                     def steps(self, value):
-                        ''' 
+                        '''
                         BDF order
                         '''
-                        self._steps = range_check(type_check(value, int), 1, 6) 
+                        self._steps = range_check(type_check(value, int), 1, 6)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object1.Integrator.BDF.type does not have value")
+                            print("Requiered variable Root.Time.TendDt.Integrator.BDF.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13327,10 +13435,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def gamma(self):
@@ -13338,10 +13446,10 @@ class Root(object):
 
                     @gamma.setter
                     def gamma(self, value):
-                        ''' 
+                        '''
                         Newmark gamma
                         '''
-                        self._gamma = range_check(type_check(value, float), 0, 1) 
+                        self._gamma = range_check(type_check(value, float), 0, 1)
 
                     @property
                     def beta(self):
@@ -13349,24 +13457,28 @@ class Root(object):
 
                     @beta.setter
                     def beta(self, value):
-                        ''' 
+                        '''
                         Newmark beta
                         '''
-                        self._beta = range_check(type_check(value, float), 0, 0.5) 
+                        self._beta = range_check(type_check(value, float), 0, 0.5)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object1.Integrator.ImplicitNewmark.type does not have value")
+                            print("Requiered variable Root.Time.TendDt.Integrator.ImplicitNewmark.type does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none({"type": self._type.value if self._type is not None else None,"gamma": self._gamma,"beta": self._beta,})
 
 
+                Object2 = ImplicitEuler
+                Object3 = BDF
+                Object4 = ImplicitNewmark
 
 
-        class Object2(object):
+
+        class TimeStepsDt(object):
             '''The time parameters: start time `t0`, time step `dt`, number of time steps.
             \nRequired: ['time_steps', 'dt']
             \nOptional: ['t0', 'integrator', 'quasistatic']'''
@@ -13375,7 +13487,7 @@ class Root(object):
                 time_steps: int = None,
                 dt: float = None,
                 t0: float = 0.0,
-                integrator: Optional["Root.Time.Object2.Integrator"] = None,
+                integrator: Optional["Root.Time.TimeStepsDt.Integrator"] = None,
                 quasistatic: bool = False
             ):
                 self._time_steps = range_check(type_check(time_steps, int), 0, None) if time_steps is not None else None
@@ -13390,10 +13502,10 @@ class Root(object):
 
             @time_steps.setter
             def time_steps(self, value):
-                ''' 
+                '''
                 Number of time steps
                 '''
-                self._time_steps = range_check(type_check(value, int), 0, None) 
+                self._time_steps = range_check(type_check(value, int), 0, None)
 
             @property
             def dt(self):
@@ -13401,10 +13513,10 @@ class Root(object):
 
             @dt.setter
             def dt(self, value):
-                ''' 
+                '''
                 Time step size $\\Delta t$
                 '''
-                self._dt = range_check(type_check(value, float), 0, None) 
+                self._dt = range_check(type_check(value, float), 0, None)
 
             @property
             def t0(self):
@@ -13412,10 +13524,10 @@ class Root(object):
 
             @t0.setter
             def t0(self, value):
-                ''' 
+                '''
                 Startning time
                 '''
-                self._t0 = range_check(type_check(value, float), 0, None) 
+                self._t0 = range_check(type_check(value, float), 0, None)
 
             @property
             def integrator(self):
@@ -13423,12 +13535,12 @@ class Root(object):
 
             @integrator.setter
             def integrator(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['string', 'ImplicitEuler', 'BDF', 'ImplicitNewmark']
                 '''
-                self._integrator = type_check(value, self.Integrator) if isinstance(value, self.Integrator) else self.Integrator(value) 
+                self._integrator = type_check(value, self.Integrator) if isinstance(value, self.Integrator) else self.Integrator(value)
 
             @property
             def quasistatic(self):
@@ -13436,18 +13548,18 @@ class Root(object):
 
             @quasistatic.setter
             def quasistatic(self, value):
-                ''' 
+                '''
                 Ignore inertia in time dependent. Used for doing incremental load.
                 '''
-                self._quasistatic = type_check(value, bool) 
+                self._quasistatic = type_check(value, bool)
 
             def check_required(self):
 
                 if self.time_steps is None:
-                    print("Requiered variable Root.Time.Object2.time_steps does not have value")
+                    print("Requiered variable Root.Time.TimeStepsDt.time_steps does not have value")
 
                 if self.dt is None:
-                    print("Requiered variable Root.Time.Object2.dt does not have value")
+                    print("Requiered variable Root.Time.TimeStepsDt.dt does not have value")
                 return
 
             def as_dict(self):
@@ -13469,15 +13581,15 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [str, self.ImplicitEuler, self.BDF, self.ImplicitNewmark]) 
+                    self._value = class_check(value, [str, self.ImplicitEuler, self.BDF, self.ImplicitNewmark])
 
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Time.Object2.Integrator.value does not have value")
+                        print("Requiered variable Root.Time.TimeStepsDt.Integrator.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -13505,15 +13617,15 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object2.Integrator.ImplicitEuler.type does not have value")
+                            print("Requiered variable Root.Time.TimeStepsDt.Integrator.ImplicitEuler.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13541,10 +13653,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def steps(self):
@@ -13552,15 +13664,15 @@ class Root(object):
 
                     @steps.setter
                     def steps(self, value):
-                        ''' 
+                        '''
                         BDF order
                         '''
-                        self._steps = range_check(type_check(value, int), 1, 6) 
+                        self._steps = range_check(type_check(value, int), 1, 6)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object2.Integrator.BDF.type does not have value")
+                            print("Requiered variable Root.Time.TimeStepsDt.Integrator.BDF.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13590,10 +13702,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def gamma(self):
@@ -13601,10 +13713,10 @@ class Root(object):
 
                     @gamma.setter
                     def gamma(self, value):
-                        ''' 
+                        '''
                         Newmark gamma
                         '''
-                        self._gamma = range_check(type_check(value, float), 0, 1) 
+                        self._gamma = range_check(type_check(value, float), 0, 1)
 
                     @property
                     def beta(self):
@@ -13612,24 +13724,28 @@ class Root(object):
 
                     @beta.setter
                     def beta(self, value):
-                        ''' 
+                        '''
                         Newmark beta
                         '''
-                        self._beta = range_check(type_check(value, float), 0, 0.5) 
+                        self._beta = range_check(type_check(value, float), 0, 0.5)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object2.Integrator.ImplicitNewmark.type does not have value")
+                            print("Requiered variable Root.Time.TimeStepsDt.Integrator.ImplicitNewmark.type does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none({"type": self._type.value if self._type is not None else None,"gamma": self._gamma,"beta": self._beta,})
 
 
+                Object2 = ImplicitEuler
+                Object3 = BDF
+                Object4 = ImplicitNewmark
 
 
-        class Object3(object):
+
+        class TimeStepsTend(object):
             '''The time parameters: start time `t0`, end time `tend`, number of time steps.
             \nRequired: ['time_steps', 'tend']
             \nOptional: ['t0', 'integrator', 'quasistatic']'''
@@ -13638,7 +13754,7 @@ class Root(object):
                 time_steps: int = None,
                 tend: float = None,
                 t0: float = 0.0,
-                integrator: Optional["Root.Time.Object3.Integrator"] = None,
+                integrator: Optional["Root.Time.TimeStepsTend.Integrator"] = None,
                 quasistatic: bool = False
             ):
                 self._time_steps = range_check(type_check(time_steps, int), 0, None) if time_steps is not None else None
@@ -13653,10 +13769,10 @@ class Root(object):
 
             @time_steps.setter
             def time_steps(self, value):
-                ''' 
+                '''
                 Number of time steps
                 '''
-                self._time_steps = range_check(type_check(value, int), 0, None) 
+                self._time_steps = range_check(type_check(value, int), 0, None)
 
             @property
             def tend(self):
@@ -13664,10 +13780,10 @@ class Root(object):
 
             @tend.setter
             def tend(self, value):
-                ''' 
+                '''
                 Ending time
                 '''
-                self._tend = range_check(type_check(value, float), 0, None) 
+                self._tend = range_check(type_check(value, float), 0, None)
 
             @property
             def t0(self):
@@ -13675,10 +13791,10 @@ class Root(object):
 
             @t0.setter
             def t0(self, value):
-                ''' 
+                '''
                 Startning time
                 '''
-                self._t0 = range_check(type_check(value, float), 0, None) 
+                self._t0 = range_check(type_check(value, float), 0, None)
 
             @property
             def integrator(self):
@@ -13686,12 +13802,12 @@ class Root(object):
 
             @integrator.setter
             def integrator(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['string', 'ImplicitEuler', 'BDF', 'ImplicitNewmark']
                 '''
-                self._integrator = type_check(value, self.Integrator) if isinstance(value, self.Integrator) else self.Integrator(value) 
+                self._integrator = type_check(value, self.Integrator) if isinstance(value, self.Integrator) else self.Integrator(value)
 
             @property
             def quasistatic(self):
@@ -13699,18 +13815,18 @@ class Root(object):
 
             @quasistatic.setter
             def quasistatic(self, value):
-                ''' 
+                '''
                 Ignore inertia in time dependent. Used for doing incremental load.
                 '''
-                self._quasistatic = type_check(value, bool) 
+                self._quasistatic = type_check(value, bool)
 
             def check_required(self):
 
                 if self.time_steps is None:
-                    print("Requiered variable Root.Time.Object3.time_steps does not have value")
+                    print("Requiered variable Root.Time.TimeStepsTend.time_steps does not have value")
 
                 if self.tend is None:
-                    print("Requiered variable Root.Time.Object3.tend does not have value")
+                    print("Requiered variable Root.Time.TimeStepsTend.tend does not have value")
                 return
 
             def as_dict(self):
@@ -13732,15 +13848,15 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [str, self.ImplicitEuler, self.BDF, self.ImplicitNewmark]) 
+                    self._value = class_check(value, [str, self.ImplicitEuler, self.BDF, self.ImplicitNewmark])
 
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Time.Object3.Integrator.value does not have value")
+                        print("Requiered variable Root.Time.TimeStepsTend.Integrator.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -13768,15 +13884,15 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object3.Integrator.ImplicitEuler.type does not have value")
+                            print("Requiered variable Root.Time.TimeStepsTend.Integrator.ImplicitEuler.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13804,10 +13920,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def steps(self):
@@ -13815,15 +13931,15 @@ class Root(object):
 
                     @steps.setter
                     def steps(self, value):
-                        ''' 
+                        '''
                         BDF order
                         '''
-                        self._steps = range_check(type_check(value, int), 1, 6) 
+                        self._steps = range_check(type_check(value, int), 1, 6)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object3.Integrator.BDF.type does not have value")
+                            print("Requiered variable Root.Time.TimeStepsTend.Integrator.BDF.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13853,10 +13969,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of time integrator to use
                         '''
-                        self._type = enum_check(value, self.Type) 
+                        self._type = enum_check(value, self.Type)
 
                     @property
                     def gamma(self):
@@ -13864,10 +13980,10 @@ class Root(object):
 
                     @gamma.setter
                     def gamma(self, value):
-                        ''' 
+                        '''
                         Newmark gamma
                         '''
-                        self._gamma = range_check(type_check(value, float), 0, 1) 
+                        self._gamma = range_check(type_check(value, float), 0, 1)
 
                     @property
                     def beta(self):
@@ -13875,22 +13991,30 @@ class Root(object):
 
                     @beta.setter
                     def beta(self, value):
-                        ''' 
+                        '''
                         Newmark beta
                         '''
-                        self._beta = range_check(type_check(value, float), 0, 0.5) 
+                        self._beta = range_check(type_check(value, float), 0, 0.5)
 
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.Object3.Integrator.ImplicitNewmark.type does not have value")
+                            print("Requiered variable Root.Time.TimeStepsTend.Integrator.ImplicitNewmark.type does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none({"type": self._type.value if self._type is not None else None,"gamma": self._gamma,"beta": self._beta,})
 
 
+                Object2 = ImplicitEuler
+                Object3 = BDF
+                Object4 = ImplicitNewmark
 
+
+
+        Object1 = TendDt
+        Object2 = TimeStepsDt
+        Object3 = TimeStepsTend
 
 
     class Contact(object):
@@ -13941,10 +14065,10 @@ class Root(object):
 
         @enabled.setter
         def enabled(self, value):
-            ''' 
+            '''
             True if contact handling is enabled.
             '''
-            self._enabled = type_check(value, bool) 
+            self._enabled = type_check(value, bool)
 
         @property
         def dhat(self):
@@ -13952,10 +14076,10 @@ class Root(object):
 
         @dhat.setter
         def dhat(self, value):
-            ''' 
+            '''
             Contact barrier activation distance.
             '''
-            self._dhat = range_check(type_check(value, float), 0, None) 
+            self._dhat = range_check(type_check(value, float), 0, None)
 
         @property
         def dhat_percentage(self):
@@ -13963,10 +14087,10 @@ class Root(object):
 
         @dhat_percentage.setter
         def dhat_percentage(self, value):
-            ''' 
+            '''
             $\\hat{d}$ as percentage of the diagonal of the bounding box
             '''
-            self._dhat_percentage = type_check(value, float) 
+            self._dhat_percentage = type_check(value, float)
 
         @property
         def epsv(self):
@@ -13974,10 +14098,10 @@ class Root(object):
 
         @epsv.setter
         def epsv(self, value):
-            ''' 
+            '''
             Friction smoothing parameter.
             '''
-            self._epsv = range_check(type_check(value, float), 0, None) 
+            self._epsv = range_check(type_check(value, float), 0, None)
 
         @property
         def friction_coefficient(self):
@@ -13985,10 +14109,10 @@ class Root(object):
 
         @friction_coefficient.setter
         def friction_coefficient(self, value):
-            ''' 
+            '''
             Coefficient of friction (global)
             '''
-            self._friction_coefficient = type_check(value, float) 
+            self._friction_coefficient = type_check(value, float)
 
         @property
         def use_convergent_formulation(self):
@@ -13996,10 +14120,10 @@ class Root(object):
 
         @use_convergent_formulation.setter
         def use_convergent_formulation(self, value):
-            ''' 
+            '''
             Whether to use the convergent (area weighted) formulation of IPC.
             '''
-            self._use_convergent_formulation = type_check(value, bool) 
+            self._use_convergent_formulation = type_check(value, bool)
 
         @property
         def use_area_weighting(self):
@@ -14007,10 +14131,10 @@ class Root(object):
 
         @use_area_weighting.setter
         def use_area_weighting(self, value):
-            ''' 
+            '''
             If using the convergent formulation, whether or not to use area weighting. Currently not implemented.
             '''
-            self._use_area_weighting = type_check(value, bool) 
+            self._use_area_weighting = type_check(value, bool)
 
         @property
         def use_improved_max_operator(self):
@@ -14018,10 +14142,10 @@ class Root(object):
 
         @use_improved_max_operator.setter
         def use_improved_max_operator(self, value):
-            ''' 
+            '''
             If using the convergent formulation, whether or not to use improved max operator. Currently not implemented.
             '''
-            self._use_improved_max_operator = type_check(value, bool) 
+            self._use_improved_max_operator = type_check(value, bool)
 
         @property
         def use_physical_barrier(self):
@@ -14029,10 +14153,10 @@ class Root(object):
 
         @use_physical_barrier.setter
         def use_physical_barrier(self, value):
-            ''' 
+            '''
             If using the convergent formulation, whether or not to use physical barrier stiffness. Currently not implemented.
             '''
-            self._use_physical_barrier = type_check(value, bool) 
+            self._use_physical_barrier = type_check(value, bool)
 
         @property
         def collision_mesh(self):
@@ -14040,12 +14164,12 @@ class Root(object):
 
         @collision_mesh.setter
         def collision_mesh(self, value):
-            ''' 
+            '''
             This is a polymorphic variable, assign an object from its classes to the value
             \nRequired: []
-            \nOptional: ['object1', 'object2', 'object3']
+            \nOptional: ['FromMesh', 'Generated', 'Default']
             '''
-            self._collision_mesh = type_check(value, self.Collision_mesh) if isinstance(value, self.Collision_mesh) else self.Collision_mesh(value) 
+            self._collision_mesh = type_check(value, self.Collision_mesh) if isinstance(value, self.Collision_mesh) else self.Collision_mesh(value)
 
         @property
         def use_gcp_formulation(self):
@@ -14053,10 +14177,10 @@ class Root(object):
 
         @use_gcp_formulation.setter
         def use_gcp_formulation(self, value):
-            ''' 
+            '''
             True if the smooth contact formulation is used.
             '''
-            self._use_gcp_formulation = type_check(value, bool) 
+            self._use_gcp_formulation = type_check(value, bool)
 
         @property
         def alpha_n(self):
@@ -14064,10 +14188,10 @@ class Root(object):
 
         @alpha_n.setter
         def alpha_n(self, value):
-            ''' 
+            '''
             Control the smoothness of normal angle contraints of contact pairs.
             '''
-            self._alpha_n = range_check(type_check(value, float), -1, 1) 
+            self._alpha_n = range_check(type_check(value, float), -1, 1)
 
         @property
         def alpha_t(self):
@@ -14075,10 +14199,10 @@ class Root(object):
 
         @alpha_t.setter
         def alpha_t(self, value):
-            ''' 
+            '''
             Control the smoothness of tangent angle contraints of contact pairs.
             '''
-            self._alpha_t = range_check(type_check(value, float), -1, 1) 
+            self._alpha_t = range_check(type_check(value, float), -1, 1)
 
         @property
         def min_distance_ratio(self):
@@ -14086,10 +14210,10 @@ class Root(object):
 
         @min_distance_ratio.setter
         def min_distance_ratio(self, value):
-            ''' 
+            '''
             Ratio of the minimum distance to contact to define local epsilon.
             '''
-            self._min_distance_ratio = range_check(type_check(value, float), 0, None) 
+            self._min_distance_ratio = range_check(type_check(value, float), 0, None)
 
         @property
         def use_adaptive_dhat(self):
@@ -14097,10 +14221,10 @@ class Root(object):
 
         @use_adaptive_dhat.setter
         def use_adaptive_dhat(self, value):
-            ''' 
+            '''
             True if adaptive epsilon is used.
             '''
-            self._use_adaptive_dhat = type_check(value, bool) 
+            self._use_adaptive_dhat = type_check(value, bool)
 
         @property
         def periodic(self):
@@ -14108,10 +14232,10 @@ class Root(object):
 
         @periodic.setter
         def periodic(self, value):
-            ''' 
+            '''
             Set to true to check collision between adjacent periodic cells.
             '''
-            self._periodic = type_check(value, bool) 
+            self._periodic = type_check(value, bool)
 
         @property
         def adhesion(self):
@@ -14119,12 +14243,12 @@ class Root(object):
 
         @adhesion.setter
         def adhesion(self, value):
-            ''' 
+            '''
             Adhesion settings.
             \nRequired: []
             \nOptional: ['adhesion_enabled', 'dhat_p', 'dhat_a', 'adhesion_strength', 'tangential_adhesion_coefficient', 'epsa']
             '''
-            self._adhesion = type_check(value, self.Adhesion) 
+            self._adhesion = type_check(value, self.Adhesion)
 
         def check_required(self):
 
@@ -14136,12 +14260,12 @@ class Root(object):
         class Collision_mesh(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
             \nRequired: []
-            \nOptional: ['object1', 'object2', 'object3']'''
+            \nOptional: ['FromMesh', 'Generated', 'Default']'''
             def __init__(
                 self,
                 value : object = None
             ):
-                self._value = class_check(value, [self.Object1, self.Object2, self.Object3]) if value is not None else None
+                self._value = class_check(value, [self.FromMesh, self.Generated, self.Default]) if value is not None else None
 
             @property
             def value(self):
@@ -14149,10 +14273,10 @@ class Root(object):
 
             @value.setter
             def value(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 '''
-                self._value = class_check(value, [self.Object1, self.Object2, self.Object3]) 
+                self._value = class_check(value, [self.FromMesh, self.Generated, self.Default])
 
             def check_required(self):
 
@@ -14164,9 +14288,9 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object1, self.Object2, self.Object3])) else self._value)
+                return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.FromMesh, self.Generated, self.Default])) else self._value)
 
-            class Object1(object):
+            class FromMesh(object):
                 '''Load a preconstructed collision mesh.
                 \nRequired: ['mesh', 'linear_map']
                 \nOptional: ['enabled']'''
@@ -14186,10 +14310,10 @@ class Root(object):
 
                 @mesh.setter
                 def mesh(self, value):
-                    ''' 
+                    '''
                     Path to preconstructed collision mesh.
                     '''
-                    self._mesh = type_check(value, str) 
+                    self._mesh = type_check(value, str)
 
                 @property
                 def linear_map(self):
@@ -14197,10 +14321,10 @@ class Root(object):
 
                 @linear_map.setter
                 def linear_map(self, value):
-                    ''' 
+                    '''
                     HDF file storing the linear mapping of displacements.
                     '''
-                    self._linear_map = type_check(value, str) 
+                    self._linear_map = type_check(value, str)
 
                 @property
                 def enabled(self):
@@ -14208,25 +14332,25 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     There is no definition
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 def check_required(self):
 
                     if self.mesh is None:
-                        print("Requiered variable Root.Contact.Collision_mesh.Object1.mesh does not have value")
+                        print("Requiered variable Root.Contact.Collision_mesh.FromMesh.mesh does not have value")
 
                     if self.linear_map is None:
-                        print("Requiered variable Root.Contact.Collision_mesh.Object1.linear_map does not have value")
+                        print("Requiered variable Root.Contact.Collision_mesh.FromMesh.linear_map does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none({"mesh": self._mesh,"linear_map": self._linear_map,"enabled": self._enabled,})
 
 
-            class Object2(object):
+            class Generated(object):
                 '''Construct a collision mesh with a maximum edge length.
                 \nRequired: ['max_edge_length']
                 \nOptional: ['tessellation_type', 'enabled']'''
@@ -14250,10 +14374,10 @@ class Root(object):
 
                 @max_edge_length.setter
                 def max_edge_length(self, value):
-                    ''' 
+                    '''
                     Maximum edge length to use for building the collision mesh.
                     '''
-                    self._max_edge_length = type_check(value, float) 
+                    self._max_edge_length = type_check(value, float)
 
                 @property
                 def tessellation_type(self):
@@ -14261,10 +14385,10 @@ class Root(object):
 
                 @tessellation_type.setter
                 def tessellation_type(self, value):
-                    ''' 
+                    '''
                     Type of tessellation to use for building the collision mesh.
                     '''
-                    self._tessellation_type = enum_check(value, self.Tessellation_type) 
+                    self._tessellation_type = enum_check(value, self.Tessellation_type)
 
                 @property
                 def enabled(self):
@@ -14272,22 +14396,22 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     There is no definition
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 def check_required(self):
 
                     if self.max_edge_length is None:
-                        print("Requiered variable Root.Contact.Collision_mesh.Object2.max_edge_length does not have value")
+                        print("Requiered variable Root.Contact.Collision_mesh.Generated.max_edge_length does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none({"max_edge_length": self._max_edge_length,"tessellation_type": self._tessellation_type.value if self._tessellation_type is not None else None,"enabled": self._enabled,})
 
 
-            class Object3(object):
+            class Default(object):
                 '''Construct a collision mesh.
                 \nRequired: []
                 \nOptional: ['enabled']'''
@@ -14303,10 +14427,10 @@ class Root(object):
 
                 @enabled.setter
                 def enabled(self, value):
-                    ''' 
+                    '''
                     There is no definition
                     '''
-                    self._enabled = type_check(value, bool) 
+                    self._enabled = type_check(value, bool)
 
                 def check_required(self):
 
@@ -14315,6 +14439,10 @@ class Root(object):
                 def as_dict(self):
                     return drop_none({"enabled": self._enabled,})
 
+
+            Object1 = FromMesh
+            Object2 = Generated
+            Object3 = Default
 
 
         class Adhesion(object):
@@ -14343,10 +14471,10 @@ class Root(object):
 
             @adhesion_enabled.setter
             def adhesion_enabled(self, value):
-                ''' 
+                '''
                 Set to true to enable normal adhesion forces.
                 '''
-                self._adhesion_enabled = type_check(value, bool) 
+                self._adhesion_enabled = type_check(value, bool)
 
             @property
             def dhat_p(self):
@@ -14354,10 +14482,10 @@ class Root(object):
 
             @dhat_p.setter
             def dhat_p(self, value):
-                ''' 
+                '''
                 Distance at which normal adhesion force reaches its maximum.
                 '''
-                self._dhat_p = type_check(value, float) 
+                self._dhat_p = type_check(value, float)
 
             @property
             def dhat_a(self):
@@ -14365,10 +14493,10 @@ class Root(object):
 
             @dhat_a.setter
             def dhat_a(self, value):
-                ''' 
+                '''
                 Distance at which normal adhesion force is activated.
                 '''
-                self._dhat_a = type_check(value, float) 
+                self._dhat_a = type_check(value, float)
 
             @property
             def adhesion_strength(self):
@@ -14376,10 +14504,10 @@ class Root(object):
 
             @adhesion_strength.setter
             def adhesion_strength(self, value):
-                ''' 
+                '''
                 Parameter that sets the strength of the normal adhesion force.
                 '''
-                self._adhesion_strength = type_check(value, float) 
+                self._adhesion_strength = type_check(value, float)
 
             @property
             def tangential_adhesion_coefficient(self):
@@ -14387,10 +14515,10 @@ class Root(object):
 
             @tangential_adhesion_coefficient.setter
             def tangential_adhesion_coefficient(self, value):
-                ''' 
+                '''
                 Coefficient of tangential adhesion (global)
                 '''
-                self._tangential_adhesion_coefficient = type_check(value, float) 
+                self._tangential_adhesion_coefficient = type_check(value, float)
 
             @property
             def epsa(self):
@@ -14398,10 +14526,10 @@ class Root(object):
 
             @epsa.setter
             def epsa(self, value):
-                ''' 
+                '''
                 Tangential adhesion smoothing parameter.
                 '''
-                self._epsa = range_check(type_check(value, float), 0, None) 
+                self._epsa = range_check(type_check(value, float), 0, None)
 
             def check_required(self):
 
@@ -14442,10 +14570,10 @@ class Root(object):
 
         @max_threads.setter
         def max_threads(self, value):
-            ''' 
+            '''
             Maximum number of threads used; 0 is unlimited.
             '''
-            self._max_threads = range_check(type_check(value, int), 0, None) 
+            self._max_threads = range_check(type_check(value, int), 0, None)
 
         @property
         def linear(self):
@@ -14453,12 +14581,12 @@ class Root(object):
 
         @linear.setter
         def linear(self, value):
-            ''' 
+            '''
             Settings for the linear solver.
             \nRequired: []
             \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']
             '''
-            self._linear = type_check(value, self.Linear) 
+            self._linear = type_check(value, self.Linear)
 
         @property
         def adjoint_linear(self):
@@ -14466,12 +14594,12 @@ class Root(object):
 
         @adjoint_linear.setter
         def adjoint_linear(self, value):
-            ''' 
+            '''
             Settings for the linear solver.
             \nRequired: []
             \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']
             '''
-            self._adjoint_linear = type_check(value, self.Adjoint_linear) 
+            self._adjoint_linear = type_check(value, self.Adjoint_linear)
 
         @property
         def nonlinear(self):
@@ -14479,12 +14607,12 @@ class Root(object):
 
         @nonlinear.setter
         def nonlinear(self, value):
-            ''' 
+            '''
             Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
             \nRequired: []
             \nOptional: ['solver', 'x_delta_tol', 'grad_norm_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'rel_x_delta_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'line_search', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'box_constraints', 'advanced']
             '''
-            self._nonlinear = type_check(value, self.Nonlinear) 
+            self._nonlinear = type_check(value, self.Nonlinear)
 
         @property
         def augmented_lagrangian(self):
@@ -14492,12 +14620,12 @@ class Root(object):
 
         @augmented_lagrangian.setter
         def augmented_lagrangian(self, value):
-            ''' 
+            '''
             Parameters for the AL for imposing Dirichlet BCs. If the bc are not imposable, we add $w\\|u - bc\\|^2$ to the energy ($u$ is the solution at the Dirichlet nodes and $bc$ are the Dirichlet values). After convergence, we try to impose bc again. The algorithm computes E + a/2*AL^2 - lambda AL, where E is the current energy (elastic, inertia, contact, etc.) and AL is the augmented Lagrangian energy. a starts at `initial_weight` and, in case DBC cannot be imposed, we update a as `a *= scaling` until `max_weight`. See IPC additional material
             \nRequired: []
             \nOptional: ['initial_weight', 'scaling', 'max_weight', 'eta', 'nonlinear']
             '''
-            self._augmented_lagrangian = type_check(value, self.Augmented_lagrangian) 
+            self._augmented_lagrangian = type_check(value, self.Augmented_lagrangian)
 
         @property
         def contact(self):
@@ -14505,12 +14633,12 @@ class Root(object):
 
         @contact.setter
         def contact(self, value):
-            ''' 
+            '''
             Settings for contact handling in the solver.
             \nRequired: []
             \nOptional: ['CCD', 'friction_iterations', 'tangential_adhesion_iterations', 'friction_convergence_tol', 'barrier_stiffness', 'initial_barrier_stiffness']
             '''
-            self._contact = type_check(value, self.Contact) 
+            self._contact = type_check(value, self.Contact)
 
         @property
         def rayleigh_damping(self):
@@ -14518,12 +14646,12 @@ class Root(object):
 
         @rayleigh_damping.setter
         def rayleigh_damping(self, value):
-            ''' 
+            '''
             Apply Rayleigh damping.
             \nRequired: []
-            \nOptional: ['item', 'object2']
+            \nOptional: ['item', 'StiffnessRatio', 'Stiffness']
             '''
-            self._rayleigh_damping = type_check(value, self.Rayleigh_damping) 
+            self._rayleigh_damping = type_check(value, self.Rayleigh_damping)
 
         @property
         def advanced(self):
@@ -14531,12 +14659,12 @@ class Root(object):
 
         @advanced.setter
         def advanced(self, value):
-            ''' 
+            '''
             Advanced settings for the solver
             \nRequired: []
             \nOptional: ['cache_size', 'lump_mass_matrix', 'lagged_regularization_weight', 'lagged_regularization_iterations', 'check_inversion', 'jacobian_threshold', 'characteristic_length', 'characteristic_force_density']
             '''
-            self._advanced = type_check(value, self.Advanced) 
+            self._advanced = type_check(value, self.Advanced)
 
         def check_required(self):
 
@@ -14612,10 +14740,10 @@ class Root(object):
 
             @enable_overwrite_solver.setter
             def enable_overwrite_solver(self, value):
-                ''' 
+                '''
                 If solver name is not present, falls back to default
                 '''
-                self._enable_overwrite_solver = type_check(value, bool) 
+                self._enable_overwrite_solver = type_check(value, bool)
 
             @property
             def solver(self):
@@ -14623,10 +14751,10 @@ class Root(object):
 
             @solver.setter
             def solver(self, value):
-                ''' 
+                '''
                 Linear solver type.
                 '''
-                self._solver = enum_check(value, self.Solver) 
+                self._solver = enum_check(value, self.Solver)
 
             @property
             def precond(self):
@@ -14634,10 +14762,10 @@ class Root(object):
 
             @precond.setter
             def precond(self, value):
-                ''' 
+                '''
                 Preconditioner used if using an iterative linear solver.
                 '''
-                self._precond = enum_check(value, self.Precond) 
+                self._precond = enum_check(value, self.Precond)
 
             @property
             def Eigen_LeastSquaresConjugateGradient(self):
@@ -14645,12 +14773,12 @@ class Root(object):
 
             @Eigen_LeastSquaresConjugateGradient.setter
             def Eigen_LeastSquaresConjugateGradient(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's Least Squares Conjugate Gradient solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_LeastSquaresConjugateGradient = type_check(value, self.EigenLeastSquaresConjugateGradient) 
+                self._Eigen_LeastSquaresConjugateGradient = type_check(value, self.EigenLeastSquaresConjugateGradient)
 
             @property
             def Eigen_DGMRES(self):
@@ -14658,12 +14786,12 @@ class Root(object):
 
             @Eigen_DGMRES.setter
             def Eigen_DGMRES(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's DGMRES solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_DGMRES = type_check(value, self.EigenDGMRES) 
+                self._Eigen_DGMRES = type_check(value, self.EigenDGMRES)
 
             @property
             def Eigen_ConjugateGradient(self):
@@ -14671,12 +14799,12 @@ class Root(object):
 
             @Eigen_ConjugateGradient.setter
             def Eigen_ConjugateGradient(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's Conjugate Gradient solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_ConjugateGradient = type_check(value, self.EigenConjugateGradient) 
+                self._Eigen_ConjugateGradient = type_check(value, self.EigenConjugateGradient)
 
             @property
             def Eigen_BiCGSTAB(self):
@@ -14684,12 +14812,12 @@ class Root(object):
 
             @Eigen_BiCGSTAB.setter
             def Eigen_BiCGSTAB(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's BiCGSTAB solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_BiCGSTAB = type_check(value, self.EigenBiCGSTAB) 
+                self._Eigen_BiCGSTAB = type_check(value, self.EigenBiCGSTAB)
 
             @property
             def Eigen_GMRES(self):
@@ -14697,12 +14825,12 @@ class Root(object):
 
             @Eigen_GMRES.setter
             def Eigen_GMRES(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's GMRES solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_GMRES = type_check(value, self.EigenGMRES) 
+                self._Eigen_GMRES = type_check(value, self.EigenGMRES)
 
             @property
             def Eigen_MINRES(self):
@@ -14710,12 +14838,12 @@ class Root(object):
 
             @Eigen_MINRES.setter
             def Eigen_MINRES(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's MINRES solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_MINRES = type_check(value, self.EigenMINRES) 
+                self._Eigen_MINRES = type_check(value, self.EigenMINRES)
 
             @property
             def Pardiso(self):
@@ -14723,12 +14851,12 @@ class Root(object):
 
             @Pardiso.setter
             def Pardiso(self, value):
-                ''' 
+                '''
                 Settings for the Pardiso solver.
                 \nRequired: []
                 \nOptional: ['mtype']
                 '''
-                self._Pardiso = type_check(value, self.Pardiso) 
+                self._Pardiso = type_check(value, self.Pardiso)
 
             @property
             def Hypre(self):
@@ -14736,12 +14864,12 @@ class Root(object):
 
             @Hypre.setter
             def Hypre(self, value):
-                ''' 
+                '''
                 Settings for the Hypre solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']
                 '''
-                self._Hypre = type_check(value, self.Hypre) 
+                self._Hypre = type_check(value, self.Hypre)
 
             @property
             def AMGCL(self):
@@ -14749,12 +14877,12 @@ class Root(object):
 
             @AMGCL.setter
             def AMGCL(self, value):
-                ''' 
+                '''
                 Settings for the AMGCL solver.
                 \nRequired: []
                 \nOptional: ['solver', 'precond']
                 '''
-                self._AMGCL = type_check(value, self.AMGCL) 
+                self._AMGCL = type_check(value, self.AMGCL)
 
             @property
             def MAS(self):
@@ -14762,12 +14890,12 @@ class Root(object):
 
             @MAS.setter
             def MAS(self, value):
-                ''' 
+                '''
                 Settings for the MAS solver.
                 \nRequired: []
                 \nOptional: ['block_dim', 'max_iter', 'relative_tolerance', 'absolute_tolerance', 'lazy_partitioning', 'use_preconditioned_residual_norm']
                 '''
-                self._MAS = type_check(value, self.MAS) 
+                self._MAS = type_check(value, self.MAS)
 
             def check_required(self):
 
@@ -14794,10 +14922,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -14805,10 +14933,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -14836,10 +14964,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -14847,10 +14975,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -14878,10 +15006,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -14889,10 +15017,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -14920,10 +15048,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -14931,10 +15059,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -14962,10 +15090,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -14973,10 +15101,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -15004,10 +15132,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -15015,10 +15143,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -15044,10 +15172,10 @@ class Root(object):
 
                 @mtype.setter
                 def mtype(self, value):
-                    ''' 
+                    '''
                     Matrix type.
                     '''
-                    self._mtype = type_check(value, int) 
+                    self._mtype = type_check(value, int)
 
                 def check_required(self):
 
@@ -15085,10 +15213,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def pre_max_iter(self):
@@ -15096,10 +15224,10 @@ class Root(object):
 
                 @pre_max_iter.setter
                 def pre_max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of pre iterations.
                     '''
-                    self._pre_max_iter = type_check(value, int) 
+                    self._pre_max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -15107,10 +15235,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 @property
                 def theta(self):
@@ -15118,10 +15246,10 @@ class Root(object):
 
                 @theta.setter
                 def theta(self, value):
-                    ''' 
+                    '''
                     Strong threshold.
                     '''
-                    self._theta = type_check(value, float) 
+                    self._theta = type_check(value, float)
 
                 @property
                 def nodal_coarsening(self):
@@ -15129,10 +15257,10 @@ class Root(object):
 
                 @nodal_coarsening.setter
                 def nodal_coarsening(self, value):
-                    ''' 
+                    '''
                     Whether or not to include nodal coarsening options.
                     '''
-                    self._nodal_coarsening = type_check(value, bool) 
+                    self._nodal_coarsening = type_check(value, bool)
 
                 @property
                 def interp_rbms(self):
@@ -15140,10 +15268,10 @@ class Root(object):
 
                 @interp_rbms.setter
                 def interp_rbms(self, value):
-                    ''' 
+                    '''
                     Whether or not to interp rbms.
                     '''
-                    self._interp_rbms = type_check(value, bool) 
+                    self._interp_rbms = type_check(value, bool)
 
                 @property
                 def dimension(self):
@@ -15151,10 +15279,10 @@ class Root(object):
 
                 @dimension.setter
                 def dimension(self, value):
-                    ''' 
+                    '''
                     Dimension of problem.
                     '''
-                    self._dimension = type_check(value, int) 
+                    self._dimension = type_check(value, int)
 
                 def check_required(self):
 
@@ -15182,12 +15310,12 @@ class Root(object):
 
                 @solver.setter
                 def solver(self, value):
-                    ''' 
+                    '''
                     Solver settings for the AMGCL.
                     \nRequired: []
                     \nOptional: ['tol', 'maxiter', 'type']
                     '''
-                    self._solver = type_check(value, self.Solver) 
+                    self._solver = type_check(value, self.Solver)
 
                 @property
                 def precond(self):
@@ -15195,12 +15323,12 @@ class Root(object):
 
                 @precond.setter
                 def precond(self, value):
-                    ''' 
+                    '''
                     Preconditioner settings for the AMGCL.
                     \nRequired: []
                     \nOptional: ['relax', 'class', 'max_levels', 'direct_coarse', 'ncycle', 'coarsening']
                     '''
-                    self._precond = type_check(value, self.Precond) 
+                    self._precond = type_check(value, self.Precond)
 
                 def check_required(self):
 
@@ -15229,10 +15357,10 @@ class Root(object):
 
                     @tol.setter
                     def tol(self, value):
-                        ''' 
+                        '''
                         Convergence tolerance.
                         '''
-                        self._tol = type_check(value, float) 
+                        self._tol = type_check(value, float)
 
                     @property
                     def maxiter(self):
@@ -15240,10 +15368,10 @@ class Root(object):
 
                     @maxiter.setter
                     def maxiter(self, value):
-                        ''' 
+                        '''
                         Maximum number of iterations.
                         '''
-                        self._maxiter = type_check(value, int) 
+                        self._maxiter = type_check(value, int)
 
                     @property
                     def type(self):
@@ -15251,10 +15379,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of solver to use.
                         '''
-                        self._type = type_check(value, str) 
+                        self._type = type_check(value, str)
 
                     def check_required(self):
 
@@ -15290,12 +15418,12 @@ class Root(object):
 
                     @relax.setter
                     def relax(self, value):
-                        ''' 
+                        '''
                         Preconditioner settings for the AMGCL.
                         \nRequired: []
                         \nOptional: ['degree', 'type', 'power_iters', 'higher', 'lower', 'scale']
                         '''
-                        self._relax = type_check(value, self.Relax) 
+                        self._relax = type_check(value, self.Relax)
 
                     @property
                     def class_(self):
@@ -15303,10 +15431,10 @@ class Root(object):
 
                     @class_.setter
                     def class_(self, value):
-                        ''' 
+                        '''
                         Type of preconditioner to use.
                         '''
-                        self._class_ = type_check(value, str) 
+                        self._class_ = type_check(value, str)
 
                     @property
                     def max_levels(self):
@@ -15314,10 +15442,10 @@ class Root(object):
 
                     @max_levels.setter
                     def max_levels(self, value):
-                        ''' 
+                        '''
                         Maximum number of levels.
                         '''
-                        self._max_levels = type_check(value, int) 
+                        self._max_levels = type_check(value, int)
 
                     @property
                     def direct_coarse(self):
@@ -15325,10 +15453,10 @@ class Root(object):
 
                     @direct_coarse.setter
                     def direct_coarse(self, value):
-                        ''' 
+                        '''
                         Use direct solver for the coarsest level.
                         '''
-                        self._direct_coarse = type_check(value, bool) 
+                        self._direct_coarse = type_check(value, bool)
 
                     @property
                     def ncycle(self):
@@ -15336,10 +15464,10 @@ class Root(object):
 
                     @ncycle.setter
                     def ncycle(self, value):
-                        ''' 
+                        '''
                         Number of cycles.
                         '''
-                        self._ncycle = type_check(value, int) 
+                        self._ncycle = type_check(value, int)
 
                     @property
                     def coarsening(self):
@@ -15347,12 +15475,12 @@ class Root(object):
 
                     @coarsening.setter
                     def coarsening(self, value):
-                        ''' 
+                        '''
                         Coarsening parameters.
                         \nRequired: []
                         \nOptional: ['type', 'estimate_spectral_radius', 'relax', 'aggr']
                         '''
-                        self._coarsening = type_check(value, self.Coarsening) 
+                        self._coarsening = type_check(value, self.Coarsening)
 
                     def check_required(self):
 
@@ -15387,10 +15515,10 @@ class Root(object):
 
                         @degree.setter
                         def degree(self, value):
-                            ''' 
+                            '''
                             Degree of the polynomial.
                             '''
-                            self._degree = type_check(value, int) 
+                            self._degree = type_check(value, int)
 
                         @property
                         def type(self):
@@ -15398,10 +15526,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Type of relaxation to use.
                             '''
-                            self._type = type_check(value, str) 
+                            self._type = type_check(value, str)
 
                         @property
                         def power_iters(self):
@@ -15409,10 +15537,10 @@ class Root(object):
 
                         @power_iters.setter
                         def power_iters(self, value):
-                            ''' 
+                            '''
                             Number of power iterations.
                             '''
-                            self._power_iters = type_check(value, int) 
+                            self._power_iters = type_check(value, int)
 
                         @property
                         def higher(self):
@@ -15420,10 +15548,10 @@ class Root(object):
 
                         @higher.setter
                         def higher(self, value):
-                            ''' 
+                            '''
                             Higher level relaxation.
                             '''
-                            self._higher = type_check(value, float) 
+                            self._higher = type_check(value, float)
 
                         @property
                         def lower(self):
@@ -15431,10 +15559,10 @@ class Root(object):
 
                         @lower.setter
                         def lower(self, value):
-                            ''' 
+                            '''
                             Lower level relaxation.
                             '''
-                            self._lower = type_check(value, float) 
+                            self._lower = type_check(value, float)
 
                         @property
                         def scale(self):
@@ -15442,10 +15570,10 @@ class Root(object):
 
                         @scale.setter
                         def scale(self, value):
-                            ''' 
+                            '''
                             Scale.
                             '''
-                            self._scale = type_check(value, bool) 
+                            self._scale = type_check(value, bool)
 
                         def check_required(self):
 
@@ -15477,10 +15605,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Coarsening type.
                             '''
-                            self._type = type_check(value, str) 
+                            self._type = type_check(value, str)
 
                         @property
                         def estimate_spectral_radius(self):
@@ -15488,10 +15616,10 @@ class Root(object):
 
                         @estimate_spectral_radius.setter
                         def estimate_spectral_radius(self, value):
-                            ''' 
+                            '''
                             Should the spectral radius be estimated.
                             '''
-                            self._estimate_spectral_radius = type_check(value, bool) 
+                            self._estimate_spectral_radius = type_check(value, bool)
 
                         @property
                         def relax(self):
@@ -15499,10 +15627,10 @@ class Root(object):
 
                         @relax.setter
                         def relax(self, value):
-                            ''' 
+                            '''
                             Coarsening relaxation.
                             '''
-                            self._relax = type_check(value, float) 
+                            self._relax = type_check(value, float)
 
                         @property
                         def aggr(self):
@@ -15510,12 +15638,12 @@ class Root(object):
 
                         @aggr.setter
                         def aggr(self, value):
-                            ''' 
+                            '''
                             Aggregation settings.
                             \nRequired: []
                             \nOptional: ['eps_strong']
                             '''
-                            self._aggr = type_check(value, self.Aggr) 
+                            self._aggr = type_check(value, self.Aggr)
 
                         def check_required(self):
 
@@ -15540,10 +15668,10 @@ class Root(object):
 
                             @eps_strong.setter
                             def eps_strong(self, value):
-                                ''' 
+                                '''
                                 Aggregation epsilon strong.
                                 '''
-                                self._eps_strong = type_check(value, float) 
+                                self._eps_strong = type_check(value, float)
 
                             def check_required(self):
 
@@ -15582,10 +15710,10 @@ class Root(object):
 
                 @block_dim.setter
                 def block_dim(self, value):
-                    ''' 
+                    '''
                     Block size of the BSR matrix PCG sovler internally use. Choose 3 for 3d problem, 2 for 2d, etc.
                     '''
-                    self._block_dim = type_check(value, int) 
+                    self._block_dim = type_check(value, int)
 
                 @property
                 def max_iter(self):
@@ -15593,10 +15721,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def relative_tolerance(self):
@@ -15604,10 +15732,10 @@ class Root(object):
 
                 @relative_tolerance.setter
                 def relative_tolerance(self, value):
-                    ''' 
+                    '''
                     Relative convergence tolerance.
                     '''
-                    self._relative_tolerance = type_check(value, float) 
+                    self._relative_tolerance = type_check(value, float)
 
                 @property
                 def absolute_tolerance(self):
@@ -15615,10 +15743,10 @@ class Root(object):
 
                 @absolute_tolerance.setter
                 def absolute_tolerance(self, value):
-                    ''' 
+                    '''
                     Absolute convergence tolerance.
                     '''
-                    self._absolute_tolerance = type_check(value, float) 
+                    self._absolute_tolerance = type_check(value, float)
 
                 @property
                 def lazy_partitioning(self):
@@ -15626,10 +15754,10 @@ class Root(object):
 
                 @lazy_partitioning.setter
                 def lazy_partitioning(self, value):
-                    ''' 
+                    '''
                     If true, reuse the first graph partition.
                     '''
-                    self._lazy_partitioning = type_check(value, bool) 
+                    self._lazy_partitioning = type_check(value, bool)
 
                 @property
                 def use_preconditioned_residual_norm(self):
@@ -15637,10 +15765,10 @@ class Root(object):
 
                 @use_preconditioned_residual_norm.setter
                 def use_preconditioned_residual_norm(self, value):
-                    ''' 
+                    '''
                     Use preconditioned residual norm for termination check.
                     '''
-                    self._use_preconditioned_residual_norm = type_check(value, bool) 
+                    self._use_preconditioned_residual_norm = type_check(value, bool)
 
                 def check_required(self):
 
@@ -15718,10 +15846,10 @@ class Root(object):
 
             @enable_overwrite_solver.setter
             def enable_overwrite_solver(self, value):
-                ''' 
+                '''
                 If solver name is not present, falls back to default
                 '''
-                self._enable_overwrite_solver = type_check(value, bool) 
+                self._enable_overwrite_solver = type_check(value, bool)
 
             @property
             def solver(self):
@@ -15729,10 +15857,10 @@ class Root(object):
 
             @solver.setter
             def solver(self, value):
-                ''' 
+                '''
                 Linear solver type.
                 '''
-                self._solver = enum_check(value, self.Solver) 
+                self._solver = enum_check(value, self.Solver)
 
             @property
             def precond(self):
@@ -15740,10 +15868,10 @@ class Root(object):
 
             @precond.setter
             def precond(self, value):
-                ''' 
+                '''
                 Preconditioner used if using an iterative linear solver.
                 '''
-                self._precond = enum_check(value, self.Precond) 
+                self._precond = enum_check(value, self.Precond)
 
             @property
             def Eigen_LeastSquaresConjugateGradient(self):
@@ -15751,12 +15879,12 @@ class Root(object):
 
             @Eigen_LeastSquaresConjugateGradient.setter
             def Eigen_LeastSquaresConjugateGradient(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's Least Squares Conjugate Gradient solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_LeastSquaresConjugateGradient = type_check(value, self.EigenLeastSquaresConjugateGradient) 
+                self._Eigen_LeastSquaresConjugateGradient = type_check(value, self.EigenLeastSquaresConjugateGradient)
 
             @property
             def Eigen_DGMRES(self):
@@ -15764,12 +15892,12 @@ class Root(object):
 
             @Eigen_DGMRES.setter
             def Eigen_DGMRES(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's DGMRES solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_DGMRES = type_check(value, self.EigenDGMRES) 
+                self._Eigen_DGMRES = type_check(value, self.EigenDGMRES)
 
             @property
             def Eigen_ConjugateGradient(self):
@@ -15777,12 +15905,12 @@ class Root(object):
 
             @Eigen_ConjugateGradient.setter
             def Eigen_ConjugateGradient(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's Conjugate Gradient solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_ConjugateGradient = type_check(value, self.EigenConjugateGradient) 
+                self._Eigen_ConjugateGradient = type_check(value, self.EigenConjugateGradient)
 
             @property
             def Eigen_BiCGSTAB(self):
@@ -15790,12 +15918,12 @@ class Root(object):
 
             @Eigen_BiCGSTAB.setter
             def Eigen_BiCGSTAB(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's BiCGSTAB solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_BiCGSTAB = type_check(value, self.EigenBiCGSTAB) 
+                self._Eigen_BiCGSTAB = type_check(value, self.EigenBiCGSTAB)
 
             @property
             def Eigen_GMRES(self):
@@ -15803,12 +15931,12 @@ class Root(object):
 
             @Eigen_GMRES.setter
             def Eigen_GMRES(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's GMRES solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_GMRES = type_check(value, self.EigenGMRES) 
+                self._Eigen_GMRES = type_check(value, self.EigenGMRES)
 
             @property
             def Eigen_MINRES(self):
@@ -15816,12 +15944,12 @@ class Root(object):
 
             @Eigen_MINRES.setter
             def Eigen_MINRES(self, value):
-                ''' 
+                '''
                 Settings for the Eigen's MINRES solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'tolerance']
                 '''
-                self._Eigen_MINRES = type_check(value, self.EigenMINRES) 
+                self._Eigen_MINRES = type_check(value, self.EigenMINRES)
 
             @property
             def Pardiso(self):
@@ -15829,12 +15957,12 @@ class Root(object):
 
             @Pardiso.setter
             def Pardiso(self, value):
-                ''' 
+                '''
                 Settings for the Pardiso solver.
                 \nRequired: []
                 \nOptional: ['mtype']
                 '''
-                self._Pardiso = type_check(value, self.Pardiso) 
+                self._Pardiso = type_check(value, self.Pardiso)
 
             @property
             def Hypre(self):
@@ -15842,12 +15970,12 @@ class Root(object):
 
             @Hypre.setter
             def Hypre(self, value):
-                ''' 
+                '''
                 Settings for the Hypre solver.
                 \nRequired: []
                 \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']
                 '''
-                self._Hypre = type_check(value, self.Hypre) 
+                self._Hypre = type_check(value, self.Hypre)
 
             @property
             def AMGCL(self):
@@ -15855,12 +15983,12 @@ class Root(object):
 
             @AMGCL.setter
             def AMGCL(self, value):
-                ''' 
+                '''
                 Settings for the AMGCL solver.
                 \nRequired: []
                 \nOptional: ['solver', 'precond']
                 '''
-                self._AMGCL = type_check(value, self.AMGCL) 
+                self._AMGCL = type_check(value, self.AMGCL)
 
             @property
             def MAS(self):
@@ -15868,12 +15996,12 @@ class Root(object):
 
             @MAS.setter
             def MAS(self, value):
-                ''' 
+                '''
                 Settings for the MAS solver.
                 \nRequired: []
                 \nOptional: ['block_dim', 'max_iter', 'relative_tolerance', 'absolute_tolerance', 'lazy_partitioning', 'use_preconditioned_residual_norm']
                 '''
-                self._MAS = type_check(value, self.MAS) 
+                self._MAS = type_check(value, self.MAS)
 
             def check_required(self):
 
@@ -15900,10 +16028,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -15911,10 +16039,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -15942,10 +16070,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -15953,10 +16081,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -15984,10 +16112,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -15995,10 +16123,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -16026,10 +16154,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -16037,10 +16165,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -16068,10 +16196,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -16079,10 +16207,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -16110,10 +16238,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -16121,10 +16249,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 def check_required(self):
 
@@ -16150,10 +16278,10 @@ class Root(object):
 
                 @mtype.setter
                 def mtype(self, value):
-                    ''' 
+                    '''
                     Matrix type.
                     '''
-                    self._mtype = type_check(value, int) 
+                    self._mtype = type_check(value, int)
 
                 def check_required(self):
 
@@ -16191,10 +16319,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def pre_max_iter(self):
@@ -16202,10 +16330,10 @@ class Root(object):
 
                 @pre_max_iter.setter
                 def pre_max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of pre iterations.
                     '''
-                    self._pre_max_iter = type_check(value, int) 
+                    self._pre_max_iter = type_check(value, int)
 
                 @property
                 def tolerance(self):
@@ -16213,10 +16341,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     Convergence tolerance.
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 @property
                 def theta(self):
@@ -16224,10 +16352,10 @@ class Root(object):
 
                 @theta.setter
                 def theta(self, value):
-                    ''' 
+                    '''
                     Strong threshold.
                     '''
-                    self._theta = type_check(value, float) 
+                    self._theta = type_check(value, float)
 
                 @property
                 def nodal_coarsening(self):
@@ -16235,10 +16363,10 @@ class Root(object):
 
                 @nodal_coarsening.setter
                 def nodal_coarsening(self, value):
-                    ''' 
+                    '''
                     Whether or not to include nodal coarsening options.
                     '''
-                    self._nodal_coarsening = type_check(value, bool) 
+                    self._nodal_coarsening = type_check(value, bool)
 
                 @property
                 def interp_rbms(self):
@@ -16246,10 +16374,10 @@ class Root(object):
 
                 @interp_rbms.setter
                 def interp_rbms(self, value):
-                    ''' 
+                    '''
                     Whether or not to interp rbms.
                     '''
-                    self._interp_rbms = type_check(value, bool) 
+                    self._interp_rbms = type_check(value, bool)
 
                 @property
                 def dimension(self):
@@ -16257,10 +16385,10 @@ class Root(object):
 
                 @dimension.setter
                 def dimension(self, value):
-                    ''' 
+                    '''
                     Dimension of problem.
                     '''
-                    self._dimension = type_check(value, int) 
+                    self._dimension = type_check(value, int)
 
                 def check_required(self):
 
@@ -16288,12 +16416,12 @@ class Root(object):
 
                 @solver.setter
                 def solver(self, value):
-                    ''' 
+                    '''
                     Solver settings for the AMGCL.
                     \nRequired: []
                     \nOptional: ['tol', 'maxiter', 'type']
                     '''
-                    self._solver = type_check(value, self.Solver) 
+                    self._solver = type_check(value, self.Solver)
 
                 @property
                 def precond(self):
@@ -16301,12 +16429,12 @@ class Root(object):
 
                 @precond.setter
                 def precond(self, value):
-                    ''' 
+                    '''
                     Preconditioner settings for the AMGCL.
                     \nRequired: []
                     \nOptional: ['relax', 'class', 'max_levels', 'direct_coarse', 'ncycle', 'coarsening']
                     '''
-                    self._precond = type_check(value, self.Precond) 
+                    self._precond = type_check(value, self.Precond)
 
                 def check_required(self):
 
@@ -16335,10 +16463,10 @@ class Root(object):
 
                     @tol.setter
                     def tol(self, value):
-                        ''' 
+                        '''
                         Convergence tolerance.
                         '''
-                        self._tol = type_check(value, float) 
+                        self._tol = type_check(value, float)
 
                     @property
                     def maxiter(self):
@@ -16346,10 +16474,10 @@ class Root(object):
 
                     @maxiter.setter
                     def maxiter(self, value):
-                        ''' 
+                        '''
                         Maximum number of iterations.
                         '''
-                        self._maxiter = type_check(value, int) 
+                        self._maxiter = type_check(value, int)
 
                     @property
                     def type(self):
@@ -16357,10 +16485,10 @@ class Root(object):
 
                     @type.setter
                     def type(self, value):
-                        ''' 
+                        '''
                         Type of solver to use.
                         '''
-                        self._type = type_check(value, str) 
+                        self._type = type_check(value, str)
 
                     def check_required(self):
 
@@ -16396,12 +16524,12 @@ class Root(object):
 
                     @relax.setter
                     def relax(self, value):
-                        ''' 
+                        '''
                         Preconditioner settings for the AMGCL.
                         \nRequired: []
                         \nOptional: ['degree', 'type', 'power_iters', 'higher', 'lower', 'scale']
                         '''
-                        self._relax = type_check(value, self.Relax) 
+                        self._relax = type_check(value, self.Relax)
 
                     @property
                     def class_(self):
@@ -16409,10 +16537,10 @@ class Root(object):
 
                     @class_.setter
                     def class_(self, value):
-                        ''' 
+                        '''
                         Type of preconditioner to use.
                         '''
-                        self._class_ = type_check(value, str) 
+                        self._class_ = type_check(value, str)
 
                     @property
                     def max_levels(self):
@@ -16420,10 +16548,10 @@ class Root(object):
 
                     @max_levels.setter
                     def max_levels(self, value):
-                        ''' 
+                        '''
                         Maximum number of levels.
                         '''
-                        self._max_levels = type_check(value, int) 
+                        self._max_levels = type_check(value, int)
 
                     @property
                     def direct_coarse(self):
@@ -16431,10 +16559,10 @@ class Root(object):
 
                     @direct_coarse.setter
                     def direct_coarse(self, value):
-                        ''' 
+                        '''
                         Use direct solver for the coarsest level.
                         '''
-                        self._direct_coarse = type_check(value, bool) 
+                        self._direct_coarse = type_check(value, bool)
 
                     @property
                     def ncycle(self):
@@ -16442,10 +16570,10 @@ class Root(object):
 
                     @ncycle.setter
                     def ncycle(self, value):
-                        ''' 
+                        '''
                         Number of cycles.
                         '''
-                        self._ncycle = type_check(value, int) 
+                        self._ncycle = type_check(value, int)
 
                     @property
                     def coarsening(self):
@@ -16453,12 +16581,12 @@ class Root(object):
 
                     @coarsening.setter
                     def coarsening(self, value):
-                        ''' 
+                        '''
                         Coarsening parameters.
                         \nRequired: []
                         \nOptional: ['type', 'estimate_spectral_radius', 'relax', 'aggr']
                         '''
-                        self._coarsening = type_check(value, self.Coarsening) 
+                        self._coarsening = type_check(value, self.Coarsening)
 
                     def check_required(self):
 
@@ -16493,10 +16621,10 @@ class Root(object):
 
                         @degree.setter
                         def degree(self, value):
-                            ''' 
+                            '''
                             Degree of the polynomial.
                             '''
-                            self._degree = type_check(value, int) 
+                            self._degree = type_check(value, int)
 
                         @property
                         def type(self):
@@ -16504,10 +16632,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Type of relaxation to use.
                             '''
-                            self._type = type_check(value, str) 
+                            self._type = type_check(value, str)
 
                         @property
                         def power_iters(self):
@@ -16515,10 +16643,10 @@ class Root(object):
 
                         @power_iters.setter
                         def power_iters(self, value):
-                            ''' 
+                            '''
                             Number of power iterations.
                             '''
-                            self._power_iters = type_check(value, int) 
+                            self._power_iters = type_check(value, int)
 
                         @property
                         def higher(self):
@@ -16526,10 +16654,10 @@ class Root(object):
 
                         @higher.setter
                         def higher(self, value):
-                            ''' 
+                            '''
                             Higher level relaxation.
                             '''
-                            self._higher = type_check(value, float) 
+                            self._higher = type_check(value, float)
 
                         @property
                         def lower(self):
@@ -16537,10 +16665,10 @@ class Root(object):
 
                         @lower.setter
                         def lower(self, value):
-                            ''' 
+                            '''
                             Lower level relaxation.
                             '''
-                            self._lower = type_check(value, float) 
+                            self._lower = type_check(value, float)
 
                         @property
                         def scale(self):
@@ -16548,10 +16676,10 @@ class Root(object):
 
                         @scale.setter
                         def scale(self, value):
-                            ''' 
+                            '''
                             Scale.
                             '''
-                            self._scale = type_check(value, bool) 
+                            self._scale = type_check(value, bool)
 
                         def check_required(self):
 
@@ -16583,10 +16711,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Coarsening type.
                             '''
-                            self._type = type_check(value, str) 
+                            self._type = type_check(value, str)
 
                         @property
                         def estimate_spectral_radius(self):
@@ -16594,10 +16722,10 @@ class Root(object):
 
                         @estimate_spectral_radius.setter
                         def estimate_spectral_radius(self, value):
-                            ''' 
+                            '''
                             Should the spectral radius be estimated.
                             '''
-                            self._estimate_spectral_radius = type_check(value, bool) 
+                            self._estimate_spectral_radius = type_check(value, bool)
 
                         @property
                         def relax(self):
@@ -16605,10 +16733,10 @@ class Root(object):
 
                         @relax.setter
                         def relax(self, value):
-                            ''' 
+                            '''
                             Coarsening relaxation.
                             '''
-                            self._relax = type_check(value, float) 
+                            self._relax = type_check(value, float)
 
                         @property
                         def aggr(self):
@@ -16616,12 +16744,12 @@ class Root(object):
 
                         @aggr.setter
                         def aggr(self, value):
-                            ''' 
+                            '''
                             Aggregation settings.
                             \nRequired: []
                             \nOptional: ['eps_strong']
                             '''
-                            self._aggr = type_check(value, self.Aggr) 
+                            self._aggr = type_check(value, self.Aggr)
 
                         def check_required(self):
 
@@ -16646,10 +16774,10 @@ class Root(object):
 
                             @eps_strong.setter
                             def eps_strong(self, value):
-                                ''' 
+                                '''
                                 Aggregation epsilon strong.
                                 '''
-                                self._eps_strong = type_check(value, float) 
+                                self._eps_strong = type_check(value, float)
 
                             def check_required(self):
 
@@ -16688,10 +16816,10 @@ class Root(object):
 
                 @block_dim.setter
                 def block_dim(self, value):
-                    ''' 
+                    '''
                     Block size of the BSR matrix PCG sovler internally use. Choose 3 for 3d problem, 2 for 2d, etc.
                     '''
-                    self._block_dim = type_check(value, int) 
+                    self._block_dim = type_check(value, int)
 
                 @property
                 def max_iter(self):
@@ -16699,10 +16827,10 @@ class Root(object):
 
                 @max_iter.setter
                 def max_iter(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations.
                     '''
-                    self._max_iter = type_check(value, int) 
+                    self._max_iter = type_check(value, int)
 
                 @property
                 def relative_tolerance(self):
@@ -16710,10 +16838,10 @@ class Root(object):
 
                 @relative_tolerance.setter
                 def relative_tolerance(self, value):
-                    ''' 
+                    '''
                     Relative convergence tolerance.
                     '''
-                    self._relative_tolerance = type_check(value, float) 
+                    self._relative_tolerance = type_check(value, float)
 
                 @property
                 def absolute_tolerance(self):
@@ -16721,10 +16849,10 @@ class Root(object):
 
                 @absolute_tolerance.setter
                 def absolute_tolerance(self, value):
-                    ''' 
+                    '''
                     Absolute convergence tolerance.
                     '''
-                    self._absolute_tolerance = type_check(value, float) 
+                    self._absolute_tolerance = type_check(value, float)
 
                 @property
                 def lazy_partitioning(self):
@@ -16732,10 +16860,10 @@ class Root(object):
 
                 @lazy_partitioning.setter
                 def lazy_partitioning(self, value):
-                    ''' 
+                    '''
                     If true, reuse the first graph partition.
                     '''
-                    self._lazy_partitioning = type_check(value, bool) 
+                    self._lazy_partitioning = type_check(value, bool)
 
                 @property
                 def use_preconditioned_residual_norm(self):
@@ -16743,10 +16871,10 @@ class Root(object):
 
                 @use_preconditioned_residual_norm.setter
                 def use_preconditioned_residual_norm(self, value):
-                    ''' 
+                    '''
                     Use preconditioned residual norm for termination check.
                     '''
-                    self._use_preconditioned_residual_norm = type_check(value, bool) 
+                    self._use_preconditioned_residual_norm = type_check(value, bool)
 
                 def check_required(self):
 
@@ -16816,12 +16944,12 @@ class Root(object):
 
             @solver.setter
             def solver(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['string', 'list']
                 '''
-                self._solver = type_check(value, self.Solver) if isinstance(value, self.Solver) else self.Solver(value) 
+                self._solver = type_check(value, self.Solver) if isinstance(value, self.Solver) else self.Solver(value)
 
             @property
             def x_delta_tol(self):
@@ -16829,10 +16957,10 @@ class Root(object):
 
             @x_delta_tol.setter
             def x_delta_tol(self, value):
-                ''' 
+                '''
                 Stopping criterion: minimal change of the variables x for the iterations to continue. Computed as the L2 norm of x divide by the time step.
                 '''
-                self._x_delta_tol = range_check(type_check(value, float), 0, None) 
+                self._x_delta_tol = range_check(type_check(value, float), 0, None)
 
             @property
             def grad_norm_tol(self):
@@ -16840,10 +16968,10 @@ class Root(object):
 
             @grad_norm_tol.setter
             def grad_norm_tol(self, value):
-                ''' 
+                '''
                 Stopping criterion: Minimal gradient norm for the iterations to continue.
                 '''
-                self._grad_norm_tol = range_check(type_check(value, float), 0, None) 
+                self._grad_norm_tol = range_check(type_check(value, float), 0, None)
 
             @property
             def rel_grad_norm_tol(self):
@@ -16851,10 +16979,10 @@ class Root(object):
 
             @rel_grad_norm_tol.setter
             def rel_grad_norm_tol(self, value):
-                ''' 
+                '''
                 Stopping criterion: minimal gradient for the iterations to continue relative to first step in nonlinear solve.
                 '''
-                self._rel_grad_norm_tol = range_check(type_check(value, float), 0, None) 
+                self._rel_grad_norm_tol = range_check(type_check(value, float), 0, None)
 
             @property
             def newton_decrement_tol(self):
@@ -16862,10 +16990,10 @@ class Root(object):
 
             @newton_decrement_tol.setter
             def newton_decrement_tol(self, value):
-                ''' 
+                '''
                 Stopping criterion: minimal change of energy (as estimated by Newton decrement) for the iterations to continue.
                 '''
-                self._newton_decrement_tol = range_check(type_check(value, float), 0, None) 
+                self._newton_decrement_tol = range_check(type_check(value, float), 0, None)
 
             @property
             def rel_x_delta_tol(self):
@@ -16873,10 +17001,10 @@ class Root(object):
 
             @rel_x_delta_tol.setter
             def rel_x_delta_tol(self, value):
-                ''' 
+                '''
                 Stopping criterion: minimal change of the variables x for the iterations to continue relative to first step in nonlinear solve.
                 '''
-                self._rel_x_delta_tol = range_check(type_check(value, float), 0, None) 
+                self._rel_x_delta_tol = range_check(type_check(value, float), 0, None)
 
             @property
             def first_grad_norm_tol(self):
@@ -16884,10 +17012,10 @@ class Root(object):
 
             @first_grad_norm_tol.setter
             def first_grad_norm_tol(self, value):
-                ''' 
+                '''
                 Minimal gradient norm for the iterations to not start, assume we already are at a minimum.
                 '''
-                self._first_grad_norm_tol = type_check(value, float) 
+                self._first_grad_norm_tol = type_check(value, float)
 
             @property
             def norm_type(self):
@@ -16895,10 +17023,10 @@ class Root(object):
 
             @norm_type.setter
             def norm_type(self, value):
-                ''' 
+                '''
                 Norm to use when computing stopping criteria in nonlinear solve.
                 '''
-                self._norm_type = enum_check(value, self.Norm_type) 
+                self._norm_type = enum_check(value, self.Norm_type)
 
             @property
             def max_iterations(self):
@@ -16906,10 +17034,10 @@ class Root(object):
 
             @max_iterations.setter
             def max_iterations(self, value):
-                ''' 
+                '''
                 Maximum number of iterations for a nonlinear solve.
                 '''
-                self._max_iterations = type_check(value, int) 
+                self._max_iterations = type_check(value, int)
 
             @property
             def iterations_per_strategy(self):
@@ -16917,12 +17045,12 @@ class Root(object):
 
             @iterations_per_strategy.setter
             def iterations_per_strategy(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'list']
                 '''
-                self._iterations_per_strategy = inline_check(value, [int, list], []) 
+                self._iterations_per_strategy = inline_check(value, [int, list], [])
 
             @property
             def line_search(self):
@@ -16930,12 +17058,12 @@ class Root(object):
 
             @line_search.setter
             def line_search(self, value):
-                ''' 
+                '''
                 Settings for line-search in the nonlinear solver
                 \nRequired: []
                 \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']
                 '''
-                self._line_search = type_check(value, self.Line_search) 
+                self._line_search = type_check(value, self.Line_search)
 
             @property
             def allow_out_of_iterations(self):
@@ -16943,10 +17071,10 @@ class Root(object):
 
             @allow_out_of_iterations.setter
             def allow_out_of_iterations(self, value):
-                ''' 
+                '''
                 If false (default), an exception will be thrown when the nonlinear solver reaches the maximum number of iterations.
                 '''
-                self._allow_out_of_iterations = type_check(value, bool) 
+                self._allow_out_of_iterations = type_check(value, bool)
 
             @property
             def L_BFGS(self):
@@ -16954,12 +17082,12 @@ class Root(object):
 
             @L_BFGS.setter
             def L_BFGS(self, value):
-                ''' 
+                '''
                 Options for LBFGS.
                 \nRequired: []
                 \nOptional: ['history_size']
                 '''
-                self._L_BFGS = type_check(value, self.LBFGS) 
+                self._L_BFGS = type_check(value, self.LBFGS)
 
             @property
             def L_BFGS_B(self):
@@ -16967,12 +17095,12 @@ class Root(object):
 
             @L_BFGS_B.setter
             def L_BFGS_B(self, value):
-                ''' 
+                '''
                 Options for the boxed L-BFGS.
                 \nRequired: []
                 \nOptional: ['history_size']
                 '''
-                self._L_BFGS_B = type_check(value, self.LBFGSB) 
+                self._L_BFGS_B = type_check(value, self.LBFGSB)
 
             @property
             def Newton(self):
@@ -16980,12 +17108,12 @@ class Root(object):
 
             @Newton.setter
             def Newton(self, value):
-                ''' 
+                '''
                 Options for Newton.
                 \nRequired: []
                 \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc', 'force_psd_projection', 'use_psd_projection', 'use_psd_projection_in_regularized']
                 '''
-                self._Newton = type_check(value, self.Newton) 
+                self._Newton = type_check(value, self.Newton)
 
             @property
             def ADAM(self):
@@ -16993,12 +17121,12 @@ class Root(object):
 
             @ADAM.setter
             def ADAM(self, value):
-                ''' 
+                '''
                 Options for ADAM.
                 \nRequired: []
                 \nOptional: ['alpha', 'beta_1', 'beta_2', 'epsilon']
                 '''
-                self._ADAM = type_check(value, self.ADAM) 
+                self._ADAM = type_check(value, self.ADAM)
 
             @property
             def StochasticADAM(self):
@@ -17006,12 +17134,12 @@ class Root(object):
 
             @StochasticADAM.setter
             def StochasticADAM(self, value):
-                ''' 
+                '''
                 Options for ADAM.
                 \nRequired: []
                 \nOptional: ['alpha', 'beta_1', 'beta_2', 'epsilon', 'erase_component_probability']
                 '''
-                self._StochasticADAM = type_check(value, self.StochasticADAM) 
+                self._StochasticADAM = type_check(value, self.StochasticADAM)
 
             @property
             def StochasticGradientDescent(self):
@@ -17019,12 +17147,12 @@ class Root(object):
 
             @StochasticGradientDescent.setter
             def StochasticGradientDescent(self, value):
-                ''' 
+                '''
                 Options for Stochastic Gradient Descent.
                 \nRequired: []
                 \nOptional: ['erase_component_probability']
                 '''
-                self._StochasticGradientDescent = type_check(value, self.StochasticGradientDescent) 
+                self._StochasticGradientDescent = type_check(value, self.StochasticGradientDescent)
 
             @property
             def box_constraints(self):
@@ -17032,12 +17160,12 @@ class Root(object):
 
             @box_constraints.setter
             def box_constraints(self, value):
-                ''' 
+                '''
                 There is no definition
                 \nRequired: []
                 \nOptional: ['bounds', 'max_change']
                 '''
-                self._box_constraints = type_check(value, self.Box_constraints) 
+                self._box_constraints = type_check(value, self.Box_constraints)
 
             @property
             def advanced(self):
@@ -17045,12 +17173,12 @@ class Root(object):
 
             @advanced.setter
             def advanced(self, value):
-                ''' 
+                '''
                 Nonlinear solver advanced options
                 \nRequired: []
                 \nOptional: ['f_delta_tol', 'f_delta_step_tol', 'derivative_along_delta_x_tol', 'apply_gradient_fd', 'gradient_fd_eps']
                 '''
-                self._advanced = type_check(value, self.Advanced) 
+                self._advanced = type_check(value, self.Advanced)
 
             def check_required(self):
 
@@ -17075,10 +17203,10 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     '''
-                    self._value = class_check(value, [str, list, self.List]) 
+                    self._value = class_check(value, [str, list, self.List])
 
                 def check_required(self):
 
@@ -17162,10 +17290,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17173,10 +17301,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         def check_required(self):
 
@@ -17209,10 +17337,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17220,10 +17348,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         def check_required(self):
 
@@ -17262,10 +17390,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17273,10 +17401,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         @property
                         def reg_weight_min(self):
@@ -17284,10 +17412,10 @@ class Root(object):
 
                         @reg_weight_min.setter
                         def reg_weight_min(self, value):
-                            ''' 
+                            '''
                             Minimum regulariztion weight.
                             '''
-                            self._reg_weight_min = type_check(value, float) 
+                            self._reg_weight_min = type_check(value, float)
 
                         @property
                         def reg_weight_max(self):
@@ -17295,10 +17423,10 @@ class Root(object):
 
                         @reg_weight_max.setter
                         def reg_weight_max(self, value):
-                            ''' 
+                            '''
                             Maximum regulariztion weight.
                             '''
-                            self._reg_weight_max = type_check(value, float) 
+                            self._reg_weight_max = type_check(value, float)
 
                         @property
                         def reg_weight_inc(self):
@@ -17306,10 +17434,10 @@ class Root(object):
 
                         @reg_weight_inc.setter
                         def reg_weight_inc(self, value):
-                            ''' 
+                            '''
                             Regulariztion weight increment.
                             '''
-                            self._reg_weight_inc = type_check(value, float) 
+                            self._reg_weight_inc = type_check(value, float)
 
                         def check_required(self):
 
@@ -17348,10 +17476,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17359,10 +17487,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         @property
                         def reg_weight_min(self):
@@ -17370,10 +17498,10 @@ class Root(object):
 
                         @reg_weight_min.setter
                         def reg_weight_min(self, value):
-                            ''' 
+                            '''
                             Minimum regulariztion weight.
                             '''
-                            self._reg_weight_min = type_check(value, float) 
+                            self._reg_weight_min = type_check(value, float)
 
                         @property
                         def reg_weight_max(self):
@@ -17381,10 +17509,10 @@ class Root(object):
 
                         @reg_weight_max.setter
                         def reg_weight_max(self, value):
-                            ''' 
+                            '''
                             Maximum regulariztion weight.
                             '''
-                            self._reg_weight_max = type_check(value, float) 
+                            self._reg_weight_max = type_check(value, float)
 
                         @property
                         def reg_weight_inc(self):
@@ -17392,10 +17520,10 @@ class Root(object):
 
                         @reg_weight_inc.setter
                         def reg_weight_inc(self, value):
-                            ''' 
+                            '''
                             Regulariztion weight increment.
                             '''
-                            self._reg_weight_inc = type_check(value, float) 
+                            self._reg_weight_inc = type_check(value, float)
 
                         def check_required(self):
 
@@ -17428,10 +17556,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17439,10 +17567,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         def check_required(self):
 
@@ -17475,10 +17603,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17486,10 +17614,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         def check_required(self):
 
@@ -17528,10 +17656,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17539,10 +17667,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         @property
                         def reg_weight_min(self):
@@ -17550,10 +17678,10 @@ class Root(object):
 
                         @reg_weight_min.setter
                         def reg_weight_min(self, value):
-                            ''' 
+                            '''
                             Minimum regulariztion weight.
                             '''
-                            self._reg_weight_min = type_check(value, float) 
+                            self._reg_weight_min = type_check(value, float)
 
                         @property
                         def reg_weight_max(self):
@@ -17561,10 +17689,10 @@ class Root(object):
 
                         @reg_weight_max.setter
                         def reg_weight_max(self, value):
-                            ''' 
+                            '''
                             Maximum regulariztion weight.
                             '''
-                            self._reg_weight_max = type_check(value, float) 
+                            self._reg_weight_max = type_check(value, float)
 
                         @property
                         def reg_weight_inc(self):
@@ -17572,10 +17700,10 @@ class Root(object):
 
                         @reg_weight_inc.setter
                         def reg_weight_inc(self, value):
-                            ''' 
+                            '''
                             Regulariztion weight increment.
                             '''
-                            self._reg_weight_inc = type_check(value, float) 
+                            self._reg_weight_inc = type_check(value, float)
 
                         def check_required(self):
 
@@ -17614,10 +17742,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def residual_tolerance(self):
@@ -17625,10 +17753,10 @@ class Root(object):
 
                         @residual_tolerance.setter
                         def residual_tolerance(self, value):
-                            ''' 
+                            '''
                             Tolerance of the linear system residual. If residual is above, the direction is rejected.
                             '''
-                            self._residual_tolerance = type_check(value, float) 
+                            self._residual_tolerance = type_check(value, float)
 
                         @property
                         def reg_weight_min(self):
@@ -17636,10 +17764,10 @@ class Root(object):
 
                         @reg_weight_min.setter
                         def reg_weight_min(self, value):
-                            ''' 
+                            '''
                             Minimum regulariztion weight.
                             '''
-                            self._reg_weight_min = type_check(value, float) 
+                            self._reg_weight_min = type_check(value, float)
 
                         @property
                         def reg_weight_max(self):
@@ -17647,10 +17775,10 @@ class Root(object):
 
                         @reg_weight_max.setter
                         def reg_weight_max(self, value):
-                            ''' 
+                            '''
                             Maximum regulariztion weight.
                             '''
-                            self._reg_weight_max = type_check(value, float) 
+                            self._reg_weight_max = type_check(value, float)
 
                         @property
                         def reg_weight_inc(self):
@@ -17658,10 +17786,10 @@ class Root(object):
 
                         @reg_weight_inc.setter
                         def reg_weight_inc(self, value):
-                            ''' 
+                            '''
                             Regulariztion weight increment.
                             '''
-                            self._reg_weight_inc = type_check(value, float) 
+                            self._reg_weight_inc = type_check(value, float)
 
                         def check_required(self):
 
@@ -17692,10 +17820,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -17728,10 +17856,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def erase_component_probability(self):
@@ -17739,10 +17867,10 @@ class Root(object):
 
                         @erase_component_probability.setter
                         def erase_component_probability(self, value):
-                            ''' 
+                            '''
                             Probability of erasing a component on the gradient for stochastic solvers.
                             '''
-                            self._erase_component_probability = type_check(value, float) 
+                            self._erase_component_probability = type_check(value, float)
 
                         def check_required(self):
 
@@ -17775,10 +17903,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def history_size(self):
@@ -17786,10 +17914,10 @@ class Root(object):
 
                         @history_size.setter
                         def history_size(self, value):
-                            ''' 
+                            '''
                             The number of corrections to approximate the inverse Hessian matrix.
                             '''
-                            self._history_size = type_check(value, int) 
+                            self._history_size = type_check(value, int)
 
                         def check_required(self):
 
@@ -17820,10 +17948,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -17862,10 +17990,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def alpha(self):
@@ -17873,10 +18001,10 @@ class Root(object):
 
                         @alpha.setter
                         def alpha(self, value):
-                            ''' 
+                            '''
                             Parameter alpha for ADAM.
                             '''
-                            self._alpha = type_check(value, float) 
+                            self._alpha = type_check(value, float)
 
                         @property
                         def beta_1(self):
@@ -17884,10 +18012,10 @@ class Root(object):
 
                         @beta_1.setter
                         def beta_1(self, value):
-                            ''' 
+                            '''
                             Parameter beta_1 for ADAM.
                             '''
-                            self._beta_1 = type_check(value, float) 
+                            self._beta_1 = type_check(value, float)
 
                         @property
                         def beta_2(self):
@@ -17895,10 +18023,10 @@ class Root(object):
 
                         @beta_2.setter
                         def beta_2(self, value):
-                            ''' 
+                            '''
                             Parameter beta_2 for ADAM.
                             '''
-                            self._beta_2 = type_check(value, float) 
+                            self._beta_2 = type_check(value, float)
 
                         @property
                         def epsilon(self):
@@ -17906,10 +18034,10 @@ class Root(object):
 
                         @epsilon.setter
                         def epsilon(self, value):
-                            ''' 
+                            '''
                             Parameter epsilon for ADAM.
                             '''
-                            self._epsilon = type_check(value, float) 
+                            self._epsilon = type_check(value, float)
 
                         def check_required(self):
 
@@ -17950,10 +18078,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             Nonlinear solver type
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def alpha(self):
@@ -17961,10 +18089,10 @@ class Root(object):
 
                         @alpha.setter
                         def alpha(self, value):
-                            ''' 
+                            '''
                             Parameter alpha for ADAM.
                             '''
-                            self._alpha = type_check(value, float) 
+                            self._alpha = type_check(value, float)
 
                         @property
                         def beta_1(self):
@@ -17972,10 +18100,10 @@ class Root(object):
 
                         @beta_1.setter
                         def beta_1(self, value):
-                            ''' 
+                            '''
                             Parameter beta_1 for ADAM.
                             '''
-                            self._beta_1 = type_check(value, float) 
+                            self._beta_1 = type_check(value, float)
 
                         @property
                         def beta_2(self):
@@ -17983,10 +18111,10 @@ class Root(object):
 
                         @beta_2.setter
                         def beta_2(self, value):
-                            ''' 
+                            '''
                             Parameter beta_2 for ADAM.
                             '''
-                            self._beta_2 = type_check(value, float) 
+                            self._beta_2 = type_check(value, float)
 
                         @property
                         def epsilon(self):
@@ -17994,10 +18122,10 @@ class Root(object):
 
                         @epsilon.setter
                         def epsilon(self, value):
-                            ''' 
+                            '''
                             Parameter epsilon for ADAM.
                             '''
-                            self._epsilon = type_check(value, float) 
+                            self._epsilon = type_check(value, float)
 
                         @property
                         def erase_component_probability(self):
@@ -18005,10 +18133,10 @@ class Root(object):
 
                         @erase_component_probability.setter
                         def erase_component_probability(self, value):
-                            ''' 
+                            '''
                             Probability of erasing a component on the gradient for stochastic solvers.
                             '''
-                            self._erase_component_probability = type_check(value, float) 
+                            self._erase_component_probability = type_check(value, float)
 
                         def check_required(self):
 
@@ -18019,6 +18147,21 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"alpha": self._alpha,"beta_1": self._beta_1,"beta_2": self._beta_2,"epsilon": self._epsilon,"erase_component_probability": self._erase_component_probability,})
 
+
+                    Item = Newton
+                    Object2 = ProjectedNewton
+                    Object3 = RegularizedNewton
+                    Object4 = RegularizedProjectedNewton
+                    Object5 = DenseNewton
+                    Object6 = DenseProjectedNewton
+                    Object7 = DenseRegularizedNewton
+                    Object8 = DenseRegularizedProjectedNewton
+                    Object9 = GradientDescent
+                    Object10 = StochasticGradientDescent
+                    Object11 = LBFGS
+                    Object12 = BFGS
+                    Object13 = ADAM
+                    Object14 = StochasticADAM
 
 
 
@@ -18062,10 +18205,10 @@ class Root(object):
 
                 @method.setter
                 def method(self, value):
-                    ''' 
+                    '''
                     Line-search type
                     '''
-                    self._method = enum_check(value, self.Method) 
+                    self._method = enum_check(value, self.Method)
 
                 @property
                 def use_grad_norm_tol(self):
@@ -18073,10 +18216,10 @@ class Root(object):
 
                 @use_grad_norm_tol.setter
                 def use_grad_norm_tol(self, value):
-                    ''' 
+                    '''
                     When the energy is smaller than use_grad_norm_tol, line-search uses norm of gradient instead of energy
                     '''
-                    self._use_grad_norm_tol = type_check(value, float) 
+                    self._use_grad_norm_tol = type_check(value, float)
 
                 @property
                 def min_step_size(self):
@@ -18084,10 +18227,10 @@ class Root(object):
 
                 @min_step_size.setter
                 def min_step_size(self, value):
-                    ''' 
+                    '''
                     Mimimum step size
                     '''
-                    self._min_step_size = type_check(value, float) 
+                    self._min_step_size = type_check(value, float)
 
                 @property
                 def max_step_size_iter(self):
@@ -18095,10 +18238,10 @@ class Root(object):
 
                 @max_step_size_iter.setter
                 def max_step_size_iter(self, value):
-                    ''' 
+                    '''
                     Number of iterations
                     '''
-                    self._max_step_size_iter = type_check(value, int) 
+                    self._max_step_size_iter = type_check(value, int)
 
                 @property
                 def min_step_size_final(self):
@@ -18106,10 +18249,10 @@ class Root(object):
 
                 @min_step_size_final.setter
                 def min_step_size_final(self, value):
-                    ''' 
+                    '''
                     Mimimum step size for last descent strategy
                     '''
-                    self._min_step_size_final = type_check(value, float) 
+                    self._min_step_size_final = type_check(value, float)
 
                 @property
                 def max_step_size_iter_final(self):
@@ -18117,10 +18260,10 @@ class Root(object):
 
                 @max_step_size_iter_final.setter
                 def max_step_size_iter_final(self, value):
-                    ''' 
+                    '''
                     Number of iterations for last descent strategy
                     '''
-                    self._max_step_size_iter_final = type_check(value, int) 
+                    self._max_step_size_iter_final = type_check(value, int)
 
                 @property
                 def default_init_step_size(self):
@@ -18128,10 +18271,10 @@ class Root(object):
 
                 @default_init_step_size.setter
                 def default_init_step_size(self, value):
-                    ''' 
+                    '''
                     Initial step size
                     '''
-                    self._default_init_step_size = type_check(value, float) 
+                    self._default_init_step_size = type_check(value, float)
 
                 @property
                 def step_ratio(self):
@@ -18139,10 +18282,10 @@ class Root(object):
 
                 @step_ratio.setter
                 def step_ratio(self, value):
-                    ''' 
+                    '''
                     Ratio used to decrease the step
                     '''
-                    self._step_ratio = type_check(value, float) 
+                    self._step_ratio = type_check(value, float)
 
                 @property
                 def Armijo(self):
@@ -18150,12 +18293,12 @@ class Root(object):
 
                 @Armijo.setter
                 def Armijo(self, value):
-                    ''' 
+                    '''
                     Options for Armijo.
                     \nRequired: []
                     \nOptional: ['c']
                     '''
-                    self._Armijo = type_check(value, self.Armijo) 
+                    self._Armijo = type_check(value, self.Armijo)
 
                 @property
                 def RobustArmijo(self):
@@ -18163,12 +18306,12 @@ class Root(object):
 
                 @RobustArmijo.setter
                 def RobustArmijo(self, value):
-                    ''' 
+                    '''
                     Options for RobustArmijo.
                     \nRequired: []
                     \nOptional: ['delta_relative_tolerance']
                     '''
-                    self._RobustArmijo = type_check(value, self.RobustArmijo) 
+                    self._RobustArmijo = type_check(value, self.RobustArmijo)
 
                 def check_required(self):
 
@@ -18193,10 +18336,10 @@ class Root(object):
 
                     @c.setter
                     def c(self, value):
-                        ''' 
+                        '''
                         Armijo c parameter.
                         '''
-                        self._c = type_check(value, float) 
+                        self._c = type_check(value, float)
 
                     def check_required(self):
 
@@ -18222,10 +18365,10 @@ class Root(object):
 
                     @delta_relative_tolerance.setter
                     def delta_relative_tolerance(self, value):
-                        ''' 
+                        '''
                         Relative tolerance on E to switch to approximate.
                         '''
-                        self._delta_relative_tolerance = type_check(value, float) 
+                        self._delta_relative_tolerance = type_check(value, float)
 
                     def check_required(self):
 
@@ -18252,10 +18395,10 @@ class Root(object):
 
                 @history_size.setter
                 def history_size(self, value):
-                    ''' 
+                    '''
                     The number of corrections to approximate the inverse Hessian matrix.
                     '''
-                    self._history_size = type_check(value, int) 
+                    self._history_size = type_check(value, int)
 
                 def check_required(self):
 
@@ -18281,10 +18424,10 @@ class Root(object):
 
                 @history_size.setter
                 def history_size(self, value):
-                    ''' 
+                    '''
                     The number of corrections to approximate the inverse Hessian matrix.
                     '''
-                    self._history_size = type_check(value, int) 
+                    self._history_size = type_check(value, int)
 
                 def check_required(self):
 
@@ -18322,10 +18465,10 @@ class Root(object):
 
                 @residual_tolerance.setter
                 def residual_tolerance(self, value):
-                    ''' 
+                    '''
                     Tolerance of the linear system residual. If residual is above, the direction is rejected.
                     '''
-                    self._residual_tolerance = type_check(value, float) 
+                    self._residual_tolerance = type_check(value, float)
 
                 @property
                 def reg_weight_min(self):
@@ -18333,10 +18476,10 @@ class Root(object):
 
                 @reg_weight_min.setter
                 def reg_weight_min(self, value):
-                    ''' 
+                    '''
                     Minimum regulariztion weight.
                     '''
-                    self._reg_weight_min = type_check(value, float) 
+                    self._reg_weight_min = type_check(value, float)
 
                 @property
                 def reg_weight_max(self):
@@ -18344,10 +18487,10 @@ class Root(object):
 
                 @reg_weight_max.setter
                 def reg_weight_max(self, value):
-                    ''' 
+                    '''
                     Maximum regulariztion weight.
                     '''
-                    self._reg_weight_max = type_check(value, float) 
+                    self._reg_weight_max = type_check(value, float)
 
                 @property
                 def reg_weight_inc(self):
@@ -18355,10 +18498,10 @@ class Root(object):
 
                 @reg_weight_inc.setter
                 def reg_weight_inc(self, value):
-                    ''' 
+                    '''
                     Regulariztion weight increment.
                     '''
-                    self._reg_weight_inc = type_check(value, float) 
+                    self._reg_weight_inc = type_check(value, float)
 
                 @property
                 def force_psd_projection(self):
@@ -18366,10 +18509,10 @@ class Root(object):
 
                 @force_psd_projection.setter
                 def force_psd_projection(self, value):
-                    ''' 
+                    '''
                     Force the Hessian to be PSD when using second order solvers (i.e., Newton's method).
                     '''
-                    self._force_psd_projection = type_check(value, bool) 
+                    self._force_psd_projection = type_check(value, bool)
 
                 @property
                 def use_psd_projection(self):
@@ -18377,10 +18520,10 @@ class Root(object):
 
                 @use_psd_projection.setter
                 def use_psd_projection(self, value):
-                    ''' 
+                    '''
                     Use PSD as fallback using second order solvers (i.e., Newton's method).
                     '''
-                    self._use_psd_projection = type_check(value, bool) 
+                    self._use_psd_projection = type_check(value, bool)
 
                 @property
                 def use_psd_projection_in_regularized(self):
@@ -18388,10 +18531,10 @@ class Root(object):
 
                 @use_psd_projection_in_regularized.setter
                 def use_psd_projection_in_regularized(self, value):
-                    ''' 
+                    '''
                     Use PSD in regularized Newton.
                     '''
-                    self._use_psd_projection_in_regularized = type_check(value, bool) 
+                    self._use_psd_projection_in_regularized = type_check(value, bool)
 
                 def check_required(self):
 
@@ -18423,10 +18566,10 @@ class Root(object):
 
                 @alpha.setter
                 def alpha(self, value):
-                    ''' 
+                    '''
                     Parameter alpha for ADAM.
                     '''
-                    self._alpha = type_check(value, float) 
+                    self._alpha = type_check(value, float)
 
                 @property
                 def beta_1(self):
@@ -18434,10 +18577,10 @@ class Root(object):
 
                 @beta_1.setter
                 def beta_1(self, value):
-                    ''' 
+                    '''
                     Parameter beta_1 for ADAM.
                     '''
-                    self._beta_1 = type_check(value, float) 
+                    self._beta_1 = type_check(value, float)
 
                 @property
                 def beta_2(self):
@@ -18445,10 +18588,10 @@ class Root(object):
 
                 @beta_2.setter
                 def beta_2(self, value):
-                    ''' 
+                    '''
                     Parameter beta_2 for ADAM.
                     '''
-                    self._beta_2 = type_check(value, float) 
+                    self._beta_2 = type_check(value, float)
 
                 @property
                 def epsilon(self):
@@ -18456,10 +18599,10 @@ class Root(object):
 
                 @epsilon.setter
                 def epsilon(self, value):
-                    ''' 
+                    '''
                     Parameter epsilon for ADAM.
                     '''
-                    self._epsilon = type_check(value, float) 
+                    self._epsilon = type_check(value, float)
 
                 def check_required(self):
 
@@ -18493,10 +18636,10 @@ class Root(object):
 
                 @alpha.setter
                 def alpha(self, value):
-                    ''' 
+                    '''
                     Parameter alpha for ADAM.
                     '''
-                    self._alpha = type_check(value, float) 
+                    self._alpha = type_check(value, float)
 
                 @property
                 def beta_1(self):
@@ -18504,10 +18647,10 @@ class Root(object):
 
                 @beta_1.setter
                 def beta_1(self, value):
-                    ''' 
+                    '''
                     Parameter beta_1 for ADAM.
                     '''
-                    self._beta_1 = type_check(value, float) 
+                    self._beta_1 = type_check(value, float)
 
                 @property
                 def beta_2(self):
@@ -18515,10 +18658,10 @@ class Root(object):
 
                 @beta_2.setter
                 def beta_2(self, value):
-                    ''' 
+                    '''
                     Parameter beta_2 for ADAM.
                     '''
-                    self._beta_2 = type_check(value, float) 
+                    self._beta_2 = type_check(value, float)
 
                 @property
                 def epsilon(self):
@@ -18526,10 +18669,10 @@ class Root(object):
 
                 @epsilon.setter
                 def epsilon(self, value):
-                    ''' 
+                    '''
                     Parameter epsilon for ADAM.
                     '''
-                    self._epsilon = type_check(value, float) 
+                    self._epsilon = type_check(value, float)
 
                 @property
                 def erase_component_probability(self):
@@ -18537,10 +18680,10 @@ class Root(object):
 
                 @erase_component_probability.setter
                 def erase_component_probability(self, value):
-                    ''' 
+                    '''
                     Probability of erasing a component on the gradient for ADAM.
                     '''
-                    self._erase_component_probability = type_check(value, float) 
+                    self._erase_component_probability = type_check(value, float)
 
                 def check_required(self):
 
@@ -18566,10 +18709,10 @@ class Root(object):
 
                 @erase_component_probability.setter
                 def erase_component_probability(self, value):
-                    ''' 
+                    '''
                     Probability of erasing a component on the gradient for StochasticGradientDescent.
                     '''
-                    self._erase_component_probability = type_check(value, float) 
+                    self._erase_component_probability = type_check(value, float)
 
                 def check_required(self):
 
@@ -18597,12 +18740,12 @@ class Root(object):
 
                 @bounds.setter
                 def bounds(self, value):
-                    ''' 
+                    '''
                     Box constraints on optimization variables.
                     \nRequired: []
                     \nOptional: ['item', 'float']
                     '''
-                    self._bounds = type_check(value, self.Bounds) 
+                    self._bounds = type_check(value, self.Bounds)
 
                 @property
                 def max_change(self):
@@ -18610,12 +18753,12 @@ class Root(object):
 
                 @max_change.setter
                 def max_change(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['float', 'list']
                     '''
-                    self._max_change = inline_check(value, [float, list], []) 
+                    self._max_change = inline_check(value, [float, list], [])
 
                 def check_required(self):
 
@@ -18704,10 +18847,10 @@ class Root(object):
 
                 @f_delta_tol.setter
                 def f_delta_tol(self, value):
-                    ''' 
+                    '''
                     Dangerous Option: Quit the optimization if the solver reduces the energy by less than f_delta for consecutive f_delta_step_tol steps.
                     '''
-                    self._f_delta_tol = range_check(type_check(value, float), 0, None) 
+                    self._f_delta_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def f_delta_step_tol(self):
@@ -18715,10 +18858,10 @@ class Root(object):
 
                 @f_delta_step_tol.setter
                 def f_delta_step_tol(self, value):
-                    ''' 
+                    '''
                     Dangerous Option: Quit the optimization if the solver reduces the energy by less than f_delta for consecutive f_delta_step_tol steps.
                     '''
-                    self._f_delta_step_tol = type_check(value, int) 
+                    self._f_delta_step_tol = type_check(value, int)
 
                 @property
                 def derivative_along_delta_x_tol(self):
@@ -18726,10 +18869,10 @@ class Root(object):
 
                 @derivative_along_delta_x_tol.setter
                 def derivative_along_delta_x_tol(self, value):
-                    ''' 
+                    '''
                     Quit the optimization if the directional derivative along the descent direction is smaller than this tolerance.
                     '''
-                    self._derivative_along_delta_x_tol = range_check(type_check(value, float), 0, None) 
+                    self._derivative_along_delta_x_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def apply_gradient_fd(self):
@@ -18737,10 +18880,10 @@ class Root(object):
 
                 @apply_gradient_fd.setter
                 def apply_gradient_fd(self, value):
-                    ''' 
+                    '''
                     Expensive Option: For every iteration of the nonlinear solver, run finite difference to verify gradient of energy.
                     '''
-                    self._apply_gradient_fd = enum_check(value, self.Apply_gradient_fd) 
+                    self._apply_gradient_fd = enum_check(value, self.Apply_gradient_fd)
 
                 @property
                 def gradient_fd_eps(self):
@@ -18748,10 +18891,10 @@ class Root(object):
 
                 @gradient_fd_eps.setter
                 def gradient_fd_eps(self, value):
-                    ''' 
+                    '''
                     Expensive Option: Eps for finite difference to verify gradient of energy.
                     '''
-                    self._gradient_fd_eps = type_check(value, float) 
+                    self._gradient_fd_eps = type_check(value, float)
 
                 def check_required(self):
 
@@ -18786,10 +18929,10 @@ class Root(object):
 
             @initial_weight.setter
             def initial_weight(self, value):
-                ''' 
+                '''
                 Initial weight for AL
                 '''
-                self._initial_weight = range_check(type_check(value, float), 0, None) 
+                self._initial_weight = range_check(type_check(value, float), 0, None)
 
             @property
             def scaling(self):
@@ -18797,10 +18940,10 @@ class Root(object):
 
             @scaling.setter
             def scaling(self, value):
-                ''' 
+                '''
                 Multiplication factor
                 '''
-                self._scaling = type_check(value, float) 
+                self._scaling = type_check(value, float)
 
             @property
             def max_weight(self):
@@ -18808,10 +18951,10 @@ class Root(object):
 
             @max_weight.setter
             def max_weight(self, value):
-                ''' 
+                '''
                 Maximum weight
                 '''
-                self._max_weight = type_check(value, float) 
+                self._max_weight = type_check(value, float)
 
             @property
             def eta(self):
@@ -18819,10 +18962,10 @@ class Root(object):
 
             @eta.setter
             def eta(self, value):
-                ''' 
+                '''
                 Tolerance for increasing the weight or updating the lagrangian
                 '''
-                self._eta = range_check(type_check(value, float), 0, 1) 
+                self._eta = range_check(type_check(value, float), 0, 1)
 
             @property
             def nonlinear(self):
@@ -18830,12 +18973,12 @@ class Root(object):
 
             @nonlinear.setter
             def nonlinear(self, value):
-                ''' 
+                '''
                 Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
                 \nRequired: []
                 \nOptional: ['solver', 'x_delta_tol', 'grad_norm_tol', 'rel_grad_norm_tol', 'newton_decrement_tol', 'rel_x_delta_tol', 'first_grad_norm_tol', 'norm_type', 'max_iterations', 'iterations_per_strategy', 'line_search', 'allow_out_of_iterations', 'L-BFGS', 'L-BFGS-B', 'Newton', 'ADAM', 'StochasticADAM', 'StochasticGradientDescent', 'box_constraints', 'advanced']
                 '''
-                self._nonlinear = type_check(value, self.Nonlinear) 
+                self._nonlinear = type_check(value, self.Nonlinear)
 
             def check_required(self):
 
@@ -18903,12 +19046,12 @@ class Root(object):
 
                 @solver.setter
                 def solver(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['string', 'list']
                     '''
-                    self._solver = type_check(value, self.Solver) if isinstance(value, self.Solver) else self.Solver(value) 
+                    self._solver = type_check(value, self.Solver) if isinstance(value, self.Solver) else self.Solver(value)
 
                 @property
                 def x_delta_tol(self):
@@ -18916,10 +19059,10 @@ class Root(object):
 
                 @x_delta_tol.setter
                 def x_delta_tol(self, value):
-                    ''' 
+                    '''
                     Stopping criterion: minimal change of the variables x for the iterations to continue. Computed as the L2 norm of x divide by the time step.
                     '''
-                    self._x_delta_tol = range_check(type_check(value, float), 0, None) 
+                    self._x_delta_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def grad_norm_tol(self):
@@ -18927,10 +19070,10 @@ class Root(object):
 
                 @grad_norm_tol.setter
                 def grad_norm_tol(self, value):
-                    ''' 
+                    '''
                     Stopping criterion: Minimal gradient norm for the iterations to continue.
                     '''
-                    self._grad_norm_tol = range_check(type_check(value, float), 0, None) 
+                    self._grad_norm_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def rel_grad_norm_tol(self):
@@ -18938,10 +19081,10 @@ class Root(object):
 
                 @rel_grad_norm_tol.setter
                 def rel_grad_norm_tol(self, value):
-                    ''' 
+                    '''
                     Stopping criterion: minimal gradient for the iterations to continue relative to first step in nonlinear solve.
                     '''
-                    self._rel_grad_norm_tol = range_check(type_check(value, float), 0, None) 
+                    self._rel_grad_norm_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def newton_decrement_tol(self):
@@ -18949,10 +19092,10 @@ class Root(object):
 
                 @newton_decrement_tol.setter
                 def newton_decrement_tol(self, value):
-                    ''' 
+                    '''
                     Stopping criterion: minimal change of energy (as estimated by Newton decrement) for the iterations to continue.
                     '''
-                    self._newton_decrement_tol = range_check(type_check(value, float), 0, None) 
+                    self._newton_decrement_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def rel_x_delta_tol(self):
@@ -18960,10 +19103,10 @@ class Root(object):
 
                 @rel_x_delta_tol.setter
                 def rel_x_delta_tol(self, value):
-                    ''' 
+                    '''
                     Stopping criterion: minimal change of the variables x for the iterations to continue relative to first step in nonlinear solve.
                     '''
-                    self._rel_x_delta_tol = range_check(type_check(value, float), 0, None) 
+                    self._rel_x_delta_tol = range_check(type_check(value, float), 0, None)
 
                 @property
                 def first_grad_norm_tol(self):
@@ -18971,10 +19114,10 @@ class Root(object):
 
                 @first_grad_norm_tol.setter
                 def first_grad_norm_tol(self, value):
-                    ''' 
+                    '''
                     Minimal gradient norm for the iterations to not start, assume we already are at a minimum.
                     '''
-                    self._first_grad_norm_tol = type_check(value, float) 
+                    self._first_grad_norm_tol = type_check(value, float)
 
                 @property
                 def norm_type(self):
@@ -18982,10 +19125,10 @@ class Root(object):
 
                 @norm_type.setter
                 def norm_type(self, value):
-                    ''' 
+                    '''
                     Norm to use when computing stopping criteria in nonlinear solve.
                     '''
-                    self._norm_type = enum_check(value, self.Norm_type) 
+                    self._norm_type = enum_check(value, self.Norm_type)
 
                 @property
                 def max_iterations(self):
@@ -18993,10 +19136,10 @@ class Root(object):
 
                 @max_iterations.setter
                 def max_iterations(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations for a nonlinear solve.
                     '''
-                    self._max_iterations = type_check(value, int) 
+                    self._max_iterations = type_check(value, int)
 
                 @property
                 def iterations_per_strategy(self):
@@ -19004,12 +19147,12 @@ class Root(object):
 
                 @iterations_per_strategy.setter
                 def iterations_per_strategy(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['int', 'list']
                     '''
-                    self._iterations_per_strategy = inline_check(value, [int, list], []) 
+                    self._iterations_per_strategy = inline_check(value, [int, list], [])
 
                 @property
                 def line_search(self):
@@ -19017,12 +19160,12 @@ class Root(object):
 
                 @line_search.setter
                 def line_search(self, value):
-                    ''' 
+                    '''
                     Settings for line-search in the nonlinear solver
                     \nRequired: []
                     \nOptional: ['method', 'use_grad_norm_tol', 'min_step_size', 'max_step_size_iter', 'min_step_size_final', 'max_step_size_iter_final', 'default_init_step_size', 'step_ratio', 'Armijo', 'RobustArmijo']
                     '''
-                    self._line_search = type_check(value, self.Line_search) 
+                    self._line_search = type_check(value, self.Line_search)
 
                 @property
                 def allow_out_of_iterations(self):
@@ -19030,10 +19173,10 @@ class Root(object):
 
                 @allow_out_of_iterations.setter
                 def allow_out_of_iterations(self, value):
-                    ''' 
+                    '''
                     If false (default), an exception will be thrown when the nonlinear solver reaches the maximum number of iterations.
                     '''
-                    self._allow_out_of_iterations = type_check(value, bool) 
+                    self._allow_out_of_iterations = type_check(value, bool)
 
                 @property
                 def L_BFGS(self):
@@ -19041,12 +19184,12 @@ class Root(object):
 
                 @L_BFGS.setter
                 def L_BFGS(self, value):
-                    ''' 
+                    '''
                     Options for LBFGS.
                     \nRequired: []
                     \nOptional: ['history_size']
                     '''
-                    self._L_BFGS = type_check(value, self.LBFGS) 
+                    self._L_BFGS = type_check(value, self.LBFGS)
 
                 @property
                 def L_BFGS_B(self):
@@ -19054,12 +19197,12 @@ class Root(object):
 
                 @L_BFGS_B.setter
                 def L_BFGS_B(self, value):
-                    ''' 
+                    '''
                     Options for the boxed L-BFGS.
                     \nRequired: []
                     \nOptional: ['history_size']
                     '''
-                    self._L_BFGS_B = type_check(value, self.LBFGSB) 
+                    self._L_BFGS_B = type_check(value, self.LBFGSB)
 
                 @property
                 def Newton(self):
@@ -19067,12 +19210,12 @@ class Root(object):
 
                 @Newton.setter
                 def Newton(self, value):
-                    ''' 
+                    '''
                     Options for Newton.
                     \nRequired: []
                     \nOptional: ['residual_tolerance', 'reg_weight_min', 'reg_weight_max', 'reg_weight_inc', 'force_psd_projection', 'use_psd_projection', 'use_psd_projection_in_regularized']
                     '''
-                    self._Newton = type_check(value, self.Newton) 
+                    self._Newton = type_check(value, self.Newton)
 
                 @property
                 def ADAM(self):
@@ -19080,12 +19223,12 @@ class Root(object):
 
                 @ADAM.setter
                 def ADAM(self, value):
-                    ''' 
+                    '''
                     Options for ADAM.
                     \nRequired: []
                     \nOptional: ['alpha', 'beta_1', 'beta_2', 'epsilon']
                     '''
-                    self._ADAM = type_check(value, self.ADAM) 
+                    self._ADAM = type_check(value, self.ADAM)
 
                 @property
                 def StochasticADAM(self):
@@ -19093,12 +19236,12 @@ class Root(object):
 
                 @StochasticADAM.setter
                 def StochasticADAM(self, value):
-                    ''' 
+                    '''
                     Options for ADAM.
                     \nRequired: []
                     \nOptional: ['alpha', 'beta_1', 'beta_2', 'epsilon', 'erase_component_probability']
                     '''
-                    self._StochasticADAM = type_check(value, self.StochasticADAM) 
+                    self._StochasticADAM = type_check(value, self.StochasticADAM)
 
                 @property
                 def StochasticGradientDescent(self):
@@ -19106,12 +19249,12 @@ class Root(object):
 
                 @StochasticGradientDescent.setter
                 def StochasticGradientDescent(self, value):
-                    ''' 
+                    '''
                     Options for Stochastic Gradient Descent.
                     \nRequired: []
                     \nOptional: ['erase_component_probability']
                     '''
-                    self._StochasticGradientDescent = type_check(value, self.StochasticGradientDescent) 
+                    self._StochasticGradientDescent = type_check(value, self.StochasticGradientDescent)
 
                 @property
                 def box_constraints(self):
@@ -19119,12 +19262,12 @@ class Root(object):
 
                 @box_constraints.setter
                 def box_constraints(self, value):
-                    ''' 
+                    '''
                     There is no definition
                     \nRequired: []
                     \nOptional: ['bounds', 'max_change']
                     '''
-                    self._box_constraints = type_check(value, self.Box_constraints) 
+                    self._box_constraints = type_check(value, self.Box_constraints)
 
                 @property
                 def advanced(self):
@@ -19132,12 +19275,12 @@ class Root(object):
 
                 @advanced.setter
                 def advanced(self, value):
-                    ''' 
+                    '''
                     Nonlinear solver advanced options
                     \nRequired: []
                     \nOptional: ['f_delta_tol', 'f_delta_step_tol', 'derivative_along_delta_x_tol', 'apply_gradient_fd', 'gradient_fd_eps']
                     '''
-                    self._advanced = type_check(value, self.Advanced) 
+                    self._advanced = type_check(value, self.Advanced)
 
                 def check_required(self):
 
@@ -19162,10 +19305,10 @@ class Root(object):
 
                     @value.setter
                     def value(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         '''
-                        self._value = class_check(value, [str, list, self.List]) 
+                        self._value = class_check(value, [str, list, self.List])
 
                     def check_required(self):
 
@@ -19249,10 +19392,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19260,10 +19403,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             def check_required(self):
 
@@ -19296,10 +19439,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19307,10 +19450,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             def check_required(self):
 
@@ -19349,10 +19492,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19360,10 +19503,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             @property
                             def reg_weight_min(self):
@@ -19371,10 +19514,10 @@ class Root(object):
 
                             @reg_weight_min.setter
                             def reg_weight_min(self, value):
-                                ''' 
+                                '''
                                 Minimum regulariztion weight.
                                 '''
-                                self._reg_weight_min = type_check(value, float) 
+                                self._reg_weight_min = type_check(value, float)
 
                             @property
                             def reg_weight_max(self):
@@ -19382,10 +19525,10 @@ class Root(object):
 
                             @reg_weight_max.setter
                             def reg_weight_max(self, value):
-                                ''' 
+                                '''
                                 Maximum regulariztion weight.
                                 '''
-                                self._reg_weight_max = type_check(value, float) 
+                                self._reg_weight_max = type_check(value, float)
 
                             @property
                             def reg_weight_inc(self):
@@ -19393,10 +19536,10 @@ class Root(object):
 
                             @reg_weight_inc.setter
                             def reg_weight_inc(self, value):
-                                ''' 
+                                '''
                                 Regulariztion weight increment.
                                 '''
-                                self._reg_weight_inc = type_check(value, float) 
+                                self._reg_weight_inc = type_check(value, float)
 
                             def check_required(self):
 
@@ -19435,10 +19578,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19446,10 +19589,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             @property
                             def reg_weight_min(self):
@@ -19457,10 +19600,10 @@ class Root(object):
 
                             @reg_weight_min.setter
                             def reg_weight_min(self, value):
-                                ''' 
+                                '''
                                 Minimum regulariztion weight.
                                 '''
-                                self._reg_weight_min = type_check(value, float) 
+                                self._reg_weight_min = type_check(value, float)
 
                             @property
                             def reg_weight_max(self):
@@ -19468,10 +19611,10 @@ class Root(object):
 
                             @reg_weight_max.setter
                             def reg_weight_max(self, value):
-                                ''' 
+                                '''
                                 Maximum regulariztion weight.
                                 '''
-                                self._reg_weight_max = type_check(value, float) 
+                                self._reg_weight_max = type_check(value, float)
 
                             @property
                             def reg_weight_inc(self):
@@ -19479,10 +19622,10 @@ class Root(object):
 
                             @reg_weight_inc.setter
                             def reg_weight_inc(self, value):
-                                ''' 
+                                '''
                                 Regulariztion weight increment.
                                 '''
-                                self._reg_weight_inc = type_check(value, float) 
+                                self._reg_weight_inc = type_check(value, float)
 
                             def check_required(self):
 
@@ -19515,10 +19658,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19526,10 +19669,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             def check_required(self):
 
@@ -19562,10 +19705,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19573,10 +19716,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             def check_required(self):
 
@@ -19615,10 +19758,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19626,10 +19769,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             @property
                             def reg_weight_min(self):
@@ -19637,10 +19780,10 @@ class Root(object):
 
                             @reg_weight_min.setter
                             def reg_weight_min(self, value):
-                                ''' 
+                                '''
                                 Minimum regulariztion weight.
                                 '''
-                                self._reg_weight_min = type_check(value, float) 
+                                self._reg_weight_min = type_check(value, float)
 
                             @property
                             def reg_weight_max(self):
@@ -19648,10 +19791,10 @@ class Root(object):
 
                             @reg_weight_max.setter
                             def reg_weight_max(self, value):
-                                ''' 
+                                '''
                                 Maximum regulariztion weight.
                                 '''
-                                self._reg_weight_max = type_check(value, float) 
+                                self._reg_weight_max = type_check(value, float)
 
                             @property
                             def reg_weight_inc(self):
@@ -19659,10 +19802,10 @@ class Root(object):
 
                             @reg_weight_inc.setter
                             def reg_weight_inc(self, value):
-                                ''' 
+                                '''
                                 Regulariztion weight increment.
                                 '''
-                                self._reg_weight_inc = type_check(value, float) 
+                                self._reg_weight_inc = type_check(value, float)
 
                             def check_required(self):
 
@@ -19701,10 +19844,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def residual_tolerance(self):
@@ -19712,10 +19855,10 @@ class Root(object):
 
                             @residual_tolerance.setter
                             def residual_tolerance(self, value):
-                                ''' 
+                                '''
                                 Tolerance of the linear system residual. If residual is above, the direction is rejected.
                                 '''
-                                self._residual_tolerance = type_check(value, float) 
+                                self._residual_tolerance = type_check(value, float)
 
                             @property
                             def reg_weight_min(self):
@@ -19723,10 +19866,10 @@ class Root(object):
 
                             @reg_weight_min.setter
                             def reg_weight_min(self, value):
-                                ''' 
+                                '''
                                 Minimum regulariztion weight.
                                 '''
-                                self._reg_weight_min = type_check(value, float) 
+                                self._reg_weight_min = type_check(value, float)
 
                             @property
                             def reg_weight_max(self):
@@ -19734,10 +19877,10 @@ class Root(object):
 
                             @reg_weight_max.setter
                             def reg_weight_max(self, value):
-                                ''' 
+                                '''
                                 Maximum regulariztion weight.
                                 '''
-                                self._reg_weight_max = type_check(value, float) 
+                                self._reg_weight_max = type_check(value, float)
 
                             @property
                             def reg_weight_inc(self):
@@ -19745,10 +19888,10 @@ class Root(object):
 
                             @reg_weight_inc.setter
                             def reg_weight_inc(self, value):
-                                ''' 
+                                '''
                                 Regulariztion weight increment.
                                 '''
-                                self._reg_weight_inc = type_check(value, float) 
+                                self._reg_weight_inc = type_check(value, float)
 
                             def check_required(self):
 
@@ -19779,10 +19922,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             def check_required(self):
 
@@ -19815,10 +19958,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def erase_component_probability(self):
@@ -19826,10 +19969,10 @@ class Root(object):
 
                             @erase_component_probability.setter
                             def erase_component_probability(self, value):
-                                ''' 
+                                '''
                                 Probability of erasing a component on the gradient for stochastic solvers.
                                 '''
-                                self._erase_component_probability = type_check(value, float) 
+                                self._erase_component_probability = type_check(value, float)
 
                             def check_required(self):
 
@@ -19862,10 +20005,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def history_size(self):
@@ -19873,10 +20016,10 @@ class Root(object):
 
                             @history_size.setter
                             def history_size(self, value):
-                                ''' 
+                                '''
                                 The number of corrections to approximate the inverse Hessian matrix.
                                 '''
-                                self._history_size = type_check(value, int) 
+                                self._history_size = type_check(value, int)
 
                             def check_required(self):
 
@@ -19907,10 +20050,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             def check_required(self):
 
@@ -19949,10 +20092,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def alpha(self):
@@ -19960,10 +20103,10 @@ class Root(object):
 
                             @alpha.setter
                             def alpha(self, value):
-                                ''' 
+                                '''
                                 Parameter alpha for ADAM.
                                 '''
-                                self._alpha = type_check(value, float) 
+                                self._alpha = type_check(value, float)
 
                             @property
                             def beta_1(self):
@@ -19971,10 +20114,10 @@ class Root(object):
 
                             @beta_1.setter
                             def beta_1(self, value):
-                                ''' 
+                                '''
                                 Parameter beta_1 for ADAM.
                                 '''
-                                self._beta_1 = type_check(value, float) 
+                                self._beta_1 = type_check(value, float)
 
                             @property
                             def beta_2(self):
@@ -19982,10 +20125,10 @@ class Root(object):
 
                             @beta_2.setter
                             def beta_2(self, value):
-                                ''' 
+                                '''
                                 Parameter beta_2 for ADAM.
                                 '''
-                                self._beta_2 = type_check(value, float) 
+                                self._beta_2 = type_check(value, float)
 
                             @property
                             def epsilon(self):
@@ -19993,10 +20136,10 @@ class Root(object):
 
                             @epsilon.setter
                             def epsilon(self, value):
-                                ''' 
+                                '''
                                 Parameter epsilon for ADAM.
                                 '''
-                                self._epsilon = type_check(value, float) 
+                                self._epsilon = type_check(value, float)
 
                             def check_required(self):
 
@@ -20037,10 +20180,10 @@ class Root(object):
 
                             @type.setter
                             def type(self, value):
-                                ''' 
+                                '''
                                 Nonlinear solver type
                                 '''
-                                self._type = enum_check(value, self.Type) 
+                                self._type = enum_check(value, self.Type)
 
                             @property
                             def alpha(self):
@@ -20048,10 +20191,10 @@ class Root(object):
 
                             @alpha.setter
                             def alpha(self, value):
-                                ''' 
+                                '''
                                 Parameter alpha for ADAM.
                                 '''
-                                self._alpha = type_check(value, float) 
+                                self._alpha = type_check(value, float)
 
                             @property
                             def beta_1(self):
@@ -20059,10 +20202,10 @@ class Root(object):
 
                             @beta_1.setter
                             def beta_1(self, value):
-                                ''' 
+                                '''
                                 Parameter beta_1 for ADAM.
                                 '''
-                                self._beta_1 = type_check(value, float) 
+                                self._beta_1 = type_check(value, float)
 
                             @property
                             def beta_2(self):
@@ -20070,10 +20213,10 @@ class Root(object):
 
                             @beta_2.setter
                             def beta_2(self, value):
-                                ''' 
+                                '''
                                 Parameter beta_2 for ADAM.
                                 '''
-                                self._beta_2 = type_check(value, float) 
+                                self._beta_2 = type_check(value, float)
 
                             @property
                             def epsilon(self):
@@ -20081,10 +20224,10 @@ class Root(object):
 
                             @epsilon.setter
                             def epsilon(self, value):
-                                ''' 
+                                '''
                                 Parameter epsilon for ADAM.
                                 '''
-                                self._epsilon = type_check(value, float) 
+                                self._epsilon = type_check(value, float)
 
                             @property
                             def erase_component_probability(self):
@@ -20092,10 +20235,10 @@ class Root(object):
 
                             @erase_component_probability.setter
                             def erase_component_probability(self, value):
-                                ''' 
+                                '''
                                 Probability of erasing a component on the gradient for stochastic solvers.
                                 '''
-                                self._erase_component_probability = type_check(value, float) 
+                                self._erase_component_probability = type_check(value, float)
 
                             def check_required(self):
 
@@ -20106,6 +20249,21 @@ class Root(object):
                             def as_dict(self):
                                 return drop_none({"type": self._type.value if self._type is not None else None,"alpha": self._alpha,"beta_1": self._beta_1,"beta_2": self._beta_2,"epsilon": self._epsilon,"erase_component_probability": self._erase_component_probability,})
 
+
+                        Item = Newton
+                        Object2 = ProjectedNewton
+                        Object3 = RegularizedNewton
+                        Object4 = RegularizedProjectedNewton
+                        Object5 = DenseNewton
+                        Object6 = DenseProjectedNewton
+                        Object7 = DenseRegularizedNewton
+                        Object8 = DenseRegularizedProjectedNewton
+                        Object9 = GradientDescent
+                        Object10 = StochasticGradientDescent
+                        Object11 = LBFGS
+                        Object12 = BFGS
+                        Object13 = ADAM
+                        Object14 = StochasticADAM
 
 
 
@@ -20149,10 +20307,10 @@ class Root(object):
 
                     @method.setter
                     def method(self, value):
-                        ''' 
+                        '''
                         Line-search type
                         '''
-                        self._method = enum_check(value, self.Method) 
+                        self._method = enum_check(value, self.Method)
 
                     @property
                     def use_grad_norm_tol(self):
@@ -20160,10 +20318,10 @@ class Root(object):
 
                     @use_grad_norm_tol.setter
                     def use_grad_norm_tol(self, value):
-                        ''' 
+                        '''
                         When the energy is smaller than use_grad_norm_tol, line-search uses norm of gradient instead of energy
                         '''
-                        self._use_grad_norm_tol = type_check(value, float) 
+                        self._use_grad_norm_tol = type_check(value, float)
 
                     @property
                     def min_step_size(self):
@@ -20171,10 +20329,10 @@ class Root(object):
 
                     @min_step_size.setter
                     def min_step_size(self, value):
-                        ''' 
+                        '''
                         Mimimum step size
                         '''
-                        self._min_step_size = type_check(value, float) 
+                        self._min_step_size = type_check(value, float)
 
                     @property
                     def max_step_size_iter(self):
@@ -20182,10 +20340,10 @@ class Root(object):
 
                     @max_step_size_iter.setter
                     def max_step_size_iter(self, value):
-                        ''' 
+                        '''
                         Number of iterations
                         '''
-                        self._max_step_size_iter = type_check(value, int) 
+                        self._max_step_size_iter = type_check(value, int)
 
                     @property
                     def min_step_size_final(self):
@@ -20193,10 +20351,10 @@ class Root(object):
 
                     @min_step_size_final.setter
                     def min_step_size_final(self, value):
-                        ''' 
+                        '''
                         Mimimum step size for last descent strategy
                         '''
-                        self._min_step_size_final = type_check(value, float) 
+                        self._min_step_size_final = type_check(value, float)
 
                     @property
                     def max_step_size_iter_final(self):
@@ -20204,10 +20362,10 @@ class Root(object):
 
                     @max_step_size_iter_final.setter
                     def max_step_size_iter_final(self, value):
-                        ''' 
+                        '''
                         Number of iterations for last descent strategy
                         '''
-                        self._max_step_size_iter_final = type_check(value, int) 
+                        self._max_step_size_iter_final = type_check(value, int)
 
                     @property
                     def default_init_step_size(self):
@@ -20215,10 +20373,10 @@ class Root(object):
 
                     @default_init_step_size.setter
                     def default_init_step_size(self, value):
-                        ''' 
+                        '''
                         Initial step size
                         '''
-                        self._default_init_step_size = type_check(value, float) 
+                        self._default_init_step_size = type_check(value, float)
 
                     @property
                     def step_ratio(self):
@@ -20226,10 +20384,10 @@ class Root(object):
 
                     @step_ratio.setter
                     def step_ratio(self, value):
-                        ''' 
+                        '''
                         Ratio used to decrease the step
                         '''
-                        self._step_ratio = type_check(value, float) 
+                        self._step_ratio = type_check(value, float)
 
                     @property
                     def Armijo(self):
@@ -20237,12 +20395,12 @@ class Root(object):
 
                     @Armijo.setter
                     def Armijo(self, value):
-                        ''' 
+                        '''
                         Options for Armijo.
                         \nRequired: []
                         \nOptional: ['c']
                         '''
-                        self._Armijo = type_check(value, self.Armijo) 
+                        self._Armijo = type_check(value, self.Armijo)
 
                     @property
                     def RobustArmijo(self):
@@ -20250,12 +20408,12 @@ class Root(object):
 
                     @RobustArmijo.setter
                     def RobustArmijo(self, value):
-                        ''' 
+                        '''
                         Options for RobustArmijo.
                         \nRequired: []
                         \nOptional: ['delta_relative_tolerance']
                         '''
-                        self._RobustArmijo = type_check(value, self.RobustArmijo) 
+                        self._RobustArmijo = type_check(value, self.RobustArmijo)
 
                     def check_required(self):
 
@@ -20280,10 +20438,10 @@ class Root(object):
 
                         @c.setter
                         def c(self, value):
-                            ''' 
+                            '''
                             Armijo c parameter.
                             '''
-                            self._c = type_check(value, float) 
+                            self._c = type_check(value, float)
 
                         def check_required(self):
 
@@ -20309,10 +20467,10 @@ class Root(object):
 
                         @delta_relative_tolerance.setter
                         def delta_relative_tolerance(self, value):
-                            ''' 
+                            '''
                             Relative tolerance on E to switch to approximate.
                             '''
-                            self._delta_relative_tolerance = type_check(value, float) 
+                            self._delta_relative_tolerance = type_check(value, float)
 
                         def check_required(self):
 
@@ -20339,10 +20497,10 @@ class Root(object):
 
                     @history_size.setter
                     def history_size(self, value):
-                        ''' 
+                        '''
                         The number of corrections to approximate the inverse Hessian matrix.
                         '''
-                        self._history_size = type_check(value, int) 
+                        self._history_size = type_check(value, int)
 
                     def check_required(self):
 
@@ -20368,10 +20526,10 @@ class Root(object):
 
                     @history_size.setter
                     def history_size(self, value):
-                        ''' 
+                        '''
                         The number of corrections to approximate the inverse Hessian matrix.
                         '''
-                        self._history_size = type_check(value, int) 
+                        self._history_size = type_check(value, int)
 
                     def check_required(self):
 
@@ -20409,10 +20567,10 @@ class Root(object):
 
                     @residual_tolerance.setter
                     def residual_tolerance(self, value):
-                        ''' 
+                        '''
                         Tolerance of the linear system residual. If residual is above, the direction is rejected.
                         '''
-                        self._residual_tolerance = type_check(value, float) 
+                        self._residual_tolerance = type_check(value, float)
 
                     @property
                     def reg_weight_min(self):
@@ -20420,10 +20578,10 @@ class Root(object):
 
                     @reg_weight_min.setter
                     def reg_weight_min(self, value):
-                        ''' 
+                        '''
                         Minimum regulariztion weight.
                         '''
-                        self._reg_weight_min = type_check(value, float) 
+                        self._reg_weight_min = type_check(value, float)
 
                     @property
                     def reg_weight_max(self):
@@ -20431,10 +20589,10 @@ class Root(object):
 
                     @reg_weight_max.setter
                     def reg_weight_max(self, value):
-                        ''' 
+                        '''
                         Maximum regulariztion weight.
                         '''
-                        self._reg_weight_max = type_check(value, float) 
+                        self._reg_weight_max = type_check(value, float)
 
                     @property
                     def reg_weight_inc(self):
@@ -20442,10 +20600,10 @@ class Root(object):
 
                     @reg_weight_inc.setter
                     def reg_weight_inc(self, value):
-                        ''' 
+                        '''
                         Regulariztion weight increment.
                         '''
-                        self._reg_weight_inc = type_check(value, float) 
+                        self._reg_weight_inc = type_check(value, float)
 
                     @property
                     def force_psd_projection(self):
@@ -20453,10 +20611,10 @@ class Root(object):
 
                     @force_psd_projection.setter
                     def force_psd_projection(self, value):
-                        ''' 
+                        '''
                         Force the Hessian to be PSD when using second order solvers (i.e., Newton's method).
                         '''
-                        self._force_psd_projection = type_check(value, bool) 
+                        self._force_psd_projection = type_check(value, bool)
 
                     @property
                     def use_psd_projection(self):
@@ -20464,10 +20622,10 @@ class Root(object):
 
                     @use_psd_projection.setter
                     def use_psd_projection(self, value):
-                        ''' 
+                        '''
                         Use PSD as fallback using second order solvers (i.e., Newton's method).
                         '''
-                        self._use_psd_projection = type_check(value, bool) 
+                        self._use_psd_projection = type_check(value, bool)
 
                     @property
                     def use_psd_projection_in_regularized(self):
@@ -20475,10 +20633,10 @@ class Root(object):
 
                     @use_psd_projection_in_regularized.setter
                     def use_psd_projection_in_regularized(self, value):
-                        ''' 
+                        '''
                         Use PSD in regularized Newton.
                         '''
-                        self._use_psd_projection_in_regularized = type_check(value, bool) 
+                        self._use_psd_projection_in_regularized = type_check(value, bool)
 
                     def check_required(self):
 
@@ -20510,10 +20668,10 @@ class Root(object):
 
                     @alpha.setter
                     def alpha(self, value):
-                        ''' 
+                        '''
                         Parameter alpha for ADAM.
                         '''
-                        self._alpha = type_check(value, float) 
+                        self._alpha = type_check(value, float)
 
                     @property
                     def beta_1(self):
@@ -20521,10 +20679,10 @@ class Root(object):
 
                     @beta_1.setter
                     def beta_1(self, value):
-                        ''' 
+                        '''
                         Parameter beta_1 for ADAM.
                         '''
-                        self._beta_1 = type_check(value, float) 
+                        self._beta_1 = type_check(value, float)
 
                     @property
                     def beta_2(self):
@@ -20532,10 +20690,10 @@ class Root(object):
 
                     @beta_2.setter
                     def beta_2(self, value):
-                        ''' 
+                        '''
                         Parameter beta_2 for ADAM.
                         '''
-                        self._beta_2 = type_check(value, float) 
+                        self._beta_2 = type_check(value, float)
 
                     @property
                     def epsilon(self):
@@ -20543,10 +20701,10 @@ class Root(object):
 
                     @epsilon.setter
                     def epsilon(self, value):
-                        ''' 
+                        '''
                         Parameter epsilon for ADAM.
                         '''
-                        self._epsilon = type_check(value, float) 
+                        self._epsilon = type_check(value, float)
 
                     def check_required(self):
 
@@ -20580,10 +20738,10 @@ class Root(object):
 
                     @alpha.setter
                     def alpha(self, value):
-                        ''' 
+                        '''
                         Parameter alpha for ADAM.
                         '''
-                        self._alpha = type_check(value, float) 
+                        self._alpha = type_check(value, float)
 
                     @property
                     def beta_1(self):
@@ -20591,10 +20749,10 @@ class Root(object):
 
                     @beta_1.setter
                     def beta_1(self, value):
-                        ''' 
+                        '''
                         Parameter beta_1 for ADAM.
                         '''
-                        self._beta_1 = type_check(value, float) 
+                        self._beta_1 = type_check(value, float)
 
                     @property
                     def beta_2(self):
@@ -20602,10 +20760,10 @@ class Root(object):
 
                     @beta_2.setter
                     def beta_2(self, value):
-                        ''' 
+                        '''
                         Parameter beta_2 for ADAM.
                         '''
-                        self._beta_2 = type_check(value, float) 
+                        self._beta_2 = type_check(value, float)
 
                     @property
                     def epsilon(self):
@@ -20613,10 +20771,10 @@ class Root(object):
 
                     @epsilon.setter
                     def epsilon(self, value):
-                        ''' 
+                        '''
                         Parameter epsilon for ADAM.
                         '''
-                        self._epsilon = type_check(value, float) 
+                        self._epsilon = type_check(value, float)
 
                     @property
                     def erase_component_probability(self):
@@ -20624,10 +20782,10 @@ class Root(object):
 
                     @erase_component_probability.setter
                     def erase_component_probability(self, value):
-                        ''' 
+                        '''
                         Probability of erasing a component on the gradient for ADAM.
                         '''
-                        self._erase_component_probability = type_check(value, float) 
+                        self._erase_component_probability = type_check(value, float)
 
                     def check_required(self):
 
@@ -20653,10 +20811,10 @@ class Root(object):
 
                     @erase_component_probability.setter
                     def erase_component_probability(self, value):
-                        ''' 
+                        '''
                         Probability of erasing a component on the gradient for StochasticGradientDescent.
                         '''
-                        self._erase_component_probability = type_check(value, float) 
+                        self._erase_component_probability = type_check(value, float)
 
                     def check_required(self):
 
@@ -20684,12 +20842,12 @@ class Root(object):
 
                     @bounds.setter
                     def bounds(self, value):
-                        ''' 
+                        '''
                         Box constraints on optimization variables.
                         \nRequired: []
                         \nOptional: ['item', 'float']
                         '''
-                        self._bounds = type_check(value, self.Bounds) 
+                        self._bounds = type_check(value, self.Bounds)
 
                     @property
                     def max_change(self):
@@ -20697,12 +20855,12 @@ class Root(object):
 
                     @max_change.setter
                     def max_change(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         \nRequired: []
                         \nOptional: ['float', 'list']
                         '''
-                        self._max_change = inline_check(value, [float, list], []) 
+                        self._max_change = inline_check(value, [float, list], [])
 
                     def check_required(self):
 
@@ -20791,10 +20949,10 @@ class Root(object):
 
                     @f_delta_tol.setter
                     def f_delta_tol(self, value):
-                        ''' 
+                        '''
                         Dangerous Option: Quit the optimization if the solver reduces the energy by less than f_delta for consecutive f_delta_step_tol steps.
                         '''
-                        self._f_delta_tol = range_check(type_check(value, float), 0, None) 
+                        self._f_delta_tol = range_check(type_check(value, float), 0, None)
 
                     @property
                     def f_delta_step_tol(self):
@@ -20802,10 +20960,10 @@ class Root(object):
 
                     @f_delta_step_tol.setter
                     def f_delta_step_tol(self, value):
-                        ''' 
+                        '''
                         Dangerous Option: Quit the optimization if the solver reduces the energy by less than f_delta for consecutive f_delta_step_tol steps.
                         '''
-                        self._f_delta_step_tol = type_check(value, int) 
+                        self._f_delta_step_tol = type_check(value, int)
 
                     @property
                     def derivative_along_delta_x_tol(self):
@@ -20813,10 +20971,10 @@ class Root(object):
 
                     @derivative_along_delta_x_tol.setter
                     def derivative_along_delta_x_tol(self, value):
-                        ''' 
+                        '''
                         Quit the optimization if the directional derivative along the descent direction is smaller than this tolerance.
                         '''
-                        self._derivative_along_delta_x_tol = range_check(type_check(value, float), 0, None) 
+                        self._derivative_along_delta_x_tol = range_check(type_check(value, float), 0, None)
 
                     @property
                     def apply_gradient_fd(self):
@@ -20824,10 +20982,10 @@ class Root(object):
 
                     @apply_gradient_fd.setter
                     def apply_gradient_fd(self, value):
-                        ''' 
+                        '''
                         Expensive Option: For every iteration of the nonlinear solver, run finite difference to verify gradient of energy.
                         '''
-                        self._apply_gradient_fd = enum_check(value, self.Apply_gradient_fd) 
+                        self._apply_gradient_fd = enum_check(value, self.Apply_gradient_fd)
 
                     @property
                     def gradient_fd_eps(self):
@@ -20835,10 +20993,10 @@ class Root(object):
 
                     @gradient_fd_eps.setter
                     def gradient_fd_eps(self, value):
-                        ''' 
+                        '''
                         Expensive Option: Eps for finite difference to verify gradient of energy.
                         '''
-                        self._gradient_fd_eps = type_check(value, float) 
+                        self._gradient_fd_eps = type_check(value, float)
 
                     def check_required(self):
 
@@ -20876,12 +21034,12 @@ class Root(object):
 
             @CCD.setter
             def CCD(self, value):
-                ''' 
+                '''
                 CCD options
                 \nRequired: []
                 \nOptional: ['broad_phase', 'tolerance', 'max_iterations']
                 '''
-                self._CCD = type_check(value, self.CCD) 
+                self._CCD = type_check(value, self.CCD)
 
             @property
             def friction_iterations(self):
@@ -20889,10 +21047,10 @@ class Root(object):
 
             @friction_iterations.setter
             def friction_iterations(self, value):
-                ''' 
+                '''
                 Maximum number of update iterations for lagged friction formulation (see IPC paper).
                 '''
-                self._friction_iterations = type_check(value, int) 
+                self._friction_iterations = type_check(value, int)
 
             @property
             def tangential_adhesion_iterations(self):
@@ -20900,10 +21058,10 @@ class Root(object):
 
             @tangential_adhesion_iterations.setter
             def tangential_adhesion_iterations(self, value):
-                ''' 
+                '''
                 Maximum number of update iterations for lagged tangential adhesion formulation (see IPC paper).
                 '''
-                self._tangential_adhesion_iterations = type_check(value, int) 
+                self._tangential_adhesion_iterations = type_check(value, int)
 
             @property
             def friction_convergence_tol(self):
@@ -20911,10 +21069,10 @@ class Root(object):
 
             @friction_convergence_tol.setter
             def friction_convergence_tol(self, value):
-                ''' 
+                '''
                 Tolerence for friction convergence
                 '''
-                self._friction_convergence_tol = type_check(value, float) 
+                self._friction_convergence_tol = type_check(value, float)
 
             @property
             def barrier_stiffness(self):
@@ -20922,12 +21080,12 @@ class Root(object):
 
             @barrier_stiffness.setter
             def barrier_stiffness(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['string', 'float']
                 '''
-                self._barrier_stiffness = inline_check(value, [str, float], []) 
+                self._barrier_stiffness = inline_check(value, [str, float], [])
 
             @property
             def initial_barrier_stiffness(self):
@@ -20935,10 +21093,10 @@ class Root(object):
 
             @initial_barrier_stiffness.setter
             def initial_barrier_stiffness(self, value):
-                ''' 
+                '''
                 Initial barrier stiffness if adaptive barrier is used.
                 '''
-                self._initial_barrier_stiffness = type_check(value, float) 
+                self._initial_barrier_stiffness = type_check(value, float)
 
             def check_required(self):
 
@@ -20981,10 +21139,10 @@ class Root(object):
 
                 @broad_phase.setter
                 def broad_phase(self, value):
-                    ''' 
+                    '''
                     Broad phase collision-detection algorithm to use
                     '''
-                    self._broad_phase = enum_check(value, self.Broad_phase) 
+                    self._broad_phase = enum_check(value, self.Broad_phase)
 
                 @property
                 def tolerance(self):
@@ -20992,10 +21150,10 @@ class Root(object):
 
                 @tolerance.setter
                 def tolerance(self, value):
-                    ''' 
+                    '''
                     CCD tolerance
                     '''
-                    self._tolerance = type_check(value, float) 
+                    self._tolerance = type_check(value, float)
 
                 @property
                 def max_iterations(self):
@@ -21003,10 +21161,10 @@ class Root(object):
 
                 @max_iterations.setter
                 def max_iterations(self, value):
-                    ''' 
+                    '''
                     Maximum number of iterations for continuous collision detection
                     '''
-                    self._max_iterations = type_check(value, int) 
+                    self._max_iterations = type_check(value, int)
 
                 def check_required(self):
 
@@ -21020,12 +21178,12 @@ class Root(object):
         class Rayleigh_damping(object):
             '''Apply Rayleigh damping.
             \nRequired: []
-            \nOptional: ['item', 'object2']'''
+            \nOptional: ['item', 'StiffnessRatio', 'Stiffness']'''
             def __init__(
                 self,
                 items : list = None
             ):
-                self._items = [class_check(i, [self.Item, self.Object2]) for i in (type_check(items, list) if items else [])]
+                self._items = [class_check(i, [self.StiffnessRatio, self.Stiffness]) for i in (type_check(items, list) if items else [])]
 
             @property
             def items(self):
@@ -21034,11 +21192,11 @@ class Root(object):
             @items.setter
             def items(self, items : list):
                 ''' Replace the list '''
-                self._items = [class_check(i, [self.Item, self.Object2]) for i in (type_check(items, list) if items else [])]
+                self._items = [class_check(i, [self.StiffnessRatio, self.Stiffness]) for i in (type_check(items, list) if items else [])]
 
             def add(self, item : object):
                 ''' Add to the list '''
-                self._items.append(class_check(item, [self.Item, self.Object2]))
+                self._items.append(class_check(item, [self.StiffnessRatio, self.Stiffness]))
 
             def clear(self):
                 '''Clear list (make empty)'''
@@ -21064,9 +21222,9 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none([i.as_dict() if isinstance(i, tuple([self.Item, self.Object2])) else i for i in self._items])
+                return drop_none([i.as_dict() if isinstance(i, tuple([self.StiffnessRatio, self.Stiffness])) else i for i in self._items])
 
-            class Item(object):
+            class StiffnessRatio(object):
                 '''Apply Rayleigh damping to the given Form with a stiffness ratio.
                 \nRequired: ['form', 'stiffness_ratio']
                 \nOptional: ['lagging_iterations']'''
@@ -21091,10 +21249,10 @@ class Root(object):
 
                 @form.setter
                 def form(self, value):
-                    ''' 
+                    '''
                     Form to damp.
                     '''
-                    self._form = enum_check(value, self.Form) 
+                    self._form = enum_check(value, self.Form)
 
                 @property
                 def stiffness_ratio(self):
@@ -21102,10 +21260,10 @@ class Root(object):
 
                 @stiffness_ratio.setter
                 def stiffness_ratio(self, value):
-                    ''' 
+                    '''
                     Ratio of to damp (stiffness = 0.75 * stiffness_ratio * Δt³).
                     '''
-                    self._stiffness_ratio = range_check(type_check(value, float), 0, None) 
+                    self._stiffness_ratio = range_check(type_check(value, float), 0, None)
 
                 @property
                 def lagging_iterations(self):
@@ -21113,25 +21271,25 @@ class Root(object):
 
                 @lagging_iterations.setter
                 def lagging_iterations(self, value):
-                    ''' 
+                    '''
                     Maximum number of update iterations for lagging.
                     '''
-                    self._lagging_iterations = type_check(value, int) 
+                    self._lagging_iterations = type_check(value, int)
 
                 def check_required(self):
 
                     if self.form is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.Item.form does not have value")
+                        print("Requiered variable Root.Solver.Rayleigh_damping.StiffnessRatio.form does not have value")
 
                     if self.stiffness_ratio is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.Item.stiffness_ratio does not have value")
+                        print("Requiered variable Root.Solver.Rayleigh_damping.StiffnessRatio.stiffness_ratio does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none({"form": self._form.value if self._form is not None else None,"stiffness_ratio": self._stiffness_ratio,"lagging_iterations": self._lagging_iterations,})
 
 
-            class Object2(object):
+            class Stiffness(object):
                 '''Apply Rayleigh damping to the given Form with a stiffness.
                 \nRequired: ['form', 'stiffness']
                 \nOptional: ['lagging_iterations']'''
@@ -21156,10 +21314,10 @@ class Root(object):
 
                 @form.setter
                 def form(self, value):
-                    ''' 
+                    '''
                     Form to damp.
                     '''
-                    self._form = enum_check(value, self.Form) 
+                    self._form = enum_check(value, self.Form)
 
                 @property
                 def stiffness(self):
@@ -21167,10 +21325,10 @@ class Root(object):
 
                 @stiffness.setter
                 def stiffness(self, value):
-                    ''' 
+                    '''
                     Ratio of to damp.
                     '''
-                    self._stiffness = range_check(type_check(value, float), 0, None) 
+                    self._stiffness = range_check(type_check(value, float), 0, None)
 
                 @property
                 def lagging_iterations(self):
@@ -21178,23 +21336,26 @@ class Root(object):
 
                 @lagging_iterations.setter
                 def lagging_iterations(self, value):
-                    ''' 
+                    '''
                     Maximum number of update iterations for lagging.
                     '''
-                    self._lagging_iterations = type_check(value, int) 
+                    self._lagging_iterations = type_check(value, int)
 
                 def check_required(self):
 
                     if self.form is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.Object2.form does not have value")
+                        print("Requiered variable Root.Solver.Rayleigh_damping.Stiffness.form does not have value")
 
                     if self.stiffness is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.Object2.stiffness does not have value")
+                        print("Requiered variable Root.Solver.Rayleigh_damping.Stiffness.stiffness does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none({"form": self._form.value if self._form is not None else None,"stiffness": self._stiffness,"lagging_iterations": self._lagging_iterations,})
 
+
+            Item = StiffnessRatio
+            Object2 = Stiffness
 
 
         class Advanced(object):
@@ -21231,10 +21392,10 @@ class Root(object):
 
             @cache_size.setter
             def cache_size(self, value):
-                ''' 
+                '''
                 Maximum number of elements when the assembly values are cached.
                 '''
-                self._cache_size = type_check(value, int) 
+                self._cache_size = type_check(value, int)
 
             @property
             def lump_mass_matrix(self):
@@ -21242,10 +21403,10 @@ class Root(object):
 
             @lump_mass_matrix.setter
             def lump_mass_matrix(self, value):
-                ''' 
+                '''
                 If true, use diagonal mass matrix with entries on the diagonal equal to the sum of entries in each row of the full mass matrix.}
                 '''
-                self._lump_mass_matrix = type_check(value, bool) 
+                self._lump_mass_matrix = type_check(value, bool)
 
             @property
             def lagged_regularization_weight(self):
@@ -21253,10 +21414,10 @@ class Root(object):
 
             @lagged_regularization_weight.setter
             def lagged_regularization_weight(self, value):
-                ''' 
+                '''
                 Weight used to regularize singular static problems.
                 '''
-                self._lagged_regularization_weight = type_check(value, float) 
+                self._lagged_regularization_weight = type_check(value, float)
 
             @property
             def lagged_regularization_iterations(self):
@@ -21264,10 +21425,10 @@ class Root(object):
 
             @lagged_regularization_iterations.setter
             def lagged_regularization_iterations(self, value):
-                ''' 
+                '''
                 Number of regularize singular static problems.
                 '''
-                self._lagged_regularization_iterations = type_check(value, int) 
+                self._lagged_regularization_iterations = type_check(value, int)
 
             @property
             def check_inversion(self):
@@ -21275,10 +21436,10 @@ class Root(object):
 
             @check_inversion.setter
             def check_inversion(self, value):
-                ''' 
+                '''
                 The method for checking if any element is flipped.
                 '''
-                self._check_inversion = enum_check(value, self.Check_inversion) 
+                self._check_inversion = enum_check(value, self.Check_inversion)
 
             @property
             def jacobian_threshold(self):
@@ -21286,10 +21447,10 @@ class Root(object):
 
             @jacobian_threshold.setter
             def jacobian_threshold(self, value):
-                ''' 
+                '''
                 .
                 '''
-                self._jacobian_threshold = type_check(value, float) 
+                self._jacobian_threshold = type_check(value, float)
 
             @property
             def characteristic_length(self):
@@ -21297,10 +21458,10 @@ class Root(object):
 
             @characteristic_length.setter
             def characteristic_length(self, value):
-                ''' 
+                '''
                 Characteristic length, used for tolerances. Defaults to bounding box diagonal if not specified.
                 '''
-                self._characteristic_length = type_check(value, float) 
+                self._characteristic_length = type_check(value, float)
 
             @property
             def characteristic_force_density(self):
@@ -21308,10 +21469,10 @@ class Root(object):
 
             @characteristic_force_density.setter
             def characteristic_force_density(self, value):
-                ''' 
+                '''
                 Characteristic force density, used for tolerances.
                 '''
-                self._characteristic_force_density = type_check(value, float) 
+                self._characteristic_force_density = type_check(value, float)
 
             def check_required(self):
 
@@ -21352,12 +21513,12 @@ class Root(object):
 
         @rhs.setter
         def rhs(self, value):
-            ''' 
+            '''
             This is a polymorphic variable, assign an object from its classes to the value
             \nRequired: []
-            \nOptional: ['float', 'string', 'object3', 'list']
+            \nOptional: ['float', 'string', 'ValueWithUnit', 'list']
             '''
-            self._rhs = type_check(value, self.Rhs) if isinstance(value, self.Rhs) else self.Rhs(value) 
+            self._rhs = type_check(value, self.Rhs) if isinstance(value, self.Rhs) else self.Rhs(value)
 
         @property
         def dirichlet_boundary(self):
@@ -21365,12 +21526,12 @@ class Root(object):
 
         @dirichlet_boundary.setter
         def dirichlet_boundary(self, value):
-            ''' 
+            '''
             The list of boundary conditions for the main variable. Elements of the list are assignment pairs (ID, value) where ID is assigned by surface selection.
             \nRequired: []
             \nOptional: ['item', 'string']
             '''
-            self._dirichlet_boundary = type_check(value, self.Dirichlet_boundary) 
+            self._dirichlet_boundary = type_check(value, self.Dirichlet_boundary)
 
         @property
         def neumann_boundary(self):
@@ -21378,12 +21539,12 @@ class Root(object):
 
         @neumann_boundary.setter
         def neumann_boundary(self, value):
-            ''' 
+            '''
             The list of boundary conditions for the main variable. Elements of the list are assignment pairs (ID, value) where ID is assigned by surface selection.
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._neumann_boundary = type_check(value, self.Neumann_boundary) 
+            self._neumann_boundary = type_check(value, self.Neumann_boundary)
 
         @property
         def normal_aligned_neumann_boundary(self):
@@ -21391,12 +21552,12 @@ class Root(object):
 
         @normal_aligned_neumann_boundary.setter
         def normal_aligned_neumann_boundary(self, value):
-            ''' 
+            '''
             Neumann boundary condition for normal times value for vector-valued PDEs.
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._normal_aligned_neumann_boundary = type_check(value, self.Normal_aligned_neumann_boundary) 
+            self._normal_aligned_neumann_boundary = type_check(value, self.Normal_aligned_neumann_boundary)
 
         @property
         def pressure_boundary(self):
@@ -21404,12 +21565,12 @@ class Root(object):
 
         @pressure_boundary.setter
         def pressure_boundary(self, value):
-            ''' 
+            '''
             Neumann boundary condition for normal times value for vector-valued PDEs.
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._pressure_boundary = type_check(value, self.Pressure_boundary) 
+            self._pressure_boundary = type_check(value, self.Pressure_boundary)
 
         @property
         def pressure_cavity(self):
@@ -21417,12 +21578,12 @@ class Root(object):
 
         @pressure_cavity.setter
         def pressure_cavity(self, value):
-            ''' 
+            '''
             Neumann boundary condition for normal times value for vector-valued PDEs.
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._pressure_cavity = type_check(value, self.Pressure_cavity) 
+            self._pressure_cavity = type_check(value, self.Pressure_cavity)
 
         @property
         def obstacle_displacements(self):
@@ -21430,12 +21591,12 @@ class Root(object):
 
         @obstacle_displacements.setter
         def obstacle_displacements(self, value):
-            ''' 
+            '''
             The list of boundary conditions for the main variable. Elements of the list are assignment pairs (ID, value) where ID is assigned by surface selection.
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._obstacle_displacements = type_check(value, self.Obstacle_displacements) 
+            self._obstacle_displacements = type_check(value, self.Obstacle_displacements)
 
         @property
         def periodic_boundary(self):
@@ -21443,12 +21604,12 @@ class Root(object):
 
         @periodic_boundary.setter
         def periodic_boundary(self, value):
-            ''' 
+            '''
             Options for periodic boundary conditions.
             \nRequired: []
             \nOptional: ['enabled', 'tolerance', 'correspondence', 'linear_displacement_offset', 'fixed_macro_strain', 'force_zero_mean']
             '''
-            self._periodic_boundary = type_check(value, self.Periodic_boundary) 
+            self._periodic_boundary = type_check(value, self.Periodic_boundary)
 
         def check_required(self):
 
@@ -21460,12 +21621,12 @@ class Root(object):
         class Rhs(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
             \nRequired: []
-            \nOptional: ['float', 'string', 'object3', 'list']'''
+            \nOptional: ['float', 'string', 'ValueWithUnit', 'list']'''
             def __init__(
                 self,
                 value : object = None
             ):
-                self._value = class_check(value, [float, str, self.Object3, list, self.List]) if value is not None else None
+                self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List]) if value is not None else None
 
             @property
             def value(self):
@@ -21473,10 +21634,10 @@ class Root(object):
 
             @value.setter
             def value(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 '''
-                self._value = class_check(value, [float, str, self.Object3, list, self.List]) 
+                self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List])
 
             def check_required(self):
 
@@ -21488,9 +21649,9 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.List])) else self._value)
+                return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.ValueWithUnit, self.List])) else self._value)
 
-            class Object3(object):
+            class ValueWithUnit(object):
                 '''Value with unit
                 \nRequired: ['value', 'unit']
                 \nOptional: []'''
@@ -21508,12 +21669,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['float', 'string']
                     '''
-                    self._value = inline_check(value, [float, str], []) 
+                    self._value = inline_check(value, [float, str], [])
 
                 @property
                 def unit(self):
@@ -21521,18 +21682,18 @@ class Root(object):
 
                 @unit.setter
                 def unit(self, value):
-                    ''' 
+                    '''
                     The unit of the Value
                     '''
-                    self._unit = type_check(value, str) 
+                    self._unit = type_check(value, str)
 
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Rhs.Object3.value does not have value")
+                        print("Requiered variable Root.Boundary_conditions.Rhs.ValueWithUnit.value does not have value")
 
                     if self.unit is None:
-                        print("Requiered variable Root.Boundary_conditions.Rhs.Object3.unit does not have value")
+                        print("Requiered variable Root.Boundary_conditions.Rhs.ValueWithUnit.unit does not have value")
                     return
 
                 def as_dict(self):
@@ -21542,7 +21703,7 @@ class Root(object):
             class List(object):
                 '''Right-hand side of the system being solved for vector-valued PDEs.
                 \nRequired: []
-                \nOptional: ['item', 'string']'''
+                \nOptional: ['item', 'string', 'ValueWithUnit']'''
                 def __init__(
                     self,
                     items : list = None
@@ -21588,6 +21749,8 @@ class Root(object):
                 def as_dict(self):
                     return drop_none([inline_as_dict(i) for i in self._items])
 
+
+            Object3 = ValueWithUnit
 
 
         class Dirichlet_boundary(object):
@@ -21663,12 +21826,12 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['int', 'string']
                     '''
-                    self._id = inline_check(value, [int, str], []) 
+                    self._id = inline_check(value, [int, str], [])
 
                 @property
                 def value(self):
@@ -21676,12 +21839,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
                     \nRequired: []
-                    \nOptional: ['item', 'string', 'list']
+                    \nOptional: ['item', 'string', 'ValueWithUnit', 'list']
                     '''
-                    self._value = type_check(value, self.Value) 
+                    self._value = type_check(value, self.Value)
 
                 @property
                 def time_reference(self):
@@ -21689,7 +21852,7 @@ class Root(object):
 
                 @time_reference.setter
                 def time_reference(self, value):
-                    ''' 
+                    '''
                     List of times when the Dirichlet boundary condition is specified
                     \nRequired: []
                     \nOptional: ['item']
@@ -21720,12 +21883,12 @@ class Root(object):
 
                 @interpolation.setter
                 def interpolation(self, value):
-                    ''' 
+                    '''
                     interpolation of boundary condition
                     \nRequired: []
                     \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
                     '''
-                    self._interpolation = type_check(value, self.Interpolation) 
+                    self._interpolation = type_check(value, self.Interpolation)
 
                 @property
                 def dimension(self):
@@ -21733,7 +21896,7 @@ class Root(object):
 
                 @dimension.setter
                 def dimension(self, value):
-                    ''' 
+                    '''
                     List of 2 (2D) or 3 (3D) boolean values indicating if the Dirichlet boundary condition  is applied for a particular dimension.
                     \nRequired: []
                     \nOptional: ['item']
@@ -21771,12 +21934,12 @@ class Root(object):
                 class Value(object):
                     '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
                     \nRequired: []
-                    \nOptional: ['item', 'string', 'list']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit', 'list']'''
                     def __init__(
                         self,
                         items : list = None
                     ):
-                        self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                        self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     @property
                     def items(self):
@@ -21785,11 +21948,11 @@ class Root(object):
                     @items.setter
                     def items(self, items : list):
                         ''' Replace the list '''
-                        self._items = [inline_check(i, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
+                        self._items = [inline_check(i, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]) for i in (type_check(items, list) if items else [])]
 
                     def add(self, item : object):
                         ''' Add to the list '''
-                        self._items.append(inline_check(item, [float, float, str, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}, {"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]))
+                        self._items.append(inline_check(item, [float, str, list], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'string': ([str], [])}}]))
 
                     def clear(self):
                         '''Clear list (make empty)'''
@@ -21886,10 +22049,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -21920,10 +22083,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -21958,10 +22121,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def to(self):
@@ -21969,10 +22132,10 @@ class Root(object):
 
                         @to.setter
                         def to(self, value):
-                            ''' 
+                            '''
                             interpolation ending time
                             '''
-                            self._to = type_check(value, float) 
+                            self._to = type_check(value, float)
 
                         @property
                         def from_(self):
@@ -21980,10 +22143,10 @@ class Root(object):
 
                         @from_.setter
                         def from_(self, value):
-                            ''' 
+                            '''
                             interpolation starting time
                             '''
-                            self._from_ = type_check(value, float) 
+                            self._from_ = type_check(value, float)
 
                         def check_required(self):
 
@@ -22029,10 +22192,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -22040,7 +22203,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -22071,7 +22234,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -22102,10 +22265,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -22154,10 +22317,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -22165,7 +22328,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -22196,7 +22359,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -22227,10 +22390,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -22279,10 +22442,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -22290,7 +22453,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -22321,7 +22484,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -22352,10 +22515,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -22372,6 +22535,13 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
+
+                    Item = None_
+                    Object2 = Linear
+                    Object3 = Linear_ramp
+                    Object4 = Piecewise_constant
+                    Object5 = Piecewise_linear
+                    Object6 = Piecewise_cubic
 
 
 
@@ -22445,12 +22615,12 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['int', 'string']
                     '''
-                    self._id = inline_check(value, [int, str], []) 
+                    self._id = inline_check(value, [int, str], [])
 
                 @property
                 def value(self):
@@ -22458,12 +22628,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
                     \nRequired: []
-                    \nOptional: ['item', 'string']
+                    \nOptional: ['item', 'string', 'ValueWithUnit']
                     '''
-                    self._value = type_check(value, self.Value) 
+                    self._value = type_check(value, self.Value)
 
                 @property
                 def interpolation(self):
@@ -22471,12 +22641,12 @@ class Root(object):
 
                 @interpolation.setter
                 def interpolation(self, value):
-                    ''' 
+                    '''
                     interpolation of boundary condition
                     \nRequired: []
                     \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
                     '''
-                    self._interpolation = type_check(value, self.Interpolation) 
+                    self._interpolation = type_check(value, self.Interpolation)
 
                 def check_required(self):
 
@@ -22491,7 +22661,7 @@ class Root(object):
                 class Value(object):
                     '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -22606,10 +22776,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -22640,10 +22810,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -22678,10 +22848,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def to(self):
@@ -22689,10 +22859,10 @@ class Root(object):
 
                         @to.setter
                         def to(self, value):
-                            ''' 
+                            '''
                             interpolation ending time
                             '''
-                            self._to = type_check(value, float) 
+                            self._to = type_check(value, float)
 
                         @property
                         def from_(self):
@@ -22700,10 +22870,10 @@ class Root(object):
 
                         @from_.setter
                         def from_(self, value):
-                            ''' 
+                            '''
                             interpolation starting time
                             '''
-                            self._from_ = type_check(value, float) 
+                            self._from_ = type_check(value, float)
 
                         def check_required(self):
 
@@ -22749,10 +22919,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -22760,7 +22930,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -22791,7 +22961,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -22822,10 +22992,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -22874,10 +23044,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -22885,7 +23055,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -22916,7 +23086,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -22947,10 +23117,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -22999,10 +23169,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -23010,7 +23180,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -23041,7 +23211,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -23072,10 +23242,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -23092,6 +23262,13 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
+
+                    Item = None_
+                    Object2 = Linear
+                    Object3 = Linear_ramp
+                    Object4 = Piecewise_constant
+                    Object5 = Piecewise_linear
+                    Object6 = Piecewise_cubic
 
 
 
@@ -23165,10 +23342,10 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     ID for the pressure Neumann boundary condition
                     '''
-                    self._id = range_check(type_check(value, int), 0, 2147483646) 
+                    self._id = range_check(type_check(value, int), 0, 2147483646)
 
                 @property
                 def value(self):
@@ -23176,12 +23353,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
-                    \nOptional: ['float', 'string', 'object3']
+                    \nOptional: ['float', 'string', 'ValueWithUnit']
                     '''
-                    self._value = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                    self._value = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                 @property
                 def none(self):
@@ -23189,12 +23366,12 @@ class Root(object):
 
                 @none.setter
                 def none(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
                     '''
-                    self._none = type_check(value, self.None_) if isinstance(value, self.None_) else self.None_(value) 
+                    self._none = type_check(value, self.None_) if isinstance(value, self.None_) else self.None_(value)
 
                 def check_required(self):
 
@@ -23224,10 +23401,10 @@ class Root(object):
 
                     @value.setter
                     def value(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         '''
-                        self._value = class_check(value, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic]) 
+                        self._value = class_check(value, [self.None_, self.Linear, self.Linear_ramp, self.Piecewise_constant, self.Piecewise_linear, self.Piecewise_cubic])
 
                     def check_required(self):
 
@@ -23260,10 +23437,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -23294,10 +23471,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -23332,10 +23509,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def to(self):
@@ -23343,10 +23520,10 @@ class Root(object):
 
                         @to.setter
                         def to(self, value):
-                            ''' 
+                            '''
                             interpolation ending time
                             '''
-                            self._to = type_check(value, float) 
+                            self._to = type_check(value, float)
 
                         @property
                         def from_(self):
@@ -23354,10 +23531,10 @@ class Root(object):
 
                         @from_.setter
                         def from_(self, value):
-                            ''' 
+                            '''
                             interpolation starting time
                             '''
-                            self._from_ = type_check(value, float) 
+                            self._from_ = type_check(value, float)
 
                         def check_required(self):
 
@@ -23403,10 +23580,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -23414,7 +23591,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -23445,7 +23622,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -23476,10 +23653,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -23528,10 +23705,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -23539,7 +23716,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -23570,7 +23747,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -23601,10 +23778,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -23653,10 +23830,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -23664,7 +23841,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -23695,7 +23872,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -23726,10 +23903,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -23746,6 +23923,13 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
+
+                    Object1 = None_
+                    Object2 = Linear
+                    Object3 = Linear_ramp
+                    Object4 = Piecewise_constant
+                    Object5 = Piecewise_linear
+                    Object6 = Piecewise_cubic
 
 
 
@@ -23819,10 +24003,10 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     ID for the pressure Neumann boundary condition
                     '''
-                    self._id = range_check(type_check(value, int), 0, 2147483646) 
+                    self._id = range_check(type_check(value, int), 0, 2147483646)
 
                 @property
                 def value(self):
@@ -23830,12 +24014,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
-                    \nOptional: ['float', 'string', 'object3', 'list']
+                    \nOptional: ['float', 'string', 'ValueWithUnit', 'list']
                     '''
-                    self._value = type_check(value, self.Value) if isinstance(value, self.Value) else self.Value(value) 
+                    self._value = type_check(value, self.Value) if isinstance(value, self.Value) else self.Value(value)
 
                 @property
                 def time_reference(self):
@@ -23843,7 +24027,7 @@ class Root(object):
 
                 @time_reference.setter
                 def time_reference(self, value):
-                    ''' 
+                    '''
                     List of times when the pressure boundary condition is specified
                     \nRequired: []
                     \nOptional: ['item']
@@ -23881,12 +24065,12 @@ class Root(object):
                 class Value(object):
                     '''This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
-                    \nOptional: ['float', 'string', 'object3', 'list']'''
+                    \nOptional: ['float', 'string', 'ValueWithUnit', 'list']'''
                     def __init__(
                         self,
                         value : object = None
                     ):
-                        self._value = class_check(value, [float, str, self.Object3, list, self.List]) if value is not None else None
+                        self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List]) if value is not None else None
 
                     @property
                     def value(self):
@@ -23894,10 +24078,10 @@ class Root(object):
 
                     @value.setter
                     def value(self, value):
-                        ''' 
+                        '''
                         This is a polymorphic variable, assign an object from its classes to the value
                         '''
-                        self._value = class_check(value, [float, str, self.Object3, list, self.List]) 
+                        self._value = class_check(value, [float, str, self.ValueWithUnit, list, self.List])
 
                     def check_required(self):
 
@@ -23909,9 +24093,9 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.Object3, self.List])) else self._value)
+                        return drop_none(self._value.as_dict() if isinstance(self._value, tuple([self.ValueWithUnit, self.List])) else self._value)
 
-                    class Object3(object):
+                    class ValueWithUnit(object):
                         '''Value with unit
                         \nRequired: ['value', 'unit']
                         \nOptional: []'''
@@ -23929,12 +24113,12 @@ class Root(object):
 
                         @value.setter
                         def value(self, value):
-                            ''' 
+                            '''
                             This is a polymorphic variable, assign an object from its classes to the value
                             \nRequired: []
                             \nOptional: ['float', 'string']
                             '''
-                            self._value = inline_check(value, [float, str], []) 
+                            self._value = inline_check(value, [float, str], [])
 
                         @property
                         def unit(self):
@@ -23942,18 +24126,18 @@ class Root(object):
 
                         @unit.setter
                         def unit(self, value):
-                            ''' 
+                            '''
                             The unit of the Value
                             '''
-                            self._unit = type_check(value, str) 
+                            self._unit = type_check(value, str)
 
                         def check_required(self):
 
                             if self.value is None:
-                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.Object3.value does not have value")
+                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.ValueWithUnit.value does not have value")
 
                             if self.unit is None:
-                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.Object3.unit does not have value")
+                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.ValueWithUnit.unit does not have value")
                             return
 
                         def as_dict(self):
@@ -23963,7 +24147,7 @@ class Root(object):
                     class List(object):
                         '''Values of pressure boundary condition specified per timestep
                         \nRequired: []
-                        \nOptional: ['item', 'string']'''
+                        \nOptional: ['item', 'string', 'ValueWithUnit']'''
                         def __init__(
                             self,
                             items : list = None
@@ -24009,6 +24193,8 @@ class Root(object):
                         def as_dict(self):
                             return drop_none([inline_as_dict(i) for i in self._items])
 
+
+                    Object3 = ValueWithUnit
 
 
 
@@ -24080,10 +24266,10 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     ID for the pressure Neumann boundary condition
                     '''
-                    self._id = range_check(type_check(value, int), 0, 2147483646) 
+                    self._id = range_check(type_check(value, int), 0, 2147483646)
 
                 @property
                 def value(self):
@@ -24091,12 +24277,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
-                    \nOptional: ['float', 'string', 'object3']
+                    \nOptional: ['float', 'string', 'ValueWithUnit']
                     '''
-                    self._value = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}]) 
+                    self._value = inline_check(value, [float, str], [{"required": ['value', 'unit'], "optional": [], "fields": {'value': ([float, str], []), 'unit': ([str], [])}}])
 
                 def check_required(self):
 
@@ -24181,12 +24367,12 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     This is a polymorphic variable, assign an object from its classes to the value
                     \nRequired: []
                     \nOptional: ['int', 'string']
                     '''
-                    self._id = inline_check(value, [int, str], []) 
+                    self._id = inline_check(value, [int, str], [])
 
                 @property
                 def value(self):
@@ -24194,12 +24380,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
                     \nRequired: []
-                    \nOptional: ['item', 'string']
+                    \nOptional: ['item', 'string', 'ValueWithUnit']
                     '''
-                    self._value = type_check(value, self.Value) 
+                    self._value = type_check(value, self.Value)
 
                 @property
                 def interpolation(self):
@@ -24207,12 +24393,12 @@ class Root(object):
 
                 @interpolation.setter
                 def interpolation(self, value):
-                    ''' 
+                    '''
                     interpolation of boundary condition
                     \nRequired: []
                     \nOptional: ['item', 'none', 'linear', 'linear_ramp', 'piecewise_constant', 'piecewise_linear', 'piecewise_cubic']
                     '''
-                    self._interpolation = type_check(value, self.Interpolation) 
+                    self._interpolation = type_check(value, self.Interpolation)
 
                 def check_required(self):
 
@@ -24227,7 +24413,7 @@ class Root(object):
                 class Value(object):
                     '''Values of boundary condition, length 1 for scalar-valued pde, 2/3 for vector-valued PDEs depending on the dimension.
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -24342,10 +24528,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -24376,10 +24562,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         def check_required(self):
 
@@ -24414,10 +24600,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def to(self):
@@ -24425,10 +24611,10 @@ class Root(object):
 
                         @to.setter
                         def to(self, value):
-                            ''' 
+                            '''
                             interpolation ending time
                             '''
-                            self._to = type_check(value, float) 
+                            self._to = type_check(value, float)
 
                         @property
                         def from_(self):
@@ -24436,10 +24622,10 @@ class Root(object):
 
                         @from_.setter
                         def from_(self, value):
-                            ''' 
+                            '''
                             interpolation starting time
                             '''
-                            self._from_ = type_check(value, float) 
+                            self._from_ = type_check(value, float)
 
                         def check_required(self):
 
@@ -24485,10 +24671,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -24496,7 +24682,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -24527,7 +24713,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -24558,10 +24744,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -24610,10 +24796,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -24621,7 +24807,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -24652,7 +24838,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -24683,10 +24869,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -24735,10 +24921,10 @@ class Root(object):
 
                         @type.setter
                         def type(self, value):
-                            ''' 
+                            '''
                             type of interpolation of boundary condition
                             '''
-                            self._type = enum_check(value, self.Type) 
+                            self._type = enum_check(value, self.Type)
 
                         @property
                         def points(self):
@@ -24746,7 +24932,7 @@ class Root(object):
 
                         @points.setter
                         def points(self, value):
-                            ''' 
+                            '''
                             interpolation time points
                             \nRequired: []
                             \nOptional: ['item']
@@ -24777,7 +24963,7 @@ class Root(object):
 
                         @values.setter
                         def values(self, value):
-                            ''' 
+                            '''
                             interpolation values
                             \nRequired: []
                             \nOptional: ['item']
@@ -24808,10 +24994,10 @@ class Root(object):
 
                         @extend.setter
                         def extend(self, value):
-                            ''' 
+                            '''
                             how to extend the piecewise interpolation
                             '''
-                            self._extend = enum_check(value, self.Extend) 
+                            self._extend = enum_check(value, self.Extend)
 
                         def check_required(self):
 
@@ -24828,6 +25014,13 @@ class Root(object):
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
+
+                    Item = None_
+                    Object2 = Linear
+                    Object3 = Linear_ramp
+                    Object4 = Piecewise_constant
+                    Object5 = Piecewise_linear
+                    Object6 = Piecewise_cubic
 
 
 
@@ -24858,10 +25051,10 @@ class Root(object):
 
             @enabled.setter
             def enabled(self, value):
-                ''' 
+                '''
                 There is no definition
                 '''
-                self._enabled = type_check(value, bool) 
+                self._enabled = type_check(value, bool)
 
             @property
             def tolerance(self):
@@ -24869,10 +25062,10 @@ class Root(object):
 
             @tolerance.setter
             def tolerance(self, value):
-                ''' 
+                '''
                 Relative tolerance of deciding periodic correspondence
                 '''
-                self._tolerance = type_check(value, float) 
+                self._tolerance = type_check(value, float)
 
             @property
             def correspondence(self):
@@ -24880,7 +25073,7 @@ class Root(object):
 
             @correspondence.setter
             def correspondence(self, value):
-                ''' 
+                '''
                 Periodic directions for periodic boundary conditions. If not specified, default to axis-aligned directions.
                 \nRequired: []
                 \nOptional: ['item']
@@ -24911,7 +25104,7 @@ class Root(object):
 
             @linear_displacement_offset.setter
             def linear_displacement_offset(self, value):
-                ''' 
+                '''
                 There is no definition
                 \nRequired: []
                 \nOptional: ['item']
@@ -24942,7 +25135,7 @@ class Root(object):
 
             @fixed_macro_strain.setter
             def fixed_macro_strain(self, value):
-                ''' 
+                '''
                 There is no definition
                 \nRequired: []
                 \nOptional: ['item']
@@ -24973,10 +25166,10 @@ class Root(object):
 
             @force_zero_mean.setter
             def force_zero_mean(self, value):
-                ''' 
+                '''
                 The periodic solution is not unique, set to true to find the solution with zero mean.
                 '''
-                self._force_zero_mean = type_check(value, bool) 
+                self._force_zero_mean = type_check(value, bool)
 
             def check_required(self):
 
@@ -25007,12 +25200,12 @@ class Root(object):
 
         @solution.setter
         def solution(self, value):
-            ''' 
+            '''
             initial solution
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._solution = type_check(value, self.Solution) 
+            self._solution = type_check(value, self.Solution)
 
         @property
         def velocity(self):
@@ -25020,12 +25213,12 @@ class Root(object):
 
         @velocity.setter
         def velocity(self, value):
-            ''' 
+            '''
             initial velocity
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._velocity = type_check(value, self.Velocity) 
+            self._velocity = type_check(value, self.Velocity)
 
         @property
         def acceleration(self):
@@ -25033,12 +25226,12 @@ class Root(object):
 
         @acceleration.setter
         def acceleration(self, value):
-            ''' 
+            '''
             initial acceleration
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._acceleration = type_check(value, self.Acceleration) 
+            self._acceleration = type_check(value, self.Acceleration)
 
         def check_required(self):
 
@@ -25114,10 +25307,10 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     ID from volume selections
                     '''
-                    self._id = type_check(value, int) 
+                    self._id = type_check(value, int)
 
                 @property
                 def value(self):
@@ -25125,12 +25318,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     value of the solution
                     \nRequired: []
-                    \nOptional: ['item', 'string']
+                    \nOptional: ['item', 'string', 'ValueWithUnit']
                     '''
-                    self._value = type_check(value, self.Value) 
+                    self._value = type_check(value, self.Value)
 
                 def check_required(self):
 
@@ -25145,7 +25338,7 @@ class Root(object):
                 class Value(object):
                     '''value of the solution
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -25261,10 +25454,10 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     ID from volume selections
                     '''
-                    self._id = type_check(value, int) 
+                    self._id = type_check(value, int)
 
                 @property
                 def value(self):
@@ -25272,12 +25465,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     value od the initial velocity
                     \nRequired: []
-                    \nOptional: ['item', 'string']
+                    \nOptional: ['item', 'string', 'ValueWithUnit']
                     '''
-                    self._value = range_check(type_check(value, self.Value), 2, 3) 
+                    self._value = range_check(type_check(value, self.Value), 2, 3)
 
                 def check_required(self):
 
@@ -25292,7 +25485,7 @@ class Root(object):
                 class Value(object):
                     '''value od the initial velocity
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -25408,10 +25601,10 @@ class Root(object):
 
                 @id.setter
                 def id(self, value):
-                    ''' 
+                    '''
                     ID from volume selections
                     '''
-                    self._id = type_check(value, int) 
+                    self._id = type_check(value, int)
 
                 @property
                 def value(self):
@@ -25419,12 +25612,12 @@ class Root(object):
 
                 @value.setter
                 def value(self, value):
-                    ''' 
+                    '''
                     value
                     \nRequired: []
-                    \nOptional: ['item', 'string']
+                    \nOptional: ['item', 'string', 'ValueWithUnit']
                     '''
-                    self._value = range_check(type_check(value, self.Value), 2, 3) 
+                    self._value = range_check(type_check(value, self.Value), 2, 3)
 
                 def check_required(self):
 
@@ -25439,7 +25632,7 @@ class Root(object):
                 class Value(object):
                     '''value
                     \nRequired: []
-                    \nOptional: ['item', 'string']'''
+                    \nOptional: ['item', 'string', 'ValueWithUnit']'''
                     def __init__(
                         self,
                         items : list = None
@@ -25507,12 +25700,12 @@ class Root(object):
 
         @soft.setter
         def soft(self, value):
-            ''' 
+            '''
             list of file containing soft constraints
             \nRequired: []
             \nOptional: ['item']
             '''
-            self._soft = type_check(value, self.Soft) 
+            self._soft = type_check(value, self.Soft)
 
         @property
         def hard(self):
@@ -25520,7 +25713,7 @@ class Root(object):
 
         @hard.setter
         def hard(self, value):
-            ''' 
+            '''
             list of file containing hard constraints
             \nRequired: []
             \nOptional: ['item']
@@ -25619,10 +25812,10 @@ class Root(object):
 
                 @weight.setter
                 def weight(self, value):
-                    ''' 
+                    '''
                     weight
                     '''
-                    self._weight = type_check(value, float) 
+                    self._weight = type_check(value, float)
 
                 @property
                 def data(self):
@@ -25630,10 +25823,10 @@ class Root(object):
 
                 @data.setter
                 def data(self, value):
-                    ''' 
+                    '''
                     constraint hdf5 file for soft constraint w||Ax-b||^2. The file must contain these datasets: local2global, dense/sparse matrix A, and vector b. The colums of b nees to be the same as the dimentionality of the problem. if A is sparse it should contain A_triplets/value A_triplets/col A_triplets/rows A_triplets/shape
                     '''
-                    self._data = type_check(value, str) 
+                    self._data = type_check(value, str)
 
                 def check_required(self):
 
@@ -25677,10 +25870,10 @@ class Root(object):
 
         @directory.setter
         def directory(self, value):
-            ''' 
+            '''
             Directory for output files.
             '''
-            self._directory = type_check(value, str) 
+            self._directory = type_check(value, str)
 
         @property
         def log(self):
@@ -25688,12 +25881,12 @@ class Root(object):
 
         @log.setter
         def log(self, value):
-            ''' 
+            '''
             Setting for the output log.
             \nRequired: []
             \nOptional: ['level', 'file_level', 'path', 'quiet']
             '''
-            self._log = type_check(value, self.Log) 
+            self._log = type_check(value, self.Log)
 
         @property
         def json(self):
@@ -25701,10 +25894,10 @@ class Root(object):
 
         @json.setter
         def json(self, value):
-            ''' 
+            '''
             File name for JSON output statistics on time/error/etc.
             '''
-            self._json = type_check(value, str) 
+            self._json = type_check(value, str)
 
         @property
         def restart_json(self):
@@ -25712,10 +25905,10 @@ class Root(object):
 
         @restart_json.setter
         def restart_json(self, value):
-            ''' 
+            '''
             File name for JSON output to restart the simulation.
             '''
-            self._restart_json = type_check(value, str) 
+            self._restart_json = type_check(value, str)
 
         @property
         def paraview(self):
@@ -25723,12 +25916,12 @@ class Root(object):
 
         @paraview.setter
         def paraview(self, value):
-            ''' 
+            '''
             Output in paraview format
             \nRequired: []
             \nOptional: ['file_name', 'vismesh_rel_area', 'skip_frame', 'high_order_mesh', 'volume', 'surface', 'wireframe', 'fields', 'points', 'options']
             '''
-            self._paraview = type_check(value, self.Paraview) 
+            self._paraview = type_check(value, self.Paraview)
 
         @property
         def data(self):
@@ -25736,12 +25929,12 @@ class Root(object):
 
         @data.setter
         def data(self, value):
-            ''' 
+            '''
             File names to write output data to.
             \nRequired: []
             \nOptional: ['solution', 'full_mat', 'stiffness_mat', 'stress_mat', 'state', 'rest_mesh', 'mises', 'nodes', 'advanced', 'file_index_offset']
             '''
-            self._data = type_check(value, self.Data) 
+            self._data = type_check(value, self.Data)
 
         @property
         def advanced(self):
@@ -25749,12 +25942,12 @@ class Root(object):
 
         @advanced.setter
         def advanced(self, value):
-            ''' 
+            '''
             Additional output options
             \nRequired: []
             \nOptional: ['timestep_prefix', 'sol_on_grid', 'compute_error', 'sol_at_node', 'vis_boundary_only', 'curved_mesh_size', 'save_solve_sequence_debug', 'save_ccd_debug_meshes', 'save_time_sequence', 'save_nl_solve_sequence', 'spectrum']
             '''
-            self._advanced = type_check(value, self.Advanced) 
+            self._advanced = type_check(value, self.Advanced)
 
         @property
         def reference(self):
@@ -25762,12 +25955,12 @@ class Root(object):
 
         @reference.setter
         def reference(self, value):
-            ''' 
+            '''
             Write out the analytic/numerical ground-truth solution and or its gradient
             \nRequired: []
             \nOptional: ['solution', 'gradient']
             '''
-            self._reference = type_check(value, self.Reference) 
+            self._reference = type_check(value, self.Reference)
 
         @property
         def stats(self):
@@ -25775,10 +25968,10 @@ class Root(object):
 
         @stats.setter
         def stats(self, value):
-            ''' 
+            '''
             Saves csv for energy and stats of the non linear solver.
             '''
-            self._stats = type_check(value, bool) 
+            self._stats = type_check(value, bool)
 
         def check_required(self):
 
@@ -25809,12 +26002,12 @@ class Root(object):
 
             @level.setter
             def level(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'string']
                 '''
-                self._level = inline_check(value, [int, str], []) 
+                self._level = inline_check(value, [int, str], [])
 
             @property
             def file_level(self):
@@ -25822,12 +26015,12 @@ class Root(object):
 
             @file_level.setter
             def file_level(self, value):
-                ''' 
+                '''
                 This is a polymorphic variable, assign an object from its classes to the value
                 \nRequired: []
                 \nOptional: ['int', 'string']
                 '''
-                self._file_level = inline_check(value, [int, str], []) 
+                self._file_level = inline_check(value, [int, str], [])
 
             @property
             def path(self):
@@ -25835,10 +26028,10 @@ class Root(object):
 
             @path.setter
             def path(self, value):
-                ''' 
+                '''
                 File where to save the log; empty string is output to terminal.
                 '''
-                self._path = type_check(value, str) 
+                self._path = type_check(value, str)
 
             @property
             def quiet(self):
@@ -25846,10 +26039,10 @@ class Root(object):
 
             @quiet.setter
             def quiet(self, value):
-                ''' 
+                '''
                 Disable cout for logging.
                 '''
-                self._quiet = type_check(value, bool) 
+                self._quiet = type_check(value, bool)
 
             def check_required(self):
 
@@ -25893,10 +26086,10 @@ class Root(object):
 
             @file_name.setter
             def file_name(self, value):
-                ''' 
+                '''
                 Paraview output file name
                 '''
-                self._file_name = type_check(value, str) 
+                self._file_name = type_check(value, str)
 
             @property
             def vismesh_rel_area(self):
@@ -25904,10 +26097,10 @@ class Root(object):
 
             @vismesh_rel_area.setter
             def vismesh_rel_area(self, value):
-                ''' 
+                '''
                 relative area for the upsampled visualisation mesh
                 '''
-                self._vismesh_rel_area = type_check(value, float) 
+                self._vismesh_rel_area = type_check(value, float)
 
             @property
             def skip_frame(self):
@@ -25915,10 +26108,10 @@ class Root(object):
 
             @skip_frame.setter
             def skip_frame(self, value):
-                ''' 
+                '''
                 export every skip_frame-th frames for time dependent simulations
                 '''
-                self._skip_frame = type_check(value, int) 
+                self._skip_frame = type_check(value, int)
 
             @property
             def high_order_mesh(self):
@@ -25926,10 +26119,10 @@ class Root(object):
 
             @high_order_mesh.setter
             def high_order_mesh(self, value):
-                ''' 
+                '''
                 Enables/disables high-order output for paraview. Supported only for isoparametric or linear meshes with high-order solutions.
                 '''
-                self._high_order_mesh = type_check(value, bool) 
+                self._high_order_mesh = type_check(value, bool)
 
             @property
             def volume(self):
@@ -25937,10 +26130,10 @@ class Root(object):
 
             @volume.setter
             def volume(self, value):
-                ''' 
+                '''
                 Export volumetric mesh
                 '''
-                self._volume = type_check(value, bool) 
+                self._volume = type_check(value, bool)
 
             @property
             def surface(self):
@@ -25948,10 +26141,10 @@ class Root(object):
 
             @surface.setter
             def surface(self, value):
-                ''' 
+                '''
                 Export surface mesh (in 2d polygon)
                 '''
-                self._surface = type_check(value, bool) 
+                self._surface = type_check(value, bool)
 
             @property
             def wireframe(self):
@@ -25959,10 +26152,10 @@ class Root(object):
 
             @wireframe.setter
             def wireframe(self, value):
-                ''' 
+                '''
                 Export the wireframe of the mesh
                 '''
-                self._wireframe = type_check(value, bool) 
+                self._wireframe = type_check(value, bool)
 
             @property
             def fields(self):
@@ -25970,7 +26163,7 @@ class Root(object):
 
             @fields.setter
             def fields(self, value):
-                ''' 
+                '''
                 list of names of fields to export. If empty, all fields are exported.
                 \nRequired: []
                 \nOptional: ['item']
@@ -26001,10 +26194,10 @@ class Root(object):
 
             @points.setter
             def points(self, value):
-                ''' 
+                '''
                 Export the Dirichlet points
                 '''
-                self._points = type_check(value, bool) 
+                self._points = type_check(value, bool)
 
             @property
             def options(self):
@@ -26012,12 +26205,12 @@ class Root(object):
 
             @options.setter
             def options(self, value):
-                ''' 
+                '''
                 Optional fields in the output
                 \nRequired: []
                 \nOptional: ['use_hdf5', 'material', 'body_ids', 'contact_forces', 'friction_forces', 'normal_adhesion_forces', 'tangential_adhesion_forces', 'velocity', 'acceleration', 'scalar_values', 'tensor_values', 'discretization_order', 'nodes', 'forces', 'force_high_order', 'jacobian_validity']
                 '''
-                self._options = type_check(value, self.Options) 
+                self._options = type_check(value, self.Options)
 
             def check_required(self):
 
@@ -26072,10 +26265,10 @@ class Root(object):
 
                 @use_hdf5.setter
                 def use_hdf5(self, value):
-                    ''' 
+                    '''
                     If true, export the data as hdf5, compatible with paraview >5.11
                     '''
-                    self._use_hdf5 = type_check(value, bool) 
+                    self._use_hdf5 = type_check(value, bool)
 
                 @property
                 def material(self):
@@ -26083,10 +26276,10 @@ class Root(object):
 
                 @material.setter
                 def material(self, value):
-                    ''' 
+                    '''
                     If true, write out material values sampled on the vertices of the mesh
                     '''
-                    self._material = type_check(value, bool) 
+                    self._material = type_check(value, bool)
 
                 @property
                 def body_ids(self):
@@ -26094,10 +26287,10 @@ class Root(object):
 
                 @body_ids.setter
                 def body_ids(self, value):
-                    ''' 
+                    '''
                     Export volumes ids
                     '''
-                    self._body_ids = type_check(value, bool) 
+                    self._body_ids = type_check(value, bool)
 
                 @property
                 def contact_forces(self):
@@ -26105,10 +26298,10 @@ class Root(object):
 
                 @contact_forces.setter
                 def contact_forces(self, value):
-                    ''' 
+                    '''
                     If true, write out contact forces for surface
                     '''
-                    self._contact_forces = type_check(value, bool) 
+                    self._contact_forces = type_check(value, bool)
 
                 @property
                 def friction_forces(self):
@@ -26116,10 +26309,10 @@ class Root(object):
 
                 @friction_forces.setter
                 def friction_forces(self, value):
-                    ''' 
+                    '''
                     If true, write out friction forces for surface
                     '''
-                    self._friction_forces = type_check(value, bool) 
+                    self._friction_forces = type_check(value, bool)
 
                 @property
                 def normal_adhesion_forces(self):
@@ -26127,10 +26320,10 @@ class Root(object):
 
                 @normal_adhesion_forces.setter
                 def normal_adhesion_forces(self, value):
-                    ''' 
+                    '''
                     If true, write out normal adhesion forces for surface
                     '''
-                    self._normal_adhesion_forces = type_check(value, bool) 
+                    self._normal_adhesion_forces = type_check(value, bool)
 
                 @property
                 def tangential_adhesion_forces(self):
@@ -26138,10 +26331,10 @@ class Root(object):
 
                 @tangential_adhesion_forces.setter
                 def tangential_adhesion_forces(self, value):
-                    ''' 
+                    '''
                     If true, write out tangential adhesion forces for surface
                     '''
-                    self._tangential_adhesion_forces = type_check(value, bool) 
+                    self._tangential_adhesion_forces = type_check(value, bool)
 
                 @property
                 def velocity(self):
@@ -26149,10 +26342,10 @@ class Root(object):
 
                 @velocity.setter
                 def velocity(self, value):
-                    ''' 
+                    '''
                     If true, write out velocities
                     '''
-                    self._velocity = type_check(value, bool) 
+                    self._velocity = type_check(value, bool)
 
                 @property
                 def acceleration(self):
@@ -26160,10 +26353,10 @@ class Root(object):
 
                 @acceleration.setter
                 def acceleration(self, value):
-                    ''' 
+                    '''
                     If true, write out accelerations
                     '''
-                    self._acceleration = type_check(value, bool) 
+                    self._acceleration = type_check(value, bool)
 
                 @property
                 def scalar_values(self):
@@ -26171,10 +26364,10 @@ class Root(object):
 
                 @scalar_values.setter
                 def scalar_values(self, value):
-                    ''' 
+                    '''
                     If true, write out scalar values
                     '''
-                    self._scalar_values = type_check(value, bool) 
+                    self._scalar_values = type_check(value, bool)
 
                 @property
                 def tensor_values(self):
@@ -26182,10 +26375,10 @@ class Root(object):
 
                 @tensor_values.setter
                 def tensor_values(self, value):
-                    ''' 
+                    '''
                     If true, write out tensor values
                     '''
-                    self._tensor_values = type_check(value, bool) 
+                    self._tensor_values = type_check(value, bool)
 
                 @property
                 def discretization_order(self):
@@ -26193,10 +26386,10 @@ class Root(object):
 
                 @discretization_order.setter
                 def discretization_order(self, value):
-                    ''' 
+                    '''
                     If true, write out discretization order
                     '''
-                    self._discretization_order = type_check(value, bool) 
+                    self._discretization_order = type_check(value, bool)
 
                 @property
                 def nodes(self):
@@ -26204,10 +26397,10 @@ class Root(object):
 
                 @nodes.setter
                 def nodes(self, value):
-                    ''' 
+                    '''
                     If true, write out node order
                     '''
-                    self._nodes = type_check(value, bool) 
+                    self._nodes = type_check(value, bool)
 
                 @property
                 def forces(self):
@@ -26215,10 +26408,10 @@ class Root(object):
 
                 @forces.setter
                 def forces(self, value):
-                    ''' 
+                    '''
                     If true, write out all variational forces on the FE mesh
                     '''
-                    self._forces = type_check(value, bool) 
+                    self._forces = type_check(value, bool)
 
                 @property
                 def force_high_order(self):
@@ -26226,10 +26419,10 @@ class Root(object):
 
                 @force_high_order.setter
                 def force_high_order(self, value):
-                    ''' 
+                    '''
                     If true, force write out high-order mesh, might break the output
                     '''
-                    self._force_high_order = type_check(value, bool) 
+                    self._force_high_order = type_check(value, bool)
 
                 @property
                 def jacobian_validity(self):
@@ -26237,10 +26430,10 @@ class Root(object):
 
                 @jacobian_validity.setter
                 def jacobian_validity(self, value):
-                    ''' 
+                    '''
                     If true, perform robust Jacobian check on the deformed elements and mark elements with non-positive Jacobian.
                     '''
-                    self._jacobian_validity = type_check(value, bool) 
+                    self._jacobian_validity = type_check(value, bool)
 
                 def check_required(self):
 
@@ -26285,10 +26478,10 @@ class Root(object):
 
             @solution.setter
             def solution(self, value):
-                ''' 
+                '''
                 Main variable solution. Unrolled [xyz, xyz, ...] using PolyFEM ordering. If reorder_nodes exports the solution with the same order the vertices of the input mesh as a #n x d file
                 '''
-                self._solution = type_check(value, str) 
+                self._solution = type_check(value, str)
 
             @property
             def full_mat(self):
@@ -26296,10 +26489,10 @@ class Root(object):
 
             @full_mat.setter
             def full_mat(self, value):
-                ''' 
+                '''
                 System matrix without boundary conditions. Doesn't work for nonlinear problems
                 '''
-                self._full_mat = type_check(value, str) 
+                self._full_mat = type_check(value, str)
 
             @property
             def stiffness_mat(self):
@@ -26307,10 +26500,10 @@ class Root(object):
 
             @stiffness_mat.setter
             def stiffness_mat(self, value):
-                ''' 
+                '''
                 System matrix with boundary conditions. Doesn't work for nonlinear problems
                 '''
-                self._stiffness_mat = type_check(value, str) 
+                self._stiffness_mat = type_check(value, str)
 
             @property
             def stress_mat(self):
@@ -26318,10 +26511,10 @@ class Root(object):
 
             @stress_mat.setter
             def stress_mat(self, value):
-                ''' 
+                '''
                 Exports stress
                 '''
-                self._stress_mat = type_check(value, str) 
+                self._stress_mat = type_check(value, str)
 
             @property
             def state(self):
@@ -26329,10 +26522,10 @@ class Root(object):
 
             @state.setter
             def state(self, value):
-                ''' 
+                '''
                 Writes the complete state in PolyFEM hdf5 format, used to restart the sim
                 '''
-                self._state = type_check(value, str) 
+                self._state = type_check(value, str)
 
             @property
             def rest_mesh(self):
@@ -26340,10 +26533,10 @@ class Root(object):
 
             @rest_mesh.setter
             def rest_mesh(self, value):
-                ''' 
+                '''
                 Writes the rest mesh in MSH format, used to restart the sim
                 '''
-                self._rest_mesh = type_check(value, str) 
+                self._rest_mesh = type_check(value, str)
 
             @property
             def mises(self):
@@ -26351,10 +26544,10 @@ class Root(object):
 
             @mises.setter
             def mises(self, value):
-                ''' 
+                '''
                 File name to write per-node Von Mises stress values to.
                 '''
-                self._mises = type_check(value, str) 
+                self._mises = type_check(value, str)
 
             @property
             def nodes(self):
@@ -26362,10 +26555,10 @@ class Root(object):
 
             @nodes.setter
             def nodes(self, value):
-                ''' 
+                '''
                 Writes the FEM nodes
                 '''
-                self._nodes = type_check(value, str) 
+                self._nodes = type_check(value, str)
 
             @property
             def advanced(self):
@@ -26373,12 +26566,12 @@ class Root(object):
 
             @advanced.setter
             def advanced(self, value):
-                ''' 
+                '''
                 advanced options
                 \nRequired: []
                 \nOptional: ['reorder_nodes']
                 '''
-                self._advanced = type_check(value, self.Advanced) 
+                self._advanced = type_check(value, self.Advanced)
 
             @property
             def file_index_offset(self):
@@ -26386,10 +26579,10 @@ class Root(object):
 
             @file_index_offset.setter
             def file_index_offset(self, value):
-                ''' 
+                '''
                 Starting file index offset for output files. Set automatically by restart JSON so that file numbering continues from the previous run.
                 '''
-                self._file_index_offset = type_check(value, int) 
+                self._file_index_offset = type_check(value, int)
 
             def check_required(self):
 
@@ -26414,10 +26607,10 @@ class Root(object):
 
                 @reorder_nodes.setter
                 def reorder_nodes(self, value):
-                    ''' 
+                    '''
                     Reorder nodes accodring to input
                     '''
-                    self._reorder_nodes = type_check(value, bool) 
+                    self._reorder_nodes = type_check(value, bool)
 
                 def check_required(self):
 
@@ -26464,10 +26657,10 @@ class Root(object):
 
             @timestep_prefix.setter
             def timestep_prefix(self, value):
-                ''' 
+                '''
                 Prefix for output file names for each time step, the final file is step_i.[vtu|vtm] where i is the time index.
                 '''
-                self._timestep_prefix = type_check(value, str) 
+                self._timestep_prefix = type_check(value, str)
 
             @property
             def sol_on_grid(self):
@@ -26475,10 +26668,10 @@ class Root(object):
 
             @sol_on_grid.setter
             def sol_on_grid(self, value):
-                ''' 
+                '''
                 exports the solution sampled on a grid, specify the grid spacing
                 '''
-                self._sol_on_grid = type_check(value, float) 
+                self._sol_on_grid = type_check(value, float)
 
             @property
             def compute_error(self):
@@ -26486,10 +26679,10 @@ class Root(object):
 
             @compute_error.setter
             def compute_error(self, value):
-                ''' 
+                '''
                 Enables the computation of the error. If no reference solution is provided, return the norms of the solution
                 '''
-                self._compute_error = type_check(value, bool) 
+                self._compute_error = type_check(value, bool)
 
             @property
             def sol_at_node(self):
@@ -26497,10 +26690,10 @@ class Root(object):
 
             @sol_at_node.setter
             def sol_at_node(self, value):
-                ''' 
+                '''
                 Write out solution values at a specific node. the values will be written in the output JSON file
                 '''
-                self._sol_at_node = type_check(value, int) 
+                self._sol_at_node = type_check(value, int)
 
             @property
             def vis_boundary_only(self):
@@ -26508,10 +26701,10 @@ class Root(object):
 
             @vis_boundary_only.setter
             def vis_boundary_only(self, value):
-                ''' 
+                '''
                 saves only elements touching the boundaries
                 '''
-                self._vis_boundary_only = type_check(value, bool) 
+                self._vis_boundary_only = type_check(value, bool)
 
             @property
             def curved_mesh_size(self):
@@ -26519,10 +26712,10 @@ class Root(object):
 
             @curved_mesh_size.setter
             def curved_mesh_size(self, value):
-                ''' 
+                '''
                 upsample curved edges to compute mesh size
                 '''
-                self._curved_mesh_size = type_check(value, bool) 
+                self._curved_mesh_size = type_check(value, bool)
 
             @property
             def save_solve_sequence_debug(self):
@@ -26530,10 +26723,10 @@ class Root(object):
 
             @save_solve_sequence_debug.setter
             def save_solve_sequence_debug(self, value):
-                ''' 
+                '''
                 saves AL internal steps, for debugging
                 '''
-                self._save_solve_sequence_debug = type_check(value, bool) 
+                self._save_solve_sequence_debug = type_check(value, bool)
 
             @property
             def save_ccd_debug_meshes(self):
@@ -26541,10 +26734,10 @@ class Root(object):
 
             @save_ccd_debug_meshes.setter
             def save_ccd_debug_meshes(self, value):
-                ''' 
+                '''
                 saves AL internal steps, for debugging
                 '''
-                self._save_ccd_debug_meshes = type_check(value, bool) 
+                self._save_ccd_debug_meshes = type_check(value, bool)
 
             @property
             def save_time_sequence(self):
@@ -26552,10 +26745,10 @@ class Root(object):
 
             @save_time_sequence.setter
             def save_time_sequence(self, value):
-                ''' 
+                '''
                 saves timesteps
                 '''
-                self._save_time_sequence = type_check(value, bool) 
+                self._save_time_sequence = type_check(value, bool)
 
             @property
             def save_nl_solve_sequence(self):
@@ -26563,10 +26756,10 @@ class Root(object):
 
             @save_nl_solve_sequence.setter
             def save_nl_solve_sequence(self, value):
-                ''' 
+                '''
                 saves obj after every nonlinear iteration, for debugging
                 '''
-                self._save_nl_solve_sequence = type_check(value, bool) 
+                self._save_nl_solve_sequence = type_check(value, bool)
 
             @property
             def spectrum(self):
@@ -26574,10 +26767,10 @@ class Root(object):
 
             @spectrum.setter
             def spectrum(self, value):
-                ''' 
+                '''
                 exports the spectrum of the matrix in the output JSON. Works only if POLYSOLVE_WITH_SPECTRA is enabled
                 '''
-                self._spectrum = type_check(value, bool) 
+                self._spectrum = type_check(value, bool)
 
             def check_required(self):
 
@@ -26605,7 +26798,7 @@ class Root(object):
 
             @solution.setter
             def solution(self, value):
-                ''' 
+                '''
                 reference solution used to compute errors
                 \nRequired: []
                 \nOptional: ['item']
@@ -26636,7 +26829,7 @@ class Root(object):
 
             @gradient.setter
             def gradient(self, value):
-                ''' 
+                '''
                 gradient of the reference solution to compute errors
                 \nRequired: []
                 \nOptional: ['item']
@@ -26686,12 +26879,12 @@ class Root(object):
 
         @data.setter
         def data(self, value):
-            ''' 
+            '''
             input to restart time dependent sim
             \nRequired: []
             \nOptional: ['state', 'reorder']
             '''
-            self._data = type_check(value, self.Data) 
+            self._data = type_check(value, self.Data)
 
         def check_required(self):
 
@@ -26718,10 +26911,10 @@ class Root(object):
 
             @state.setter
             def state(self, value):
-                ''' 
+                '''
                 input state as hdf5
                 '''
-                self._state = type_check(value, str) 
+                self._state = type_check(value, str)
 
             @property
             def reorder(self):
@@ -26729,10 +26922,10 @@ class Root(object):
 
             @reorder.setter
             def reorder(self, value):
-                ''' 
+                '''
                 reorder input data
                 '''
-                self._reorder = type_check(value, bool) 
+                self._reorder = type_check(value, bool)
 
             def check_required(self):
 

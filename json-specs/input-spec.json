@@ -1048,6 +1048,7 @@
         "pointer": "/time",
         "default": "skip",
         "type": "object",
+        "type_name": "TendDt",
         "required": [
             "tend",
             "dt"
@@ -1062,6 +1063,7 @@
     {
         "pointer": "/time",
         "type": "object",
+        "type_name": "TimeStepsDt",
         "required": [
             "time_steps",
             "dt"
@@ -1076,6 +1078,7 @@
     {
         "pointer": "/time",
         "type": "object",
+        "type_name": "TimeStepsTend",
         "required": [
             "time_steps",
             "tend"
@@ -1321,6 +1324,7 @@
     {
         "pointer": "/contact/collision_mesh",
         "type": "object",
+        "type_name": "FromMesh",
         "required": [
             "mesh",
             "linear_map"
@@ -1334,6 +1338,7 @@
     {
         "pointer": "/contact/collision_mesh",
         "type": "object",
+        "type_name": "Generated",
         "required": [
             "max_edge_length"
         ],
@@ -1346,6 +1351,7 @@
     {
         "pointer": "/contact/collision_mesh",
         "type": "object",
+        "type_name": "Default",
         "optional": [
             "enabled"
         ],
@@ -1630,6 +1636,7 @@
     {
         "pointer": "/solver/rayleigh_damping/*",
         "type": "object",
+        "type_name": "StiffnessRatio",
         "required": [
             "form",
             "stiffness_ratio"
@@ -1642,6 +1649,7 @@
     {
         "pointer": "/solver/rayleigh_damping/*",
         "type": "object",
+        "type_name": "Stiffness",
         "required": [
             "form",
             "stiffness"

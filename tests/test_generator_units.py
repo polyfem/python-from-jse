@@ -610,6 +610,131 @@ class GeneratorUnitTests(unittest.TestCase):
                 time_steps=10,
             )
 
+    def test_type_named_object_variants_keep_legacy_object_aliases(self):
+        generator = import_generator("json_to_tree_type_name_object_aliases")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["time"],
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "type_name": "TendDt",
+                "required": ["tend", "dt"],
+                "optional": ["t0"],
+            },
+            {
+                "pointer": "/time",
+                "type": "object",
+                "type_name": "TimeStepsDt",
+                "required": ["time_steps", "dt"],
+                "optional": ["t0"],
+            },
+            {
+                "pointer": "/time/t0",
+                "type": "float",
+                "default": 0.0,
+            },
+            {
+                "pointer": "/time/tend",
+                "type": "float",
+            },
+            {
+                "pointer": "/time/dt",
+                "type": "float",
+            },
+            {
+                "pointer": "/time/time_steps",
+                "type": "int",
+            },
+        ])
+
+        generated = generator.generated_class_text(root)
+
+        self.assertIn("class TendDt(object):", generated)
+        self.assertIn("class TimeStepsDt(object):", generated)
+        self.assertIn("Object1 = TendDt", generated)
+        self.assertIn("Object2 = TimeStepsDt", generated)
+
+        generated_module = module_from_generated_text(generated)
+
+        self.assertIs(generated_module.Root.Time.Object1, generated_module.Root.Time.TendDt)
+        self.assertIs(generated_module.Root.Time.Object2, generated_module.Root.Time.TimeStepsDt)
+        self.assertEqual(
+            {"tend": 1.0, "dt": 0.1, "t0": 0.0},
+            generated_module.Root.Time.Object1(tend=1.0, dt=0.1).as_dict(),
+        )
+
+    def test_type_named_list_variants_keep_legacy_item_aliases(self):
+        generator = import_generator("json_to_tree_type_name_list_aliases")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["solver"],
+            },
+            {
+                "pointer": "/solver",
+                "type": "object",
+                "optional": ["rayleigh_damping"],
+            },
+            {
+                "pointer": "/solver/rayleigh_damping",
+                "type": "list",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*",
+                "type": "object",
+                "type_name": "StiffnessRatio",
+                "required": ["form", "stiffness_ratio"],
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*",
+                "type": "object",
+                "type_name": "Stiffness",
+                "required": ["form", "stiffness"],
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/form",
+                "type": "string",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/stiffness_ratio",
+                "type": "float",
+            },
+            {
+                "pointer": "/solver/rayleigh_damping/*/stiffness",
+                "type": "float",
+            },
+        ])
+
+        generated = generator.generated_class_text(root)
+
+        self.assertIn("class StiffnessRatio(object):", generated)
+        self.assertIn("class Stiffness(object):", generated)
+        self.assertIn("Item = StiffnessRatio", generated)
+        self.assertIn("Object2 = Stiffness", generated)
+
+        generated_module = module_from_generated_text(generated)
+
+        self.assertIs(
+            generated_module.Root.Solver.Rayleigh_damping.Item,
+            generated_module.Root.Solver.Rayleigh_damping.StiffnessRatio,
+        )
+        self.assertIs(
+            generated_module.Root.Solver.Rayleigh_damping.Object2,
+            generated_module.Root.Solver.Rayleigh_damping.Stiffness,
+        )
+        self.assertEqual(
+            {"form": "elasticity", "stiffness_ratio": 0.25},
+            generated_module.Root.Solver.Rayleigh_damping.Item(
+                form="elasticity",
+                stiffness_ratio=0.25,
+            ).as_dict(),
+        )
+
     def test_parameter_unions_are_inlined_in_variant_classes(self):
         generator = import_generator("json_to_tree_inline_parameters")
         root = generator.build_tree([
@@ -663,6 +788,17 @@ class GeneratorUnitTests(unittest.TestCase):
                 "spec_file": "value1.json",
             },
         ])
+
+        value_with_unit = (
+            root.get_optional("materials")
+            .get_optional("MooneyRivlin")
+            .get_required("k")
+            .get_optional("ValueWithUnit")
+        )
+
+        self.assertIsNotNone(value_with_unit)
+        self.assertEqual("ValueWithUnit", value_with_unit.type_name)
+
         generated = generator.generated_class_text(root)
         mooney_block = generated[
             generated.index("        class MooneyRivlin(object):"):
@@ -672,6 +808,7 @@ class GeneratorUnitTests(unittest.TestCase):
         self.assertNotIn("class K(object):", mooney_block)
         self.assertNotIn("class Id(object):", mooney_block)
         self.assertNotIn("class Rho(object):", mooney_block)
+        self.assertNotIn("class ValueWithUnit(object):", mooney_block)
 
         generated_module = module_from_generated_text(generated)
         material = generated_module.Root.Materials.MooneyRivlin(
@@ -1046,14 +1183,17 @@ class GeneratorUnitTests(unittest.TestCase):
         rhs = root.get_optional("rhs")
 
         self.assertEqual("list", rhs.type)
-        self.assertEqual(["item", "string"], list(rhs._optional))
-        self.assertEqual("polymorphic", rhs.get_optional("item").type)
+        self.assertEqual(["item", "string", "ValueWithUnit"], list(rhs._optional))
+        self.assertEqual("float", rhs.get_optional("item").type)
         self.assertEqual("string", rhs.get_optional("string").type)
+        self.assertEqual("polymorphic", rhs.get_optional("ValueWithUnit").type)
 
         generated = generator.generated_class_text(root)
         self.assertIn("inline_check(i, [float, str], [", generated)
         self.assertNotIn("self.Item", generated)
+        self.assertNotIn("self.ValueWithUnit", generated)
         self.assertNotIn("class Object3(object):", generated)
+        self.assertNotIn("class ValueWithUnit(object):", generated)
 
         generated_module = module_from_generated_text(generated)
         rhs = generated_module.Root.Rhs(
