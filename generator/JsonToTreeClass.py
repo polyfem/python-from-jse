@@ -725,13 +725,21 @@ class JsonToTreeClass(object):
         self.type_name = None
         self.variant_fields = None
         self.required_field_sets = []
+        self.pending_variant_fields = {}
+        self.pending_list_item_fields = {}
         # self.camera: str = 'you'
 
     def __str__(self):
         return self._to_string()
 
-    def clone(self, name=None):
+    def clone(self, name=None, include_pending=True, _seen=None):
+        _seen = _seen or {}
+        node_id = id(self)
+        if node_id in _seen:
+            return _seen[node_id]
+
         cloned = JsonToTreeClass(name or self.name)
+        _seen[node_id] = cloned
         cloned.default = self.default
         cloned.type = self.type
         cloned.doc = self.doc
@@ -741,12 +749,21 @@ class JsonToTreeClass(object):
         cloned.type_name = self.type_name
         cloned.variant_fields = list(self.variant_fields) if self.variant_fields is not None else None
         cloned.required_field_sets = [list(fields) for fields in self.required_field_sets]
+        if include_pending:
+            cloned.pending_variant_fields = {
+                key: value.clone(key, include_pending=False, _seen=_seen)
+                for key, value in self.pending_variant_fields.items()
+            }
+            cloned.pending_list_item_fields = {
+                key: value.clone(key, include_pending=False, _seen=_seen)
+                for key, value in self.pending_list_item_fields.items()
+            }
         cloned._required = {
-            key: value.clone(key)
+            key: value.clone(key, include_pending=include_pending, _seen=_seen)
             for key, value in self._required.items()
         }
         cloned._optional = {
-            key: value.clone(key)
+            key: value.clone(key, include_pending=include_pending, _seen=_seen)
             for key, value in self._optional.items()
         }
         return cloned
@@ -819,6 +836,14 @@ class JsonToTreeClass(object):
         polymorph = JsonToTreeClass(self.name)
         polymorph.doc = "This is a polymorphic variable, assign an object from its classes to the value"
         polymorph.type = "polymorphic"
+        polymorph.pending_variant_fields = {
+            key: value.clone(key, include_pending=False)
+            for key, value in self.pending_variant_fields.items()
+        }
+        polymorph.pending_list_item_fields = {
+            key: value.clone(key, include_pending=False)
+            for key, value in self.pending_list_item_fields.items()
+        }
         if existing_variant_name:
             self.name = existing_variant_name
         elif self.type != "object":
@@ -1096,6 +1121,40 @@ def mark_required_field_set(node, entry):
     if required_fields and required_fields not in node.required_field_sets:
         node.required_field_sets.append(required_fields)
 
+def replace_field(target, field_name, field_node):
+    cloned = field_node.clone(field_name, include_pending=False)
+    if target.get_required(field_name) is not None:
+        target._required[field_name] = cloned
+    elif target.get_optional(field_name) is not None:
+        target._optional[field_name] = cloned
+    else:
+        target._optional[field_name] = cloned
+
+def apply_pending_fields(parent, child, entry_type):
+    for field_name, field_node in parent.pending_variant_fields.items():
+        replace_field(child, field_name, field_node)
+
+    if not parent.pending_list_item_fields:
+        return
+
+    if entry_type == "list":
+        child.add_optional(LIST_ITEM_NAME)
+        target = child.get_optional(LIST_ITEM_NAME)
+    else:
+        target = child
+
+    for field_name, field_node in parent.pending_list_item_fields.items():
+        replace_field(target, field_name, field_node)
+
+def record_pending_broadcast_field(parent, field_name, field_node, is_wildcard_child):
+    if is_wildcard_child:
+        parent.pending_list_item_fields[field_name] = field_node.clone(field_name, include_pending=False)
+        for child in parent._optional.values():
+            if child.type == "list":
+                child.pending_list_item_fields[field_name] = field_node.clone(field_name, include_pending=False)
+                child.add_optional(LIST_ITEM_NAME)
+                replace_field(child.get_optional(LIST_ITEM_NAME), field_name, field_node)
+
 def prune_variant_fields(node, visited=None):
     visited = visited or set()
     node_id = id(node)
@@ -1202,6 +1261,7 @@ def build_tree(schema_entries):
                         path._optional[type_name] = placeholder.clone(type_name)
                     else:
                         path.add_optional(type_name)
+                apply_pending_fields(path, path.get_optional(type_name), entry.get('type'))
                 path = path.get_optional(type_name)
                 path.type_name = type_name
             else: 
@@ -1244,6 +1304,7 @@ def build_tree(schema_entries):
         #handeling polymorfic variables
         if path.type == "polymorphic":
             replacement_node = path
+            polymorphic_parent = path
             if type_name and entry.get('type') == "object":
                 routing = type_name
             elif entry.get('type') != "object":
@@ -1252,6 +1313,7 @@ def build_tree(schema_entries):
                 routing = entry.get('type') + str(len(path._optional) + 1)
             path.add_optional(routing)
             path = path.get_optional(routing)
+            apply_pending_fields(polymorphic_parent, path, entry.get('type'))
             if type_name and entry.get('type') == "object":
                 path.type_name = type_name
             
@@ -1272,6 +1334,7 @@ def build_tree(schema_entries):
                 if not (len(parts) > 1 and parts[-2] == '*'):
                     parent.find_var_replace(polymorph.name, polymorph)
                 path = polymorph.get_optional(routing)
+                apply_pending_fields(polymorph, path, entry.get('type'))
                 if type_name and entry.get('type') == "object":
                     path.type_name = type_name
                 replacement_node = polymorph
@@ -1317,6 +1380,13 @@ def build_tree(schema_entries):
         if (len(parts) > 1 and parts[-2] == '*') or parent.type == "polymorphic":
             replacement_node = replacement_node or path
             field_name = parts[-1]
+            is_wildcard_child = len(parts) > 1 and parts[-2] == '*'
+            record_pending_broadcast_field(
+                parent,
+                field_name,
+                replacement_node,
+                is_wildcard_child,
+            )
             for child in parent._optional.values():
                 if child.type_name and field_name == "type":
                     child.find_var_replace(field_name, replacement_node.clone(field_name))

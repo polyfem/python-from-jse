@@ -350,6 +350,49 @@ class GeneratorUnitTests(unittest.TestCase):
 
         self.assertEqual({"threshold": {"expr": "x > 0"}}, box.as_dict())
 
+    def test_late_list_variant_inherits_earlier_wildcard_field_type(self):
+        generator = import_generator("json_to_tree_late_list_variant_field")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["selection"],
+            },
+            {
+                "pointer": "/selection",
+                "type": "int",
+            },
+            {
+                "pointer": "/selection/*/threshold",
+                "type": "float",
+            },
+            {
+                "pointer": "/selection",
+                "type": "list",
+            },
+            {
+                "pointer": "/selection/*",
+                "type": "object",
+                "#type_name": "box_side",
+                "required": ["threshold"],
+            },
+        ])
+
+        selection = root.get_optional("selection")
+        box_side = selection.get_optional("list").get_optional("box_side")
+        threshold = box_side.get_required("threshold")
+
+        self.assertEqual("float", threshold.type)
+
+        generated = generator.generated_class_text(root)
+        self.assertIn("threshold: float = None", generated)
+        self.assertNotIn("threshold: object = None", generated)
+
+        generated_module = module_from_generated_text(generated)
+        box_side = generated_module.Root.Selection.List.Box_side(threshold=0.25)
+
+        self.assertEqual({"threshold": 0.25}, box_side.as_dict())
+
     def test_simple_list_remove_uses_field_backing_list(self):
         generator = import_generator("json_to_tree_simple_list_remove")
         root = generator.build_tree([

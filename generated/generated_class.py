@@ -1825,7 +1825,7 @@ class Root(object):
                 class List(object):
                     '''List of selection (ID assignment) operations to apply to the geometry; operations can be box, sphere, etc.
                     \nRequired: []
-                    \nOptional: ['box_side']'''
+                    \nOptional: ['item', 'box_side']'''
                     def __init__(
                         self,
                         items : list = None
@@ -1877,10 +1877,10 @@ class Root(object):
                         \nOptional: ['id_offset']'''
                         def __init__(
                             self,
-                            threshold: object = None,
+                            threshold: float = None,
                             id_offset: int = 0
                         ):
-                            self._threshold = threshold
+                            self._threshold = type_check(threshold, float) if threshold is not None else None
                             self._id_offset = type_check(id_offset, int) if id_offset is not None else None
 
                         @property
@@ -1890,9 +1890,9 @@ class Root(object):
                         @threshold.setter
                         def threshold(self, value):
                             '''
-                            There is no definition
+                            Threshold for box side selection.
                             '''
-                            self._threshold = value
+                            self._threshold = type_check(value, float)
 
                         @property
                         def id_offset(self):
@@ -1900,7 +1900,7 @@ class Root(object):
 
                         @id_offset.setter
                         def id_offset(self, value):
-                            ''' 
+                            '''
                             ID offset of box side selection.
                             '''
                             self._id_offset = type_check(value, int) 
@@ -2541,7 +2541,7 @@ class Root(object):
                             ''' 
                             Threshold for box side selection.
                             '''
-                            self._threshold = type_check(value, float) 
+                            self._threshold = type_check(value, float)
 
                         @property
                         def id_offset(self):
@@ -4184,7 +4184,7 @@ class Root(object):
                 class List(object):
                     '''List of selection (ID assignment) operations to apply to the geometry; operations can be box, sphere, etc.
                     \nRequired: []
-                    \nOptional: ['box_side']'''
+                    \nOptional: ['item', 'box_side']'''
                     def __init__(
                         self,
                         items : list = None
@@ -4236,10 +4236,10 @@ class Root(object):
                         \nOptional: ['id_offset']'''
                         def __init__(
                             self,
-                            threshold: object = None,
+                            threshold: float = None,
                             id_offset: int = 0
                         ):
-                            self._threshold = threshold
+                            self._threshold = type_check(threshold, float) if threshold is not None else None
                             self._id_offset = type_check(id_offset, int) if id_offset is not None else None
 
                         @property
@@ -4249,9 +4249,9 @@ class Root(object):
                         @threshold.setter
                         def threshold(self, value):
                             '''
-                            There is no definition
+                            Threshold for box side selection.
                             '''
-                            self._threshold = value
+                            self._threshold = type_check(value, float)
 
                         @property
                         def id_offset(self):
