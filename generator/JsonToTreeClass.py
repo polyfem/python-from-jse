@@ -325,22 +325,38 @@ class ClassGenerator(object):
             self._init_input.append(
                 f'{name}: Optional["{path}"] = None'
             )
-            self._init_body.append(
-                f'self._{name} = type_check({name}, self.{class_name}) if isinstance({name}, self.{class_name}) else self.{class_name}({name}) if {name} is not None else self.{class_name}()'
-            )
-            self._as_dict.append(
-                f'"{node.name}": self._{name}.as_dict(),'
-            )
+            if node.has_default and node.default is None:
+                self._init_body.append(
+                    f'self._{name} = type_check({name}, self.{class_name}) if isinstance({name}, self.{class_name}) else self.{class_name}({name}) if {name} is not None else None'
+                )
+                self._as_dict.append(
+                    f'"{node.name}": self._{name}.as_dict() if self._{name} is not None else None,'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{name} = type_check({name}, self.{class_name}) if isinstance({name}, self.{class_name}) else self.{class_name}({name}) if {name} is not None else self.{class_name}()'
+                )
+                self._as_dict.append(
+                    f'"{node.name}": self._{name}.as_dict(),'
+                )
         elif node.type == "object" or (node.type == "list" and (len(node._optional) > 1 or child.type in ("object", "polymorphic"))):
             self._init_input.append(
                 f'{name}: Optional["{path}"] = None'
             )
-            self._init_body.append(
-                f'self._{name} = type_check({name}, self.{class_name}) if {name} else self.{class_name}()'
-            )
-            self._as_dict.append(
-                f'"{node.name}": self._{name}.as_dict(),'
-            )
+            if node.has_default and node.default is None:
+                self._init_body.append(
+                    f'self._{name} = type_check({name}, self.{class_name}) if {name} is not None else None'
+                )
+                self._as_dict.append(
+                    f'"{node.name}": self._{name}.as_dict() if self._{name} is not None else None,'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{name} = type_check({name}, self.{class_name}) if {name} else self.{class_name}()'
+                )
+                self._as_dict.append(
+                    f'"{node.name}": self._{name}.as_dict(),'
+                )
         #for lists without polymorphism
         elif node.type == "list" and len(node._optional) == 1:
             #default = node.default if node.default else None
@@ -755,6 +771,7 @@ class JsonToTreeClass(object):
     def __init__(self, name):
         self.name = name
         self.default = None
+        self.has_default = False
         self.type = None
         self._required = {}
         self._optional = {}
@@ -782,6 +799,7 @@ class JsonToTreeClass(object):
         cloned = JsonToTreeClass(name or self.name)
         _seen[node_id] = cloned
         cloned.default = self.default
+        cloned.has_default = self.has_default
         cloned.type = self.type
         cloned.doc = self.doc
         cloned.extensions = list(self.extensions) if self.extensions else self.extensions
@@ -829,8 +847,9 @@ class JsonToTreeClass(object):
     def set_doc(self, discription : str):
         self.doc = discription
 
-    def set_default(self, value):
+    def set_default(self, value, has_default=True):
         self.default = value
+        self.has_default = has_default
 
     def set_type(self, value):
         self.type = value
@@ -1458,7 +1477,7 @@ def build_tree(schema_entries):
             path.set_doc(doc)
             
         default = entry.get('default')
-        path.set_default(default)
+        path.set_default(default, 'default' in entry)
         
         type = entry.get('type') if entry.get('type') != "file" else "string"
         path.set_type(type)
@@ -1511,6 +1530,8 @@ def drop_none(d):
     return {k: v for k, v in d.items() if v is not None} if type(d) == dict else d
 
 def extension_check(filename, extensions):
+    if filename in (None, ""):
+        return None
     if not filename.endswith(tuple(extensions)):
         raise ValueError(
             f"Invalid file extension: {filename!r}. "
@@ -1576,8 +1597,8 @@ def inline_as_dict(value):
     return value
 
 def enum_check(value, enum):
-    if value is None:
-        return value
+    if value in (None, ""):
+        return None
     try:
         if isinstance(value, str):
             value = enum(value)

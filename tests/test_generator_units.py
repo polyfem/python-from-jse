@@ -426,6 +426,102 @@ class GeneratorUnitTests(unittest.TestCase):
 
         self.assertEqual({"box": [1.0, 3.0]}, selection.as_dict())
 
+    def test_empty_file_default_is_treated_as_unset(self):
+        generator = import_generator("json_to_tree_empty_file_default")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["common"],
+            },
+            {
+                "pointer": "/common",
+                "type": "file",
+                "default": "",
+                "extensions": [".json"],
+            },
+        ])
+
+        generated_module = module_from_generated_text(
+            generator.generated_class_text(root)
+        )
+
+        config = generated_module.Root()
+
+        self.assertEqual({}, config.as_dict())
+
+    def test_empty_enum_default_is_treated_as_unset(self):
+        generator = import_generator("json_to_tree_empty_enum_default")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["solver"],
+            },
+            {
+                "pointer": "/solver",
+                "type": "string",
+                "default": "",
+                "options": ["Eigen::SparseLU", "AMGCL"],
+            },
+        ])
+
+        generated_module = module_from_generated_text(
+            generator.generated_class_text(root)
+        )
+
+        config = generated_module.Root()
+
+        self.assertEqual({}, config.as_dict())
+
+    def test_default_null_object_is_not_automatically_instantiated(self):
+        generator = import_generator("json_to_tree_default_null_object")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["solver"],
+            },
+            {
+                "pointer": "/solver",
+                "type": "object",
+                "default": None,
+                "optional": ["max_threads", "linear"],
+            },
+            {
+                "pointer": "/solver/max_threads",
+                "type": "int",
+                "default": 0,
+            },
+            {
+                "pointer": "/solver/linear",
+                "type": "object",
+                "default": None,
+                "optional": ["enabled"],
+            },
+            {
+                "pointer": "/solver/linear/enabled",
+                "type": "bool",
+                "default": True,
+            },
+        ])
+
+        generated_module = module_from_generated_text(
+            generator.generated_class_text(root)
+        )
+
+        self.assertEqual({}, generated_module.Root().as_dict())
+        self.assertEqual(
+            {"max_threads": 0},
+            generated_module.Root.Solver().as_dict(),
+        )
+        self.assertEqual(
+            {"max_threads": 0, "linear": {"enabled": True}},
+            generated_module.Root.Solver(
+                linear=generated_module.Root.Solver.Linear()
+            ).as_dict(),
+        )
+
     def test_child_pointer_before_parent_entry_stays_under_parent(self):
         generator = import_generator("json_to_tree_child_before_parent")
         root = generator.build_tree([

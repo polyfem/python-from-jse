@@ -7,6 +7,8 @@ def drop_none(d):
     return {k: v for k, v in d.items() if v is not None} if type(d) == dict else d
 
 def extension_check(filename, extensions):
+    if filename in (None, ""):
+        return None
     if not filename.endswith(tuple(extensions)):
         raise ValueError(
             f"Invalid file extension: {filename!r}. "
@@ -72,8 +74,8 @@ def inline_as_dict(value):
     return value
 
 def enum_check(value, enum):
-    if value is None:
-        return value
+    if value in (None, ""):
+        return None
     try:
         if isinstance(value, str):
             value = enum(value)
@@ -124,18 +126,18 @@ class Root(object):
     ):
         self._geometry = type_check(geometry, self.Geometry) if geometry else self.Geometry()
         self._materials = type_check(materials, self.Materials) if materials else self.Materials()
-        self._units = type_check(units, self.Units) if units else self.Units()
+        self._units = type_check(units, self.Units) if units is not None else None
         self._common = extension_check(type_check(common, str), ['.json']) if common is not None else None
         self._root_path = type_check(root_path, str) if root_path is not None else None
-        self._space = type_check(space, self.Space) if space else self.Space()
+        self._space = type_check(space, self.Space) if space is not None else None
         self._time = type_check(time, self.Time) if isinstance(time, self.Time) else self.Time(time) if time is not None else self.Time()
-        self._contact = type_check(contact, self.Contact) if contact else self.Contact()
-        self._solver = type_check(solver, self.Solver) if solver else self.Solver()
-        self._boundary_conditions = type_check(boundary_conditions, self.Boundary_conditions) if boundary_conditions else self.Boundary_conditions()
-        self._initial_conditions = type_check(initial_conditions, self.Initial_conditions) if initial_conditions else self.Initial_conditions()
-        self._constraints = type_check(constraints, self.Constraints) if constraints else self.Constraints()
-        self._output = type_check(output, self.Output) if output else self.Output()
-        self._input = type_check(input, self.Input) if input else self.Input()
+        self._contact = type_check(contact, self.Contact) if contact is not None else None
+        self._solver = type_check(solver, self.Solver) if solver is not None else None
+        self._boundary_conditions = type_check(boundary_conditions, self.Boundary_conditions) if boundary_conditions is not None else None
+        self._initial_conditions = type_check(initial_conditions, self.Initial_conditions) if initial_conditions is not None else None
+        self._constraints = type_check(constraints, self.Constraints) if constraints is not None else None
+        self._output = type_check(output, self.Output) if output is not None else None
+        self._input = type_check(input, self.Input) if input is not None else None
 
     @property
     def geometry(self):
@@ -321,7 +323,7 @@ class Root(object):
         return
 
     def as_dict(self):
-        return drop_none({"geometry": self._geometry.as_dict(),"materials": self._materials.as_dict(),"units": self._units.as_dict(),"common": self._common,"root_path": self._root_path,"space": self._space.as_dict(),"time": self._time.as_dict(),"contact": self._contact.as_dict(),"solver": self._solver.as_dict(),"boundary_conditions": self._boundary_conditions.as_dict(),"initial_conditions": self._initial_conditions.as_dict(),"constraints": self._constraints.as_dict(),"output": self._output.as_dict(),"input": self._input.as_dict(),})
+        return drop_none({"geometry": self._geometry.as_dict(),"materials": self._materials.as_dict(),"units": self._units.as_dict() if self._units is not None else None,"common": self._common,"root_path": self._root_path,"space": self._space.as_dict() if self._space is not None else None,"time": self._time.as_dict(),"contact": self._contact.as_dict() if self._contact is not None else None,"solver": self._solver.as_dict() if self._solver is not None else None,"boundary_conditions": self._boundary_conditions.as_dict() if self._boundary_conditions is not None else None,"initial_conditions": self._initial_conditions.as_dict() if self._initial_conditions is not None else None,"constraints": self._constraints.as_dict() if self._constraints is not None else None,"output": self._output.as_dict() if self._output is not None else None,"input": self._input.as_dict() if self._input is not None else None,})
 
     class Geometry(object):
         '''List of geometry objects.
@@ -405,13 +407,13 @@ class Root(object):
                 self._type = enum_check(type, self.Type)
                 self._extract = enum_check(extract, self.Extract)
                 self._unit = type_check(unit, str) if unit is not None else None
-                self._transformation = type_check(transformation, self.Transformation) if transformation else self.Transformation()
+                self._transformation = type_check(transformation, self.Transformation) if transformation is not None else None
                 self._volume_selection = type_check(volume_selection, self.Volume_selection) if isinstance(volume_selection, self.Volume_selection) else self.Volume_selection(volume_selection) if volume_selection is not None else self.Volume_selection()
                 self._surface_selection = type_check(surface_selection, self.Surface_selection) if isinstance(surface_selection, self.Surface_selection) else self.Surface_selection(surface_selection) if surface_selection is not None else self.Surface_selection()
-                self._curve_selection = type_check(curve_selection, self.Curve_selection) if curve_selection else self.Curve_selection()
+                self._curve_selection = type_check(curve_selection, self.Curve_selection) if curve_selection is not None else None
                 self._point_selection = type_check(point_selection, self.Point_selection) if isinstance(point_selection, self.Point_selection) else self.Point_selection(point_selection) if point_selection is not None else self.Point_selection()
                 self._n_refs = type_check(n_refs, int) if n_refs is not None else None
-                self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+                self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
                 self._enabled = type_check(enabled, bool) if enabled is not None else None
                 self._is_obstacle = type_check(is_obstacle, bool) if is_obstacle is not None else None
 
@@ -577,7 +579,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"mesh": self._mesh,"type": self._type.value if self._type is not None else None,"extract": self._extract.value if self._extract is not None else None,"unit": self._unit,"transformation": self._transformation.as_dict(),"volume_selection": self._volume_selection.as_dict(),"surface_selection": self._surface_selection.as_dict(),"curve_selection": self._curve_selection.as_dict(),"point_selection": self._point_selection.as_dict(),"n_refs": self._n_refs,"advanced": self._advanced.as_dict(),"enabled": self._enabled,"is_obstacle": self._is_obstacle,})
+                return drop_none({"mesh": self._mesh,"type": self._type.value if self._type is not None else None,"extract": self._extract.value if self._extract is not None else None,"unit": self._unit,"transformation": self._transformation.as_dict() if self._transformation is not None else None,"volume_selection": self._volume_selection.as_dict(),"surface_selection": self._surface_selection.as_dict(),"curve_selection": self._curve_selection.as_dict() if self._curve_selection is not None else None,"point_selection": self._point_selection.as_dict(),"n_refs": self._n_refs,"advanced": self._advanced.as_dict() if self._advanced is not None else None,"enabled": self._enabled,"is_obstacle": self._is_obstacle,})
 
             class Transformation(object):
                 '''Geometric transformations applied to the geometry after loading it.
@@ -2692,13 +2694,13 @@ class Root(object):
                 self._type = enum_check(type, self.Type)
                 self._extract = enum_check(extract, self.Extract)
                 self._unit = type_check(unit, str) if unit is not None else None
-                self._transformation = type_check(transformation, self.Transformation) if transformation else self.Transformation()
+                self._transformation = type_check(transformation, self.Transformation) if transformation is not None else None
                 self._volume_selection = type_check(volume_selection, self.Volume_selection) if isinstance(volume_selection, self.Volume_selection) else self.Volume_selection(volume_selection) if volume_selection is not None else self.Volume_selection()
                 self._surface_selection = type_check(surface_selection, self.Surface_selection) if isinstance(surface_selection, self.Surface_selection) else self.Surface_selection(surface_selection) if surface_selection is not None else self.Surface_selection()
-                self._curve_selection = type_check(curve_selection, self.Curve_selection) if curve_selection else self.Curve_selection()
+                self._curve_selection = type_check(curve_selection, self.Curve_selection) if curve_selection is not None else None
                 self._point_selection = type_check(point_selection, self.Point_selection) if isinstance(point_selection, self.Point_selection) else self.Point_selection(point_selection) if point_selection is not None else self.Point_selection()
                 self._n_refs = type_check(n_refs, int) if n_refs is not None else None
-                self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+                self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
                 self._enabled = type_check(enabled, bool) if enabled is not None else None
                 self._is_obstacle = type_check(is_obstacle, bool) if is_obstacle is not None else None
 
@@ -2878,7 +2880,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"mesh": self._mesh,"array": self._array.as_dict(),"type": self._type.value if self._type is not None else None,"extract": self._extract.value if self._extract is not None else None,"unit": self._unit,"transformation": self._transformation.as_dict(),"volume_selection": self._volume_selection.as_dict(),"surface_selection": self._surface_selection.as_dict(),"curve_selection": self._curve_selection.as_dict(),"point_selection": self._point_selection.as_dict(),"n_refs": self._n_refs,"advanced": self._advanced.as_dict(),"enabled": self._enabled,"is_obstacle": self._is_obstacle,})
+                return drop_none({"mesh": self._mesh,"array": self._array.as_dict(),"type": self._type.value if self._type is not None else None,"extract": self._extract.value if self._extract is not None else None,"unit": self._unit,"transformation": self._transformation.as_dict() if self._transformation is not None else None,"volume_selection": self._volume_selection.as_dict(),"surface_selection": self._surface_selection.as_dict(),"curve_selection": self._curve_selection.as_dict() if self._curve_selection is not None else None,"point_selection": self._point_selection.as_dict(),"n_refs": self._n_refs,"advanced": self._advanced.as_dict() if self._advanced is not None else None,"enabled": self._enabled,"is_obstacle": self._is_obstacle,})
 
             class Array(object):
                 '''Array of meshes
@@ -5271,9 +5273,9 @@ class Root(object):
                 self._type = enum_check(type, self.Type)
                 self._extract = enum_check(extract, self.Extract)
                 self._unit = type_check(unit, str) if unit is not None else None
-                self._transformation = type_check(transformation, self.Transformation) if transformation else self.Transformation()
+                self._transformation = type_check(transformation, self.Transformation) if transformation is not None else None
                 self._n_refs = type_check(n_refs, int) if n_refs is not None else None
-                self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+                self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
                 self._enabled = type_check(enabled, bool) if enabled is not None else None
                 self._is_obstacle = type_check(is_obstacle, bool) if is_obstacle is not None else None
 
@@ -5403,7 +5405,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"mesh_sequence": inline_as_dict(self._mesh_sequence),"fps": self._fps,"type": self._type.value if self._type is not None else None,"extract": self._extract.value if self._extract is not None else None,"unit": self._unit,"transformation": self._transformation.as_dict(),"n_refs": self._n_refs,"advanced": self._advanced.as_dict(),"enabled": self._enabled,"is_obstacle": self._is_obstacle,})
+                return drop_none({"mesh_sequence": inline_as_dict(self._mesh_sequence),"fps": self._fps,"type": self._type.value if self._type is not None else None,"extract": self._extract.value if self._extract is not None else None,"unit": self._unit,"transformation": self._transformation.as_dict() if self._transformation is not None else None,"n_refs": self._n_refs,"advanced": self._advanced.as_dict() if self._advanced is not None else None,"enabled": self._enabled,"is_obstacle": self._is_obstacle,})
 
             class Transformation(object):
                 '''Geometric transformations applied to the geometry after loading it.
@@ -12264,8 +12266,8 @@ class Root(object):
             self._basis_type = enum_check(basis_type, self.Basis_type)
             self._poly_basis_type = enum_check(poly_basis_type, self.Poly_basis_type)
             self._use_p_ref = type_check(use_p_ref, bool) if use_p_ref is not None else None
-            self._remesh = type_check(remesh, self.Remesh) if remesh else self.Remesh()
-            self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+            self._remesh = type_check(remesh, self.Remesh) if remesh is not None else None
+            self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
 
         @property
         def discr_order(self):
@@ -12366,7 +12368,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"discr_order": self._discr_order.as_dict(),"discr_orderq": self._discr_orderq,"pressure_discr_order": self._pressure_discr_order,"basis_type": self._basis_type.value if self._basis_type is not None else None,"poly_basis_type": self._poly_basis_type.value if self._poly_basis_type is not None else None,"use_p_ref": self._use_p_ref,"remesh": self._remesh.as_dict(),"advanced": self._advanced.as_dict(),})
+            return drop_none({"discr_order": self._discr_order.as_dict(),"discr_orderq": self._discr_orderq,"pressure_discr_order": self._pressure_discr_order,"basis_type": self._basis_type.value if self._basis_type is not None else None,"poly_basis_type": self._poly_basis_type.value if self._poly_basis_type is not None else None,"use_p_ref": self._use_p_ref,"remesh": self._remesh.as_dict() if self._remesh is not None else None,"advanced": self._advanced.as_dict() if self._advanced is not None else None,})
 
         class Discr_order(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
@@ -12520,11 +12522,11 @@ class Root(object):
                 type: "Type" = 'physics'
             ):
                 self._enabled = type_check(enabled, bool) if enabled is not None else None
-                self._split = type_check(split, self.Split) if split else self.Split()
-                self._collapse = type_check(collapse, self.Collapse) if collapse else self.Collapse()
-                self._swap = type_check(swap, self.Swap) if swap else self.Swap()
-                self._smooth = type_check(smooth, self.Smooth) if smooth else self.Smooth()
-                self._local_relaxation = type_check(local_relaxation, self.Local_relaxation) if local_relaxation else self.Local_relaxation()
+                self._split = type_check(split, self.Split) if split is not None else None
+                self._collapse = type_check(collapse, self.Collapse) if collapse is not None else None
+                self._swap = type_check(swap, self.Swap) if swap is not None else None
+                self._smooth = type_check(smooth, self.Smooth) if smooth is not None else None
+                self._local_relaxation = type_check(local_relaxation, self.Local_relaxation) if local_relaxation is not None else None
                 self._type = enum_check(type, self.Type)
 
             @property
@@ -12619,7 +12621,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"enabled": self._enabled,"split": self._split.as_dict(),"collapse": self._collapse.as_dict(),"swap": self._swap.as_dict(),"smooth": self._smooth.as_dict(),"local_relaxation": self._local_relaxation.as_dict(),"type": self._type.value if self._type is not None else None,})
+                return drop_none({"enabled": self._enabled,"split": self._split.as_dict() if self._split is not None else None,"collapse": self._collapse.as_dict() if self._collapse is not None else None,"swap": self._swap.as_dict() if self._swap is not None else None,"smooth": self._smooth.as_dict() if self._smooth is not None else None,"local_relaxation": self._local_relaxation.as_dict() if self._local_relaxation is not None else None,"type": self._type.value if self._type is not None else None,})
 
             class Split(object):
                 '''Settings for adaptive remeshing edge splitting operations
@@ -14057,7 +14059,7 @@ class Root(object):
             self._min_distance_ratio = range_check(type_check(min_distance_ratio, float), 0, None) if min_distance_ratio is not None else None
             self._use_adaptive_dhat = type_check(use_adaptive_dhat, bool) if use_adaptive_dhat is not None else None
             self._periodic = type_check(periodic, bool) if periodic is not None else None
-            self._adhesion = type_check(adhesion, self.Adhesion) if adhesion else self.Adhesion()
+            self._adhesion = type_check(adhesion, self.Adhesion) if adhesion is not None else None
 
         @property
         def enabled(self):
@@ -14255,7 +14257,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"enabled": self._enabled,"dhat": self._dhat,"dhat_percentage": self._dhat_percentage,"epsv": self._epsv,"friction_coefficient": self._friction_coefficient,"use_convergent_formulation": self._use_convergent_formulation,"use_area_weighting": self._use_area_weighting,"use_improved_max_operator": self._use_improved_max_operator,"use_physical_barrier": self._use_physical_barrier,"collision_mesh": self._collision_mesh.as_dict(),"use_gcp_formulation": self._use_gcp_formulation,"alpha_n": self._alpha_n,"alpha_t": self._alpha_t,"min_distance_ratio": self._min_distance_ratio,"use_adaptive_dhat": self._use_adaptive_dhat,"periodic": self._periodic,"adhesion": self._adhesion.as_dict(),})
+            return drop_none({"enabled": self._enabled,"dhat": self._dhat,"dhat_percentage": self._dhat_percentage,"epsv": self._epsv,"friction_coefficient": self._friction_coefficient,"use_convergent_formulation": self._use_convergent_formulation,"use_area_weighting": self._use_area_weighting,"use_improved_max_operator": self._use_improved_max_operator,"use_physical_barrier": self._use_physical_barrier,"collision_mesh": self._collision_mesh.as_dict(),"use_gcp_formulation": self._use_gcp_formulation,"alpha_n": self._alpha_n,"alpha_t": self._alpha_t,"min_distance_ratio": self._min_distance_ratio,"use_adaptive_dhat": self._use_adaptive_dhat,"periodic": self._periodic,"adhesion": self._adhesion.as_dict() if self._adhesion is not None else None,})
 
         class Collision_mesh(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
@@ -14556,13 +14558,13 @@ class Root(object):
             advanced: Optional["Root.Solver.Advanced"] = None
         ):
             self._max_threads = range_check(type_check(max_threads, int), 0, None) if max_threads is not None else None
-            self._linear = type_check(linear, self.Linear) if linear else self.Linear()
-            self._adjoint_linear = type_check(adjoint_linear, self.Adjoint_linear) if adjoint_linear else self.Adjoint_linear()
-            self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear else self.Nonlinear()
-            self._augmented_lagrangian = type_check(augmented_lagrangian, self.Augmented_lagrangian) if augmented_lagrangian else self.Augmented_lagrangian()
-            self._contact = type_check(contact, self.Contact) if contact else self.Contact()
+            self._linear = type_check(linear, self.Linear) if linear is not None else None
+            self._adjoint_linear = type_check(adjoint_linear, self.Adjoint_linear) if adjoint_linear is not None else None
+            self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear is not None else None
+            self._augmented_lagrangian = type_check(augmented_lagrangian, self.Augmented_lagrangian) if augmented_lagrangian is not None else None
+            self._contact = type_check(contact, self.Contact) if contact is not None else None
             self._rayleigh_damping = type_check(rayleigh_damping, self.Rayleigh_damping) if rayleigh_damping else self.Rayleigh_damping()
-            self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+            self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
 
         @property
         def max_threads(self):
@@ -14671,7 +14673,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"max_threads": self._max_threads,"linear": self._linear.as_dict(),"adjoint_linear": self._adjoint_linear.as_dict(),"nonlinear": self._nonlinear.as_dict(),"augmented_lagrangian": self._augmented_lagrangian.as_dict(),"contact": self._contact.as_dict(),"rayleigh_damping": self._rayleigh_damping.as_dict(),"advanced": self._advanced.as_dict(),})
+            return drop_none({"max_threads": self._max_threads,"linear": self._linear.as_dict() if self._linear is not None else None,"adjoint_linear": self._adjoint_linear.as_dict() if self._adjoint_linear is not None else None,"nonlinear": self._nonlinear.as_dict() if self._nonlinear is not None else None,"augmented_lagrangian": self._augmented_lagrangian.as_dict() if self._augmented_lagrangian is not None else None,"contact": self._contact.as_dict() if self._contact is not None else None,"rayleigh_damping": self._rayleigh_damping.as_dict(),"advanced": self._advanced.as_dict() if self._advanced is not None else None,})
 
         class Linear(object):
             '''Settings for the linear solver.
@@ -14723,16 +14725,16 @@ class Root(object):
                 self._enable_overwrite_solver = type_check(enable_overwrite_solver, bool) if enable_overwrite_solver is not None else None
                 self._solver = enum_check(solver, self.Solver)
                 self._precond = enum_check(precond, self.Precond)
-                self._Eigen_LeastSquaresConjugateGradient = type_check(Eigen_LeastSquaresConjugateGradient, self.EigenLeastSquaresConjugateGradient) if Eigen_LeastSquaresConjugateGradient else self.EigenLeastSquaresConjugateGradient()
-                self._Eigen_DGMRES = type_check(Eigen_DGMRES, self.EigenDGMRES) if Eigen_DGMRES else self.EigenDGMRES()
-                self._Eigen_ConjugateGradient = type_check(Eigen_ConjugateGradient, self.EigenConjugateGradient) if Eigen_ConjugateGradient else self.EigenConjugateGradient()
-                self._Eigen_BiCGSTAB = type_check(Eigen_BiCGSTAB, self.EigenBiCGSTAB) if Eigen_BiCGSTAB else self.EigenBiCGSTAB()
-                self._Eigen_GMRES = type_check(Eigen_GMRES, self.EigenGMRES) if Eigen_GMRES else self.EigenGMRES()
-                self._Eigen_MINRES = type_check(Eigen_MINRES, self.EigenMINRES) if Eigen_MINRES else self.EigenMINRES()
-                self._Pardiso = type_check(Pardiso, self.Pardiso) if Pardiso else self.Pardiso()
-                self._Hypre = type_check(Hypre, self.Hypre) if Hypre else self.Hypre()
-                self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL else self.AMGCL()
-                self._MAS = type_check(MAS, self.MAS) if MAS else self.MAS()
+                self._Eigen_LeastSquaresConjugateGradient = type_check(Eigen_LeastSquaresConjugateGradient, self.EigenLeastSquaresConjugateGradient) if Eigen_LeastSquaresConjugateGradient is not None else None
+                self._Eigen_DGMRES = type_check(Eigen_DGMRES, self.EigenDGMRES) if Eigen_DGMRES is not None else None
+                self._Eigen_ConjugateGradient = type_check(Eigen_ConjugateGradient, self.EigenConjugateGradient) if Eigen_ConjugateGradient is not None else None
+                self._Eigen_BiCGSTAB = type_check(Eigen_BiCGSTAB, self.EigenBiCGSTAB) if Eigen_BiCGSTAB is not None else None
+                self._Eigen_GMRES = type_check(Eigen_GMRES, self.EigenGMRES) if Eigen_GMRES is not None else None
+                self._Eigen_MINRES = type_check(Eigen_MINRES, self.EigenMINRES) if Eigen_MINRES is not None else None
+                self._Pardiso = type_check(Pardiso, self.Pardiso) if Pardiso is not None else None
+                self._Hypre = type_check(Hypre, self.Hypre) if Hypre is not None else None
+                self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL is not None else None
+                self._MAS = type_check(MAS, self.MAS) if MAS is not None else None
 
             @property
             def enable_overwrite_solver(self):
@@ -14902,7 +14904,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict(),"Eigen::DGMRES": self._Eigen_DGMRES.as_dict(),"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict(),"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict(),"Eigen::GMRES": self._Eigen_GMRES.as_dict(),"Eigen::MINRES": self._Eigen_MINRES.as_dict(),"Pardiso": self._Pardiso.as_dict(),"Hypre": self._Hypre.as_dict(),"AMGCL": self._AMGCL.as_dict(),"MAS": self._MAS.as_dict(),})
+                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict() if self._Eigen_LeastSquaresConjugateGradient is not None else None,"Eigen::DGMRES": self._Eigen_DGMRES.as_dict() if self._Eigen_DGMRES is not None else None,"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict() if self._Eigen_ConjugateGradient is not None else None,"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict() if self._Eigen_BiCGSTAB is not None else None,"Eigen::GMRES": self._Eigen_GMRES.as_dict() if self._Eigen_GMRES is not None else None,"Eigen::MINRES": self._Eigen_MINRES.as_dict() if self._Eigen_MINRES is not None else None,"Pardiso": self._Pardiso.as_dict() if self._Pardiso is not None else None,"Hypre": self._Hypre.as_dict() if self._Hypre is not None else None,"AMGCL": self._AMGCL.as_dict() if self._AMGCL is not None else None,"MAS": self._MAS.as_dict() if self._MAS is not None else None,})
 
             class EigenLeastSquaresConjugateGradient(object):
                 '''Settings for the Eigen's Least Squares Conjugate Gradient solver.
@@ -15301,8 +15303,8 @@ class Root(object):
                     solver: Optional["Root.Solver.Linear.AMGCL.Solver"] = None,
                     precond: Optional["Root.Solver.Linear.AMGCL.Precond"] = None
                 ):
-                    self._solver = type_check(solver, self.Solver) if solver else self.Solver()
-                    self._precond = type_check(precond, self.Precond) if precond else self.Precond()
+                    self._solver = type_check(solver, self.Solver) if solver is not None else None
+                    self._precond = type_check(precond, self.Precond) if precond is not None else None
 
                 @property
                 def solver(self):
@@ -15335,7 +15337,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"solver": self._solver.as_dict(),"precond": self._precond.as_dict(),})
+                    return drop_none({"solver": self._solver.as_dict() if self._solver is not None else None,"precond": self._precond.as_dict() if self._precond is not None else None,})
 
                 class Solver(object):
                     '''Solver settings for the AMGCL.
@@ -15405,12 +15407,12 @@ class Root(object):
                         ncycle: int = 2,
                         coarsening: Optional["Root.Solver.Linear.AMGCL.Precond.Coarsening"] = None
                     ):
-                        self._relax = type_check(relax, self.Relax) if relax else self.Relax()
+                        self._relax = type_check(relax, self.Relax) if relax is not None else None
                         self._class_ = type_check(class_, str) if class_ is not None else None
                         self._max_levels = type_check(max_levels, int) if max_levels is not None else None
                         self._direct_coarse = type_check(direct_coarse, bool) if direct_coarse is not None else None
                         self._ncycle = type_check(ncycle, int) if ncycle is not None else None
-                        self._coarsening = type_check(coarsening, self.Coarsening) if coarsening else self.Coarsening()
+                        self._coarsening = type_check(coarsening, self.Coarsening) if coarsening is not None else None
 
                     @property
                     def relax(self):
@@ -15487,7 +15489,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"relax": self._relax.as_dict(),"class": self._class_,"max_levels": self._max_levels,"direct_coarse": self._direct_coarse,"ncycle": self._ncycle,"coarsening": self._coarsening.as_dict(),})
+                        return drop_none({"relax": self._relax.as_dict() if self._relax is not None else None,"class": self._class_,"max_levels": self._max_levels,"direct_coarse": self._direct_coarse,"ncycle": self._ncycle,"coarsening": self._coarsening.as_dict() if self._coarsening is not None else None,})
 
                     class Relax(object):
                         '''Preconditioner settings for the AMGCL.
@@ -15597,7 +15599,7 @@ class Root(object):
                             self._type = type_check(type, str) if type is not None else None
                             self._estimate_spectral_radius = type_check(estimate_spectral_radius, bool) if estimate_spectral_radius is not None else None
                             self._relax = type_check(relax, float) if relax is not None else None
-                            self._aggr = type_check(aggr, self.Aggr) if aggr else self.Aggr()
+                            self._aggr = type_check(aggr, self.Aggr) if aggr is not None else None
 
                         @property
                         def type(self):
@@ -15650,7 +15652,7 @@ class Root(object):
                             return
 
                         def as_dict(self):
-                            return drop_none({"type": self._type,"estimate_spectral_radius": self._estimate_spectral_radius,"relax": self._relax,"aggr": self._aggr.as_dict(),})
+                            return drop_none({"type": self._type,"estimate_spectral_radius": self._estimate_spectral_radius,"relax": self._relax,"aggr": self._aggr.as_dict() if self._aggr is not None else None,})
 
                         class Aggr(object):
                             '''Aggregation settings.
@@ -15829,16 +15831,16 @@ class Root(object):
                 self._enable_overwrite_solver = type_check(enable_overwrite_solver, bool) if enable_overwrite_solver is not None else None
                 self._solver = enum_check(solver, self.Solver)
                 self._precond = enum_check(precond, self.Precond)
-                self._Eigen_LeastSquaresConjugateGradient = type_check(Eigen_LeastSquaresConjugateGradient, self.EigenLeastSquaresConjugateGradient) if Eigen_LeastSquaresConjugateGradient else self.EigenLeastSquaresConjugateGradient()
-                self._Eigen_DGMRES = type_check(Eigen_DGMRES, self.EigenDGMRES) if Eigen_DGMRES else self.EigenDGMRES()
-                self._Eigen_ConjugateGradient = type_check(Eigen_ConjugateGradient, self.EigenConjugateGradient) if Eigen_ConjugateGradient else self.EigenConjugateGradient()
-                self._Eigen_BiCGSTAB = type_check(Eigen_BiCGSTAB, self.EigenBiCGSTAB) if Eigen_BiCGSTAB else self.EigenBiCGSTAB()
-                self._Eigen_GMRES = type_check(Eigen_GMRES, self.EigenGMRES) if Eigen_GMRES else self.EigenGMRES()
-                self._Eigen_MINRES = type_check(Eigen_MINRES, self.EigenMINRES) if Eigen_MINRES else self.EigenMINRES()
-                self._Pardiso = type_check(Pardiso, self.Pardiso) if Pardiso else self.Pardiso()
-                self._Hypre = type_check(Hypre, self.Hypre) if Hypre else self.Hypre()
-                self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL else self.AMGCL()
-                self._MAS = type_check(MAS, self.MAS) if MAS else self.MAS()
+                self._Eigen_LeastSquaresConjugateGradient = type_check(Eigen_LeastSquaresConjugateGradient, self.EigenLeastSquaresConjugateGradient) if Eigen_LeastSquaresConjugateGradient is not None else None
+                self._Eigen_DGMRES = type_check(Eigen_DGMRES, self.EigenDGMRES) if Eigen_DGMRES is not None else None
+                self._Eigen_ConjugateGradient = type_check(Eigen_ConjugateGradient, self.EigenConjugateGradient) if Eigen_ConjugateGradient is not None else None
+                self._Eigen_BiCGSTAB = type_check(Eigen_BiCGSTAB, self.EigenBiCGSTAB) if Eigen_BiCGSTAB is not None else None
+                self._Eigen_GMRES = type_check(Eigen_GMRES, self.EigenGMRES) if Eigen_GMRES is not None else None
+                self._Eigen_MINRES = type_check(Eigen_MINRES, self.EigenMINRES) if Eigen_MINRES is not None else None
+                self._Pardiso = type_check(Pardiso, self.Pardiso) if Pardiso is not None else None
+                self._Hypre = type_check(Hypre, self.Hypre) if Hypre is not None else None
+                self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL is not None else None
+                self._MAS = type_check(MAS, self.MAS) if MAS is not None else None
 
             @property
             def enable_overwrite_solver(self):
@@ -16008,7 +16010,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict(),"Eigen::DGMRES": self._Eigen_DGMRES.as_dict(),"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict(),"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict(),"Eigen::GMRES": self._Eigen_GMRES.as_dict(),"Eigen::MINRES": self._Eigen_MINRES.as_dict(),"Pardiso": self._Pardiso.as_dict(),"Hypre": self._Hypre.as_dict(),"AMGCL": self._AMGCL.as_dict(),"MAS": self._MAS.as_dict(),})
+                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict() if self._Eigen_LeastSquaresConjugateGradient is not None else None,"Eigen::DGMRES": self._Eigen_DGMRES.as_dict() if self._Eigen_DGMRES is not None else None,"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict() if self._Eigen_ConjugateGradient is not None else None,"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict() if self._Eigen_BiCGSTAB is not None else None,"Eigen::GMRES": self._Eigen_GMRES.as_dict() if self._Eigen_GMRES is not None else None,"Eigen::MINRES": self._Eigen_MINRES.as_dict() if self._Eigen_MINRES is not None else None,"Pardiso": self._Pardiso.as_dict() if self._Pardiso is not None else None,"Hypre": self._Hypre.as_dict() if self._Hypre is not None else None,"AMGCL": self._AMGCL.as_dict() if self._AMGCL is not None else None,"MAS": self._MAS.as_dict() if self._MAS is not None else None,})
 
             class EigenLeastSquaresConjugateGradient(object):
                 '''Settings for the Eigen's Least Squares Conjugate Gradient solver.
@@ -16407,8 +16409,8 @@ class Root(object):
                     solver: Optional["Root.Solver.Adjoint_linear.AMGCL.Solver"] = None,
                     precond: Optional["Root.Solver.Adjoint_linear.AMGCL.Precond"] = None
                 ):
-                    self._solver = type_check(solver, self.Solver) if solver else self.Solver()
-                    self._precond = type_check(precond, self.Precond) if precond else self.Precond()
+                    self._solver = type_check(solver, self.Solver) if solver is not None else None
+                    self._precond = type_check(precond, self.Precond) if precond is not None else None
 
                 @property
                 def solver(self):
@@ -16441,7 +16443,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"solver": self._solver.as_dict(),"precond": self._precond.as_dict(),})
+                    return drop_none({"solver": self._solver.as_dict() if self._solver is not None else None,"precond": self._precond.as_dict() if self._precond is not None else None,})
 
                 class Solver(object):
                     '''Solver settings for the AMGCL.
@@ -16511,12 +16513,12 @@ class Root(object):
                         ncycle: int = 2,
                         coarsening: Optional["Root.Solver.Adjoint_linear.AMGCL.Precond.Coarsening"] = None
                     ):
-                        self._relax = type_check(relax, self.Relax) if relax else self.Relax()
+                        self._relax = type_check(relax, self.Relax) if relax is not None else None
                         self._class_ = type_check(class_, str) if class_ is not None else None
                         self._max_levels = type_check(max_levels, int) if max_levels is not None else None
                         self._direct_coarse = type_check(direct_coarse, bool) if direct_coarse is not None else None
                         self._ncycle = type_check(ncycle, int) if ncycle is not None else None
-                        self._coarsening = type_check(coarsening, self.Coarsening) if coarsening else self.Coarsening()
+                        self._coarsening = type_check(coarsening, self.Coarsening) if coarsening is not None else None
 
                     @property
                     def relax(self):
@@ -16593,7 +16595,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"relax": self._relax.as_dict(),"class": self._class_,"max_levels": self._max_levels,"direct_coarse": self._direct_coarse,"ncycle": self._ncycle,"coarsening": self._coarsening.as_dict(),})
+                        return drop_none({"relax": self._relax.as_dict() if self._relax is not None else None,"class": self._class_,"max_levels": self._max_levels,"direct_coarse": self._direct_coarse,"ncycle": self._ncycle,"coarsening": self._coarsening.as_dict() if self._coarsening is not None else None,})
 
                     class Relax(object):
                         '''Preconditioner settings for the AMGCL.
@@ -16703,7 +16705,7 @@ class Root(object):
                             self._type = type_check(type, str) if type is not None else None
                             self._estimate_spectral_radius = type_check(estimate_spectral_radius, bool) if estimate_spectral_radius is not None else None
                             self._relax = type_check(relax, float) if relax is not None else None
-                            self._aggr = type_check(aggr, self.Aggr) if aggr else self.Aggr()
+                            self._aggr = type_check(aggr, self.Aggr) if aggr is not None else None
 
                         @property
                         def type(self):
@@ -16756,7 +16758,7 @@ class Root(object):
                             return
 
                         def as_dict(self):
-                            return drop_none({"type": self._type,"estimate_spectral_radius": self._estimate_spectral_radius,"relax": self._relax,"aggr": self._aggr.as_dict(),})
+                            return drop_none({"type": self._type,"estimate_spectral_radius": self._estimate_spectral_radius,"relax": self._relax,"aggr": self._aggr.as_dict() if self._aggr is not None else None,})
 
                         class Aggr(object):
                             '''Aggregation settings.
@@ -16927,16 +16929,16 @@ class Root(object):
                 self._norm_type = enum_check(norm_type, self.Norm_type)
                 self._max_iterations = type_check(max_iterations, int) if max_iterations is not None else None
                 self._iterations_per_strategy = inline_check(iterations_per_strategy, [int, list], []) if iterations_per_strategy is not None else None
-                self._line_search = type_check(line_search, self.Line_search) if line_search else self.Line_search()
+                self._line_search = type_check(line_search, self.Line_search) if line_search is not None else None
                 self._allow_out_of_iterations = type_check(allow_out_of_iterations, bool) if allow_out_of_iterations is not None else None
-                self._L_BFGS = type_check(L_BFGS, self.LBFGS) if L_BFGS else self.LBFGS()
-                self._L_BFGS_B = type_check(L_BFGS_B, self.LBFGSB) if L_BFGS_B else self.LBFGSB()
-                self._Newton = type_check(Newton, self.Newton) if Newton else self.Newton()
-                self._ADAM = type_check(ADAM, self.ADAM) if ADAM else self.ADAM()
-                self._StochasticADAM = type_check(StochasticADAM, self.StochasticADAM) if StochasticADAM else self.StochasticADAM()
-                self._StochasticGradientDescent = type_check(StochasticGradientDescent, self.StochasticGradientDescent) if StochasticGradientDescent else self.StochasticGradientDescent()
-                self._box_constraints = type_check(box_constraints, self.Box_constraints) if box_constraints else self.Box_constraints()
-                self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+                self._L_BFGS = type_check(L_BFGS, self.LBFGS) if L_BFGS is not None else None
+                self._L_BFGS_B = type_check(L_BFGS_B, self.LBFGSB) if L_BFGS_B is not None else None
+                self._Newton = type_check(Newton, self.Newton) if Newton is not None else None
+                self._ADAM = type_check(ADAM, self.ADAM) if ADAM is not None else None
+                self._StochasticADAM = type_check(StochasticADAM, self.StochasticADAM) if StochasticADAM is not None else None
+                self._StochasticGradientDescent = type_check(StochasticGradientDescent, self.StochasticGradientDescent) if StochasticGradientDescent is not None else None
+                self._box_constraints = type_check(box_constraints, self.Box_constraints) if box_constraints is not None else None
+                self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
 
             @property
             def solver(self):
@@ -17185,7 +17187,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"grad_norm_tol": self._grad_norm_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"line_search": self._line_search.as_dict(),"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict(),"L-BFGS-B": self._L_BFGS_B.as_dict(),"Newton": self._Newton.as_dict(),"ADAM": self._ADAM.as_dict(),"StochasticADAM": self._StochasticADAM.as_dict(),"StochasticGradientDescent": self._StochasticGradientDescent.as_dict(),"box_constraints": self._box_constraints.as_dict(),"advanced": self._advanced.as_dict(),})
+                return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"grad_norm_tol": self._grad_norm_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"line_search": self._line_search.as_dict() if self._line_search is not None else None,"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict() if self._L_BFGS is not None else None,"L-BFGS-B": self._L_BFGS_B.as_dict() if self._L_BFGS_B is not None else None,"Newton": self._Newton.as_dict() if self._Newton is not None else None,"ADAM": self._ADAM.as_dict() if self._ADAM is not None else None,"StochasticADAM": self._StochasticADAM.as_dict() if self._StochasticADAM is not None else None,"StochasticGradientDescent": self._StochasticGradientDescent.as_dict() if self._StochasticGradientDescent is not None else None,"box_constraints": self._box_constraints.as_dict() if self._box_constraints is not None else None,"advanced": self._advanced.as_dict() if self._advanced is not None else None,})
 
             class Solver(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
@@ -18196,8 +18198,8 @@ class Root(object):
                     self._max_step_size_iter_final = type_check(max_step_size_iter_final, int) if max_step_size_iter_final is not None else None
                     self._default_init_step_size = type_check(default_init_step_size, float) if default_init_step_size is not None else None
                     self._step_ratio = type_check(step_ratio, float) if step_ratio is not None else None
-                    self._Armijo = type_check(Armijo, self.Armijo) if Armijo else self.Armijo()
-                    self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo else self.RobustArmijo()
+                    self._Armijo = type_check(Armijo, self.Armijo) if Armijo is not None else None
+                    self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo is not None else None
 
                 @property
                 def method(self):
@@ -18318,7 +18320,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict(),"RobustArmijo": self._RobustArmijo.as_dict(),})
+                    return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict() if self._Armijo is not None else None,"RobustArmijo": self._RobustArmijo.as_dict() if self._RobustArmijo is not None else None,})
 
                 class Armijo(object):
                     '''Options for Armijo.
@@ -18921,7 +18923,7 @@ class Root(object):
                 self._scaling = type_check(scaling, float) if scaling is not None else None
                 self._max_weight = type_check(max_weight, float) if max_weight is not None else None
                 self._eta = range_check(type_check(eta, float), 0, 1) if eta is not None else None
-                self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear else self.Nonlinear()
+                self._nonlinear = type_check(nonlinear, self.Nonlinear) if nonlinear is not None else None
 
             @property
             def initial_weight(self):
@@ -18985,7 +18987,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"initial_weight": self._initial_weight,"scaling": self._scaling,"max_weight": self._max_weight,"eta": self._eta,"nonlinear": self._nonlinear.as_dict(),})
+                return drop_none({"initial_weight": self._initial_weight,"scaling": self._scaling,"max_weight": self._max_weight,"eta": self._eta,"nonlinear": self._nonlinear.as_dict() if self._nonlinear is not None else None,})
 
             class Nonlinear(object):
                 '''Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.
@@ -19029,16 +19031,16 @@ class Root(object):
                     self._norm_type = enum_check(norm_type, self.Norm_type)
                     self._max_iterations = type_check(max_iterations, int) if max_iterations is not None else None
                     self._iterations_per_strategy = inline_check(iterations_per_strategy, [int, list], []) if iterations_per_strategy is not None else None
-                    self._line_search = type_check(line_search, self.Line_search) if line_search else self.Line_search()
+                    self._line_search = type_check(line_search, self.Line_search) if line_search is not None else None
                     self._allow_out_of_iterations = type_check(allow_out_of_iterations, bool) if allow_out_of_iterations is not None else None
-                    self._L_BFGS = type_check(L_BFGS, self.LBFGS) if L_BFGS else self.LBFGS()
-                    self._L_BFGS_B = type_check(L_BFGS_B, self.LBFGSB) if L_BFGS_B else self.LBFGSB()
-                    self._Newton = type_check(Newton, self.Newton) if Newton else self.Newton()
-                    self._ADAM = type_check(ADAM, self.ADAM) if ADAM else self.ADAM()
-                    self._StochasticADAM = type_check(StochasticADAM, self.StochasticADAM) if StochasticADAM else self.StochasticADAM()
-                    self._StochasticGradientDescent = type_check(StochasticGradientDescent, self.StochasticGradientDescent) if StochasticGradientDescent else self.StochasticGradientDescent()
-                    self._box_constraints = type_check(box_constraints, self.Box_constraints) if box_constraints else self.Box_constraints()
-                    self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+                    self._L_BFGS = type_check(L_BFGS, self.LBFGS) if L_BFGS is not None else None
+                    self._L_BFGS_B = type_check(L_BFGS_B, self.LBFGSB) if L_BFGS_B is not None else None
+                    self._Newton = type_check(Newton, self.Newton) if Newton is not None else None
+                    self._ADAM = type_check(ADAM, self.ADAM) if ADAM is not None else None
+                    self._StochasticADAM = type_check(StochasticADAM, self.StochasticADAM) if StochasticADAM is not None else None
+                    self._StochasticGradientDescent = type_check(StochasticGradientDescent, self.StochasticGradientDescent) if StochasticGradientDescent is not None else None
+                    self._box_constraints = type_check(box_constraints, self.Box_constraints) if box_constraints is not None else None
+                    self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
 
                 @property
                 def solver(self):
@@ -19287,7 +19289,7 @@ class Root(object):
                     return
 
                 def as_dict(self):
-                    return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"grad_norm_tol": self._grad_norm_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"line_search": self._line_search.as_dict(),"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict(),"L-BFGS-B": self._L_BFGS_B.as_dict(),"Newton": self._Newton.as_dict(),"ADAM": self._ADAM.as_dict(),"StochasticADAM": self._StochasticADAM.as_dict(),"StochasticGradientDescent": self._StochasticGradientDescent.as_dict(),"box_constraints": self._box_constraints.as_dict(),"advanced": self._advanced.as_dict(),})
+                    return drop_none({"solver": self._solver.as_dict(),"x_delta_tol": self._x_delta_tol,"grad_norm_tol": self._grad_norm_tol,"rel_grad_norm_tol": self._rel_grad_norm_tol,"newton_decrement_tol": self._newton_decrement_tol,"rel_x_delta_tol": self._rel_x_delta_tol,"first_grad_norm_tol": self._first_grad_norm_tol,"norm_type": self._norm_type.value if self._norm_type is not None else None,"max_iterations": self._max_iterations,"iterations_per_strategy": inline_as_dict(self._iterations_per_strategy),"line_search": self._line_search.as_dict() if self._line_search is not None else None,"allow_out_of_iterations": self._allow_out_of_iterations,"L-BFGS": self._L_BFGS.as_dict() if self._L_BFGS is not None else None,"L-BFGS-B": self._L_BFGS_B.as_dict() if self._L_BFGS_B is not None else None,"Newton": self._Newton.as_dict() if self._Newton is not None else None,"ADAM": self._ADAM.as_dict() if self._ADAM is not None else None,"StochasticADAM": self._StochasticADAM.as_dict() if self._StochasticADAM is not None else None,"StochasticGradientDescent": self._StochasticGradientDescent.as_dict() if self._StochasticGradientDescent is not None else None,"box_constraints": self._box_constraints.as_dict() if self._box_constraints is not None else None,"advanced": self._advanced.as_dict() if self._advanced is not None else None,})
 
                 class Solver(object):
                     '''This is a polymorphic variable, assign an object from its classes to the value
@@ -20298,8 +20300,8 @@ class Root(object):
                         self._max_step_size_iter_final = type_check(max_step_size_iter_final, int) if max_step_size_iter_final is not None else None
                         self._default_init_step_size = type_check(default_init_step_size, float) if default_init_step_size is not None else None
                         self._step_ratio = type_check(step_ratio, float) if step_ratio is not None else None
-                        self._Armijo = type_check(Armijo, self.Armijo) if Armijo else self.Armijo()
-                        self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo else self.RobustArmijo()
+                        self._Armijo = type_check(Armijo, self.Armijo) if Armijo is not None else None
+                        self._RobustArmijo = type_check(RobustArmijo, self.RobustArmijo) if RobustArmijo is not None else None
 
                     @property
                     def method(self):
@@ -20420,7 +20422,7 @@ class Root(object):
                         return
 
                     def as_dict(self):
-                        return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict(),"RobustArmijo": self._RobustArmijo.as_dict(),})
+                        return drop_none({"method": self._method.value if self._method is not None else None,"use_grad_norm_tol": self._use_grad_norm_tol,"min_step_size": self._min_step_size,"max_step_size_iter": self._max_step_size_iter,"min_step_size_final": self._min_step_size_final,"max_step_size_iter_final": self._max_step_size_iter_final,"default_init_step_size": self._default_init_step_size,"step_ratio": self._step_ratio,"Armijo": self._Armijo.as_dict() if self._Armijo is not None else None,"RobustArmijo": self._RobustArmijo.as_dict() if self._RobustArmijo is not None else None,})
 
                     class Armijo(object):
                         '''Options for Armijo.
@@ -21021,7 +21023,7 @@ class Root(object):
                 barrier_stiffness: object = None,
                 initial_barrier_stiffness: float = 1.0
             ):
-                self._CCD = type_check(CCD, self.CCD) if CCD else self.CCD()
+                self._CCD = type_check(CCD, self.CCD) if CCD is not None else None
                 self._friction_iterations = type_check(friction_iterations, int) if friction_iterations is not None else None
                 self._tangential_adhesion_iterations = type_check(tangential_adhesion_iterations, int) if tangential_adhesion_iterations is not None else None
                 self._friction_convergence_tol = type_check(friction_convergence_tol, float) if friction_convergence_tol is not None else None
@@ -21103,7 +21105,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"CCD": self._CCD.as_dict(),"friction_iterations": self._friction_iterations,"tangential_adhesion_iterations": self._tangential_adhesion_iterations,"friction_convergence_tol": self._friction_convergence_tol,"barrier_stiffness": inline_as_dict(self._barrier_stiffness),"initial_barrier_stiffness": self._initial_barrier_stiffness,})
+                return drop_none({"CCD": self._CCD.as_dict() if self._CCD is not None else None,"friction_iterations": self._friction_iterations,"tangential_adhesion_iterations": self._tangential_adhesion_iterations,"friction_convergence_tol": self._friction_convergence_tol,"barrier_stiffness": inline_as_dict(self._barrier_stiffness),"initial_barrier_stiffness": self._initial_barrier_stiffness,})
 
             class CCD(object):
                 '''CCD options
@@ -21505,7 +21507,7 @@ class Root(object):
             self._pressure_boundary = type_check(pressure_boundary, self.Pressure_boundary) if pressure_boundary else self.Pressure_boundary()
             self._pressure_cavity = type_check(pressure_cavity, self.Pressure_cavity) if pressure_cavity else self.Pressure_cavity()
             self._obstacle_displacements = type_check(obstacle_displacements, self.Obstacle_displacements) if obstacle_displacements else self.Obstacle_displacements()
-            self._periodic_boundary = type_check(periodic_boundary, self.Periodic_boundary) if periodic_boundary else self.Periodic_boundary()
+            self._periodic_boundary = type_check(periodic_boundary, self.Periodic_boundary) if periodic_boundary is not None else None
 
         @property
         def rhs(self):
@@ -21616,7 +21618,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"rhs": self._rhs.as_dict(),"dirichlet_boundary": self._dirichlet_boundary.as_dict(),"neumann_boundary": self._neumann_boundary.as_dict(),"normal_aligned_neumann_boundary": self._normal_aligned_neumann_boundary.as_dict(),"pressure_boundary": self._pressure_boundary.as_dict(),"pressure_cavity": self._pressure_cavity.as_dict(),"obstacle_displacements": self._obstacle_displacements.as_dict(),"periodic_boundary": self._periodic_boundary.as_dict(),})
+            return drop_none({"rhs": self._rhs.as_dict(),"dirichlet_boundary": self._dirichlet_boundary.as_dict(),"neumann_boundary": self._neumann_boundary.as_dict(),"normal_aligned_neumann_boundary": self._normal_aligned_neumann_boundary.as_dict(),"pressure_boundary": self._pressure_boundary.as_dict(),"pressure_cavity": self._pressure_cavity.as_dict(),"obstacle_displacements": self._obstacle_displacements.as_dict(),"periodic_boundary": self._periodic_boundary.as_dict() if self._periodic_boundary is not None else None,})
 
         class Rhs(object):
             '''This is a polymorphic variable, assign an object from its classes to the value
@@ -25855,13 +25857,13 @@ class Root(object):
             stats: bool = False
         ):
             self._directory = type_check(directory, str) if directory is not None else None
-            self._log = type_check(log, self.Log) if log else self.Log()
+            self._log = type_check(log, self.Log) if log is not None else None
             self._json = type_check(json, str) if json is not None else None
             self._restart_json = type_check(restart_json, str) if restart_json is not None else None
-            self._paraview = type_check(paraview, self.Paraview) if paraview else self.Paraview()
-            self._data = type_check(data, self.Data) if data else self.Data()
-            self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
-            self._reference = type_check(reference, self.Reference) if reference else self.Reference()
+            self._paraview = type_check(paraview, self.Paraview) if paraview is not None else None
+            self._data = type_check(data, self.Data) if data is not None else None
+            self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
+            self._reference = type_check(reference, self.Reference) if reference is not None else None
             self._stats = type_check(stats, bool) if stats is not None else None
 
         @property
@@ -25978,7 +25980,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"directory": self._directory,"log": self._log.as_dict(),"json": self._json,"restart_json": self._restart_json,"paraview": self._paraview.as_dict(),"data": self._data.as_dict(),"advanced": self._advanced.as_dict(),"reference": self._reference.as_dict(),"stats": self._stats,})
+            return drop_none({"directory": self._directory,"log": self._log.as_dict() if self._log is not None else None,"json": self._json,"restart_json": self._restart_json,"paraview": self._paraview.as_dict() if self._paraview is not None else None,"data": self._data.as_dict() if self._data is not None else None,"advanced": self._advanced.as_dict() if self._advanced is not None else None,"reference": self._reference.as_dict() if self._reference is not None else None,"stats": self._stats,})
 
         class Log(object):
             '''Setting for the output log.
@@ -26078,7 +26080,7 @@ class Root(object):
                 self._wireframe = type_check(wireframe, bool) if wireframe is not None else None
                 self._fields = [] if fields is None else [type_check(i, str) for i in fields]
                 self._points = type_check(points, bool) if points is not None else None
-                self._options = type_check(options, self.Options) if options else self.Options()
+                self._options = type_check(options, self.Options) if options is not None else None
 
             @property
             def file_name(self):
@@ -26217,7 +26219,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"file_name": self._file_name,"vismesh_rel_area": self._vismesh_rel_area,"skip_frame": self._skip_frame,"high_order_mesh": self._high_order_mesh,"volume": self._volume,"surface": self._surface,"wireframe": self._wireframe,"fields": self._fields,"points": self._points,"options": self._options.as_dict(),})
+                return drop_none({"file_name": self._file_name,"vismesh_rel_area": self._vismesh_rel_area,"skip_frame": self._skip_frame,"high_order_mesh": self._high_order_mesh,"volume": self._volume,"surface": self._surface,"wireframe": self._wireframe,"fields": self._fields,"points": self._points,"options": self._options.as_dict() if self._options is not None else None,})
 
             class Options(object):
                 '''Optional fields in the output
@@ -26469,7 +26471,7 @@ class Root(object):
                 self._rest_mesh = type_check(rest_mesh, str) if rest_mesh is not None else None
                 self._mises = type_check(mises, str) if mises is not None else None
                 self._nodes = type_check(nodes, str) if nodes is not None else None
-                self._advanced = type_check(advanced, self.Advanced) if advanced else self.Advanced()
+                self._advanced = type_check(advanced, self.Advanced) if advanced is not None else None
                 self._file_index_offset = type_check(file_index_offset, int) if file_index_offset is not None else None
 
             @property
@@ -26589,7 +26591,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"solution": self._solution,"full_mat": self._full_mat,"stiffness_mat": self._stiffness_mat,"stress_mat": self._stress_mat,"state": self._state,"rest_mesh": self._rest_mesh,"mises": self._mises,"nodes": self._nodes,"advanced": self._advanced.as_dict(),"file_index_offset": self._file_index_offset,})
+                return drop_none({"solution": self._solution,"full_mat": self._full_mat,"stiffness_mat": self._stiffness_mat,"stress_mat": self._stress_mat,"state": self._state,"rest_mesh": self._rest_mesh,"mises": self._mises,"nodes": self._nodes,"advanced": self._advanced.as_dict() if self._advanced is not None else None,"file_index_offset": self._file_index_offset,})
 
             class Advanced(object):
                 '''advanced options
@@ -26871,7 +26873,7 @@ class Root(object):
             self,
             data: Optional["Root.Input.Data"] = None
         ):
-            self._data = type_check(data, self.Data) if data else self.Data()
+            self._data = type_check(data, self.Data) if data is not None else None
 
         @property
         def data(self):
@@ -26891,7 +26893,7 @@ class Root(object):
             return
 
         def as_dict(self):
-            return drop_none({"data": self._data.as_dict(),})
+            return drop_none({"data": self._data.as_dict() if self._data is not None else None,})
 
         class Data(object):
             '''input to restart time dependent sim
