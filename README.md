@@ -1,129 +1,189 @@
-# Class Generation from JSON Specification
+# Python Class Generation from JSON Specification
 
-This repository contains the implementation developed for a master's thesis on **specification-driven configuration generation**. The system converts a JSON-based specification into a **strongly typed Python configuration interface**, allowing users to construct valid configurations programmatically and serialize them into JSON.
+This repository contains a JSON-specification-driven generator for Python configuration classes. It reads a JSON schema for PolyFEM-style configuration files, builds an intermediate tree representation, and generates a typed Python authoring interface that can validate inputs and serialize back to JSON-compatible dictionaries.
 
-Instead of manually writing JSON configuration files and validating them afterward, this approach generates Python classes that enforce structure and constraints during configuration construction.
+## What The Generator Does
 
----
+The generator is not a simple one-entry-to-one-class converter. The current pipeline is:
 
-# Overview
-
-The generator reads a JSON specification describing configuration variables, their hierarchy, and associated constraints. From this specification it:
-
-1. Builds an **intermediate tree representation** of the configuration structure.
-2. Generates **Python classes** that mirror the hierarchy of the specification.
-3. Provides a **typed authoring interface** for constructing configurations.
-4. Serializes the resulting configuration objects into **JSON-compatible dictionaries**.
-
-Validation occurs during assignment through generated setters and helper utilities, ensuring that type and constraint violations are detected early.
-
----
-
-# Files
-
-- **Untitled-1.json**  
-  Example JSON specification used as input to the generator.
-
-- **JsonToTreeClass.py**  
-  Main script responsible for:
-  - parsing the specification
-  - constructing the intermediate tree
-  - generating Python classes
-
-- **generated_class.py**  
-  Output file containing the generated configuration classes.
-
----
-
-# Generating Classes
-
-To generate classes from the specification:
-
-### 1. Modify the specification
-
-Edit the example file:
-Untitled-1.json
-
-
-or replace it with another compatible specification.
-
-### 2. Run the generator
-
-```bash
-python JsonToTreeClass.py
+```text
+json-specs/input-spec.json
+  -> expand_includes()
+  -> build_tree()
+  -> generated_class_text()
+  -> generated/generated_class.py
 ```
-### 3. Generated output
 
-After execution, the generated Python classes will be written to:
-```bash
-generated_class.py
+During that process it handles:
+
+- included spec files under `json-specs/`
+- repeated pointers and polymorphic values
+- list wildcard entries such as `/materials/*`
+- `type_name` and legacy `#type_name`
+- required and optional child fields
+- variant-specific field pruning
+- legacy `ObjectN` aliases for backward compatibility
+
+The output is a generated Python module containing nested classes such as `Root`, `Root.Time`, `Root.Materials`, and their variants.
+
+## Repository Layout
+
+- `generator/JsonToTreeClass.py`
+  - Main generator implementation.
+  - Defines schema expansion, tree construction, class generation, and the default CLI entry point.
+
+- `json-specs/input-spec.json`
+  - Default top-level input specification.
+
+- `json-specs/*.json`
+  - Additional specs included from the top-level schema.
+
+- `generated/generated_class.py`
+  - Generated Python classes.
+  - This file is overwritten when the generator is run.
+
+- `tests/test_generator_units.py`
+  - Unit tests for generator behavior and edge cases.
+
+- `doc/generator-explanation.md`
+  - Local detailed explanation document.
+  - The `doc/` directory is currently ignored by git.
+
+## Requirements
+
+The project uses the Python standard library only. No external dependencies are required for generation or tests.
+
+Use Python 3.10 or newer if possible. The current code and tests are run with the local Python available in this workspace.
+
+## Generate Classes
+
+From the repository root:
+
+```powershell
+python generator\JsonToTreeClass.py
 ```
-This file is automatically overwritten each time the generator runs.
 
----
+By default this reads:
 
-# Using the Generated Classes
-
-Once classes are generated, they can be used as a configuration authoring interface.
-
-Example usage:
-```bash
-from generated_class import Root
-
-# Create root configuration
-root = Root(string1="hello")
-
-# Incrementally populate nested values
-root.geometry.nested = 8
-
-# Optional: check for missing required fields
-root.check_required()
-
-# Convert to JSON-compatible dictionary
-data = root.as_dict()
+```text
+json-specs/input-spec.json
 ```
-The resulting dictionary can then be serialized using any JSON library.
 
----
+and writes:
 
-# Validation Behavior
+```text
+generated/generated_class.py
+```
 
-The generated interface performs validation when values are assigned.
+The output file is regenerated in place.
 
-This includes checks such as:
+## Use The Generated Classes
 
-- Type validation
+After generation, import `Root` from the generated module and construct configuration objects programmatically.
 
-- Numeric range constraints
+Example:
 
-- Enumerated value checks
+```python
+from generated.generated_class import Root
 
-- File extension checks (when defined)
+config = Root()
 
-Errors are reported at the point of assignment, helping users detect invalid configurations early.
+config.time = Root.Time(
+    Root.Time.TendDt(tend=1.0, dt=0.1)
+)
 
----
+material = Root.Materials.MooneyRivlin(
+    c1=1.0,
+    c2=1.0,
+    k=10.0,
+)
+config.materials = Root.Materials(items=[material])
 
-# Notes on Extending the System
+config.check_required()
+data = config.as_dict()
+```
 
-## Hierarchy Ordering
+`data` is a JSON-compatible dictionary and can be passed to `json.dump()` or `json.dumps()`.
 
-The generator assumes that the specification is incremental with respect to hierarchy.
+## Validation Behavior
 
-This means:
+The generated classes validate values when they are assigned. Current validation includes:
 
-- A parent node must appear before its children in the specification file.
+- Python type checks
+- class checks for nested generated objects
+- enum checks for string `options`
+- numeric range checks
+- file extension checks
+- inline checks for small polymorphic value schemas
 
-If this ordering is violated, the generator raises a hierarchy-order error.
+`check_required()` recursively reports missing required values by printing messages. It does not currently raise exceptions.
 
-## Adding New Types or Rules
+`as_dict()` serializes generated objects back to plain Python dictionaries and lists, dropping fields whose value is `None`.
 
-If new types or validation rules are required, the following components must be extended consistently:
+## Notes On `type_name` And `ObjectN`
 
-- specification parser
+The generator supports both `type_name` and legacy `#type_name` through `entry_type_name(entry)`.
 
-- node representation
+When a schema object variant has a stable type name, the generated class uses that readable name. For compatibility, the generator may also create aliases such as:
 
-- class generation logic
+```python
+Object2 = Stiffness
+```
 
-Unsupported type identifiers are rejected with a clear error message listing the supported types.
+These aliases are not the same as anonymous generated classes. They should not be removed just to eliminate the text `ObjectN`.
+
+The case that needs attention is:
+
+```python
+class Object2(object):
+    ...
+```
+
+That usually means the schema or generator did not provide a stable readable name for that object variant.
+
+## Skipped Schema Sections
+
+The generator intentionally skips these pointer prefixes:
+
+```python
+SKIP_POINTER_PREFIXES = ("/preset_problem", "/tests")
+```
+
+Those sections are excluded by design in the current generator.
+
+## Run Checks
+
+Run the unit tests:
+
+```powershell
+python -m unittest tests.test_generator_units
+```
+
+Compile-check the generator, tests, and generated output:
+
+```powershell
+python -m py_compile tests\test_generator_units.py generator\JsonToTreeClass.py generated\generated_class.py
+```
+
+Search for generated `ObjectN` classes or aliases:
+
+```powershell
+rg -n "class Object[0-9]+\(object\):|Object[0-9]+ =" generated\generated_class.py
+```
+
+## Development Notes
+
+When changing the generator, prefer small regression tests in `tests/test_generator_units.py`. A minimal schema in a unit test is usually easier to debug than the full `json-specs/input-spec.json`.
+
+Good areas to test explicitly include:
+
+- include expansion
+- child pointers appearing before parent entries
+- duplicate pointer variants
+- list item variants
+- inline value schemas
+- `type_name` / `#type_name` behavior
+- required field alternatives
+- `as_dict()` output shape
+
+Avoid broad refactors unless the generator behavior is already covered by focused tests.
