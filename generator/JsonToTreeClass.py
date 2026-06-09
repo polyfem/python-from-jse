@@ -37,30 +37,6 @@ PRIMITIVE_TYPE_EXPRESSIONS = {
 INLINE_PRIMITIVE_TYPES = set(PRIMITIVE_TYPE_EXPRESSIONS)
 LIST_ITEM_NAME = "item"
 
-def legacy_list_variant_alias(node):
-    variants = [
-        child
-        for name, child in node._optional.items()
-        if not (
-            name == LIST_ITEM_NAME
-            and child.type is None
-            and child.type_name is None
-            and not child._required
-            and not child._optional
-        )
-    ]
-    return LIST_ITEM_NAME if not variants else f"object{len(variants) + 1}"
-
-def is_generated_legacy_alias(alias):
-    return alias == LIST_ITEM_NAME or re.fullmatch(r"object\d+", alias) is not None
-
-def set_generated_legacy_alias(node, alias):
-    node.legacy_aliases = [
-        existing for existing in node.legacy_aliases
-        if not is_generated_legacy_alias(existing)
-    ]
-    node.add_legacy_alias(alias)
-
 def is_value_with_unit_node(node):
     return (
         node.type == "object"
@@ -115,7 +91,6 @@ class ClassGenerator(object):
         self._property_setter = []
         self._as_dict = []
         self._inner_classes = []
-        self._class_aliases = []
         self._check_required = []
         self._enums = []
         self._field_names = {}
@@ -221,7 +196,6 @@ class ClassGenerator(object):
         self._enums.append(result)
 
     def set_init_list(self, node):
-        #type = node.type if node.type != "string" else "str"
         if not self._init_input:
             allowed_classes = []
             dict_condition = []
@@ -303,7 +277,7 @@ class ClassGenerator(object):
             )
     
     def set_init(self, node, path):
-        type = node.type if node.type != "string" else "str"
+        python_type = node.type if node.type != "string" else "str"
         name = self.field_name(node)
         class_name = py_class_name(node.name)
         child = node
@@ -383,7 +357,7 @@ class ClassGenerator(object):
         elif node.type == "string" and len(node._optional) > 0:
             self.set_enum(node)
             self._init_input.append(
-                f'{name}: "{class_name}" = {self.default_literal(node, type)}'
+                f'{name}: "{class_name}" = {self.default_literal(node, python_type)}'
             )
             self._init_body.append(
                 f'self._{name} = enum_check({name}, self.{class_name})'
@@ -393,9 +367,9 @@ class ClassGenerator(object):
             )
         #For file types with extensions limit
         elif node.type == "string" and node.extensions:
-            type = "str"
+            python_type = "str"
             self._init_input.append(
-                f'{name}: {type} = {self.default_literal(node, type)}'
+                f'{name}: {python_type} = {self.default_literal(node, python_type)}'
             )
             self._init_body.append(
                 f'self._{name} = extension_check(type_check({name}, str), {node.extensions}) if {name} is not None else None'
@@ -416,15 +390,15 @@ class ClassGenerator(object):
         #For other types (string, int and float)
         else :
             self._init_input.append(
-                    f'{name}: {type} = {self.default_literal(node, type)}'
+                    f'{name}: {python_type} = {self.default_literal(node, python_type)}'
                 )
             if node.min is not None or node.max is not None:
                 self._init_body.append(
-                    f'self._{name} = range_check(type_check({name}, {type}), {node.min}, {node.max}) if {name} is not None else None'
+                    f'self._{name} = range_check(type_check({name}, {python_type}), {node.min}, {node.max}) if {name} is not None else None'
                 )
             else:
                 self._init_body.append(
-                    f'self._{name} = type_check({name}, {type}) if {name} is not None else None'
+                    f'self._{name} = type_check({name}, {python_type}) if {name} is not None else None'
                 )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
@@ -437,7 +411,7 @@ class ClassGenerator(object):
             self._check_required.append(
                     f"""
         if self.value is None:
-            print("Requiered variable {path}.value does not have value")
+            print("Required variable {path}.value does not have value")
         else:
             if type(self.value) not in [{type_list}]:
                 self.value.check_required()"""
@@ -454,7 +428,7 @@ class ClassGenerator(object):
                 if type(item) not in [{type_list}]:
                     item.check_required()
         else:
-            print("Requiered variable {path}.items does not have value")"""
+            print("Required variable {path}.items does not have value")"""
                     )
 
     def set_check_required(self, node, path):
@@ -467,7 +441,7 @@ class ClassGenerator(object):
             self._check_required.append(
                 f"""
         if self.{name} is None:
-            print("Requiered variable {path} does not have value")"""
+            print("Required variable {path} does not have value")"""
                 )
         elif node.type == "object" or (node.type == "list" and (len(node._optional) > 1 or child.type == "object") or node.type == "polymorphic"):
             self._check_required.append(
@@ -478,13 +452,13 @@ class ClassGenerator(object):
             self._check_required.append(
                 f"""
         if not self.{name}:
-            print("Requiered variable {path} does not have value")"""
+            print("Required variable {path} does not have value")"""
                 )
         else :
             self._check_required.append(
                 f"""
         if self.{name} is None:
-            print("Requiered variable {path} does not have value")"""
+            print("Required variable {path} does not have value")"""
                 )
 
     def set_check_required_alternatives(self, path, required_field_sets):
@@ -502,7 +476,7 @@ class ClassGenerator(object):
         self._check_required.append(
             f"""
         if not ({condition}):
-            print("Requiered variable {path} must satisfy one required field set: {description}")"""
+            print("Required variable {path} must satisfy one required field set: {description}")"""
         )
 
     def set_property_setter_list(self, node):
@@ -598,7 +572,7 @@ class ClassGenerator(object):
         )
 
     def set_property_setter(self, node):
-        type = node.type if node.type != "string" else "str"
+        python_type = node.type if node.type != "string" else "str"
         name = self.field_name(node)
         class_name = py_class_name(node.name)
         child = node
@@ -623,13 +597,13 @@ class ClassGenerator(object):
             )
             return
 
-        if type == "object" or type == "polymorphic" or type == "list":
-            type_check = f'self.{class_name}'
+        if python_type == "object" or python_type == "polymorphic" or python_type == "list":
+            type_check_expr = f'self.{class_name}'
             required_optional = f"""
         \\nRequired: {list(node._required)}
         \\nOptional: {list(node._optional)}"""
         else:
-            type_check = type
+            type_check_expr = python_type
 
         if node.type == "list" and len(node._optional) == 1 and child.type not in ("object", "polymorphic"):
             child_type = child.type if child.type != "string" else "str"
@@ -672,9 +646,9 @@ class ClassGenerator(object):
         #for other types
         else:
             if node.min is not None or node.max is not None:
-                inside_setter = f"self._{name} = range_check(type_check(value, {type_check}), {node.min}, {node.max})"
+                inside_setter = f"self._{name} = range_check(type_check(value, {type_check_expr}), {node.min}, {node.max})"
             else:
-                inside_setter = f"self._{name} = type_check(value, {type_check})"
+                inside_setter = f"self._{name} = type_check(value, {type_check_expr})"
         
         self._property_setter.append(
             f"""
@@ -695,16 +669,7 @@ class ClassGenerator(object):
             inner_class
         )
 
-    def set_class_alias(self, alias, target):
-        alias_name = py_class_name(alias)
-        target_name = py_class_name(target)
-        if alias_name == target_name:
-            return
-        class_alias = f"{alias_name} = {target_name}"
-        if class_alias not in self._class_aliases:
-            self._class_aliases.append(class_alias)
-
-    def generate(self, type):
+    def generate(self, node_type):
         INDENT = "    "
         init_input = (",\n").join(
             INDENT * 2 + p for p in self._init_input
@@ -732,17 +697,11 @@ class ClassGenerator(object):
             p for p in self._inner_classes
         )
 
-        class_aliases = ("\n").join(
-            INDENT + p for p in self._class_aliases
-        )
-        if class_aliases:
-            class_aliases = "\n" + class_aliases + "\n"
-
         enums = ("").join(
             p for p in self._enums
         )
 
-        as_dict = as_dict if type == "list" or type == "polymorphic" else "{" + as_dict + "}"
+        as_dict = as_dict if node_type == "list" or node_type == "polymorphic" else "{" + as_dict + "}"
 
         result = f"""
 class {self._class_name}(object):
@@ -760,9 +719,8 @@ class {self._class_name}(object):
 
     def as_dict(self):
         return drop_none({as_dict})
-{inner_classes}{class_aliases}
+{inner_classes}
 """
-        #print(result)
         return result
 
 
@@ -782,10 +740,8 @@ class JsonToTreeClass(object):
         self.type_name = None
         self.variant_fields = None
         self.required_field_sets = []
-        self.legacy_aliases = []
         self.pending_variant_fields = {}
         self.pending_list_item_fields = {}
-        # self.camera: str = 'you'
 
     def __str__(self):
         return self._to_string()
@@ -808,7 +764,6 @@ class JsonToTreeClass(object):
         cloned.type_name = self.type_name
         cloned.variant_fields = list(self.variant_fields) if self.variant_fields is not None else None
         cloned.required_field_sets = [list(fields) for fields in self.required_field_sets]
-        cloned.legacy_aliases = list(self.legacy_aliases)
         if include_pending:
             cloned.pending_variant_fields = {
                 key: value.clone(key, include_pending=False, _seen=_seen)
@@ -844,8 +799,8 @@ class JsonToTreeClass(object):
 
         return result
 
-    def set_doc(self, discription : str):
-        self.doc = discription
+    def set_doc(self, description : str):
+        self.doc = description
 
     def set_default(self, value, has_default=True):
         self.default = value
@@ -892,10 +847,6 @@ class JsonToTreeClass(object):
 
     def get_optional(self, var_name):
         return self._optional.get(var_name)
-
-    def add_legacy_alias(self, alias):
-        if alias and alias != self.name and alias not in self.legacy_aliases:
-            self.legacy_aliases.append(alias)
     
     def make_it_polymorphic(self, existing_variant_name=None):
         polymorph = JsonToTreeClass(self.name)
@@ -1029,7 +980,6 @@ class JsonToTreeClass(object):
             class_builder.set_check_required_alternatives(path, required_field_sets)
 
         for required in self._required.values():
-            #print(self.name)
             inner_path_capitalize = path + "." + py_class_name(required.name)
             inner_path = path + "." + required.name
             class_builder.set_init(required, inner_path_capitalize)
@@ -1045,11 +995,8 @@ class JsonToTreeClass(object):
                 inner_class = required.class_generator(inner_path_capitalize)
                 inner_class = self.indent(inner_class)
                 class_builder.set_inner_classes(inner_class)
-                for alias in required.legacy_aliases:
-                    class_builder.set_class_alias(alias, required.name)
 
         for optional in self._optional.values():
-            #print(self.name)
             inner_path_capitalize = path + "." + py_class_name(optional.name)
             if self.type == "list":
                 class_builder.set_init_list(self)
@@ -1071,22 +1018,8 @@ class JsonToTreeClass(object):
                 inner_class = optional.class_generator(inner_path_capitalize)
                 inner_class = self.indent(inner_class)
                 class_builder.set_inner_classes(inner_class)
-                for alias in optional.legacy_aliases:
-                    class_builder.set_class_alias(alias, optional.name)
 
         return class_builder.generate(self.type)
-        """ optional = self.get_optional(parts[0])
-        if optional == "No set":
-            self.add_optional(parts[0])
-            optional = self.get_optional(parts[0])
-        return optional.find_optional_var(parts[1:]) """
-        
-
-"""
-    def show_all_grades(self):
-        for course, grade in self.grades.items():
-            print(f"{course}: {grade}")
-""" 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SPEC_DIR = PROJECT_ROOT / "json-specs"
@@ -1170,10 +1103,6 @@ def filtered_entry(entry):
 
 def entry_type_name(entry):
     return entry.get("type_name") or entry.get("#type_name")
-
-def pointer_depth(entry):
-    pointer = entry.get("pointer", "/")
-    return 0 if pointer == "/" else len(pointer.strip("/").split("/"))
 
 def mark_variant_fields(node, entry):
     fields = []
@@ -1274,32 +1203,6 @@ def apply_type_name_defaults(node, visited=None):
     for child in list(node._required.values()) + list(node._optional.values()):
         apply_type_name_defaults(child, visited)
 
-def apply_legacy_type_name_aliases(node, visited=None):
-    visited = visited or set()
-    node_id = id(node)
-    if node_id in visited:
-        return
-    visited.add(node_id)
-
-    if node.type == "list":
-        typed_object_index = 0
-        for child in node._optional.values():
-            if child.type_name and child.type == "object":
-                alias = (
-                    LIST_ITEM_NAME
-                    if typed_object_index == 0
-                    else f"object{typed_object_index + 1}"
-                )
-                set_generated_legacy_alias(child, alias)
-                typed_object_index += 1
-    elif node.type == "polymorphic":
-        for index, child in enumerate(node._optional.values(), start=1):
-            if child.type_name and child.type == "object":
-                set_generated_legacy_alias(child, f"object{index}")
-
-    for child in list(node._required.values()) + list(node._optional.values()):
-        apply_legacy_type_name_aliases(child, visited)
-
 def build_tree(schema_entries):
     root = JsonToTreeClass("root")
     schema = expand_includes(schema_entries)
@@ -1329,16 +1232,13 @@ def build_tree(schema_entries):
         ensure_pointer(root, entry.get("pointer", "/"))
 
     type_list = ["object", "int", "float", "list", "string", "bool", "file"]
-    """ setting value of json to the class """
     for entry in schema:
-        type = entry.get('type')
-        if type not in type_list:
-            raise ValueError(f'Type "{type}" is not supported by the system. \nAcceptable types: {type_list}')
+        entry_type = entry.get('type')
+        if entry_type not in type_list:
+            raise ValueError(f'Type "{entry_type}" is not supported by the system. \nAcceptable types: {type_list}')
 
         name = "root" if entry['pointer'] == "/" else entry['pointer']
-        #print(name)
         parts = [name] if name == 'root' else name.strip('/').split('/')
-        #print(parts[-1])
 
         if parts[-1] == 'root':
             path = root
@@ -1352,24 +1252,21 @@ def build_tree(schema_entries):
         replacement_node = None
         type_name = entry_type_name(entry)
         used_list_type_name = False
-        legacy_alias = None
 
-        #handling list variables
+        # Handle list variables.
         if path.type == "list" and parts[-1] == '*':
             parent = path
             if type_name:
                 used_list_type_name = True
-                legacy_alias = legacy_list_variant_alias(path)
                 if path.get_optional(type_name) is None:
                     placeholder = path.get_optional(LIST_ITEM_NAME)
                     if placeholder is not None:
                         path._optional[type_name] = placeholder.clone(type_name)
                     else:
                         path.add_optional(type_name)
-                apply_pending_fields(path, path.get_optional(type_name), entry.get('type'))
+                apply_pending_fields(path, path.get_optional(type_name), entry_type)
                 path = path.get_optional(type_name)
                 path.type_name = type_name
-                path.add_legacy_alias(legacy_alias)
             else: 
                 path.add_optional(LIST_ITEM_NAME)
                 path = path.get_optional(LIST_ITEM_NAME)
@@ -1381,9 +1278,8 @@ def build_tree(schema_entries):
             and path.name == LIST_ITEM_NAME
             and path.type is not None
             and not type_name
-            and (entry.get("type") != "object" or path.type == "object")
+            and (entry_type != "object" or path.type == "object")
         ):
-            entry_type = entry.get("type")
             routing = (
                 f"object{len(parent._optional) + 1}"
                 if entry_type == "object"
@@ -1394,10 +1290,9 @@ def build_tree(schema_entries):
             parent.add_optional(routing)
             path = parent.get_optional(routing)
 
-        if type_name and not used_list_type_name and entry.get('type') == "object" and path.type is None:
+        if type_name and not used_list_type_name and entry_type == "object" and path.type is None:
             placeholder = path.clone(type_name)
             placeholder.type_name = type_name
-            placeholder.add_legacy_alias("object1")
             path.type = "polymorphic"
             path.doc = "This is a polymorphic variable, assign an object from its classes to the value"
             path.default = None
@@ -1408,78 +1303,68 @@ def build_tree(schema_entries):
             path._optional = {type_name: placeholder}
             path = placeholder
 
-        #handeling polymorfic variables
+        # Handle polymorphic variables.
         if path.type == "polymorphic":
             replacement_node = path
             polymorphic_parent = path
-            if type_name and entry.get('type') == "object":
+            if type_name and entry_type == "object":
                 routing = type_name
-                legacy_alias = f"object{len(path._optional) + 1}"
-            elif entry.get('type') != "object":
-                routing = entry.get('type')
+            elif entry_type != "object":
+                routing = entry_type
             else:
-                routing = entry.get('type') + str(len(path._optional) + 1)
+                routing = entry_type + str(len(path._optional) + 1)
             path.add_optional(routing)
             path = path.get_optional(routing)
-            apply_pending_fields(polymorphic_parent, path, entry.get('type'))
-            if type_name and entry.get('type') == "object":
+            apply_pending_fields(polymorphic_parent, path, entry_type)
+            if type_name and entry_type == "object":
                 path.type_name = type_name
-                path.add_legacy_alias(legacy_alias)
             
         elif (
             path.type is not None
             and not (
-                entry.get('type') == "object"
+                entry_type == "object"
                 and path.type == "object"
                 and not type_name
                 and not entry.get('required')
                 and entry.get('optional')
             )
         ):
-            if type_name and entry.get('type') == "object" and path.name == type_name and path.type == "object":
+            if type_name and entry_type == "object" and path.name == type_name and path.type == "object":
                 routing = None
                 path.type_name = type_name
             else:
                 existing_variant_name = path.name if path.name != parts[-1] else None
                 polymorph = path.make_it_polymorphic(existing_variant_name)
-                if type_name and entry.get('type') == "object":
+                if type_name and entry_type == "object":
                     routing = type_name
-                    legacy_alias = f"object{len(polymorph._optional) + 1}"
-                elif entry.get('type') != "object":
-                    routing = entry.get('type')
+                elif entry_type != "object":
+                    routing = entry_type
                 else:
-                    routing = entry.get('type') + "2"
+                    routing = entry_type + "2"
                 polymorph.add_optional(routing)
                 if not (len(parts) > 1 and parts[-2] == '*'):
                     parent.find_var_replace(polymorph.name, polymorph)
                 path = polymorph.get_optional(routing)
-                apply_pending_fields(polymorph, path, entry.get('type'))
-                if type_name and entry.get('type') == "object":
+                apply_pending_fields(polymorph, path, entry_type)
+                if type_name and entry_type == "object":
                     path.type_name = type_name
-                    path.add_legacy_alias(legacy_alias)
                 replacement_node = polymorph
 
-        if entry.get('type') == "object":
+        if entry_type == "object":
             mark_variant_fields(path, entry)
             mark_required_field_set(path, entry)
 
         if entry.get('required'):
             for value in entry.get('required'):
-                #optional = JsonToTreeClass(value)
                 path.add_required(value)
-                #print(path.get_optional(value).name)
 
         if entry.get('optional'):
             for value in entry.get('optional'):
-                #optional = JsonToTreeClass(value)
                 path.add_optional(value)
-                #print(path.get_optional(value).name)
 
         if entry.get('options'):
             for value in entry.get('options'):
-                #optional = JsonToTreeClass(value)
                 path.add_optional(value)
-                #print(path.get_optional(value).name)
 
         doc = entry.get('doc')
         if doc:
@@ -1488,8 +1373,8 @@ def build_tree(schema_entries):
         default = entry.get('default')
         path.set_default(default, 'default' in entry)
         
-        type = entry.get('type') if entry.get('type') != "file" else "string"
-        path.set_type(type)
+        node_type = entry_type if entry_type != "file" else "string"
+        path.set_type(node_type)
         
         extensions = entry.get('extensions')
         path.set_extensions(extensions)
@@ -1513,18 +1398,7 @@ def build_tree(schema_entries):
                 else:
                     child.find_var_replace(field_name, replacement_node)
 
-        #print (path.name)
-
-    """
-        if entry['pointer'] == "/":
-            root = JsonToTreeClass("root")
-            if entry.get('optional'):
-                print(entry['optional']) 
-    """
-    #print(root.get_optional("geometry").get_optional("nested").name)
-
     prune_variant_fields(root)
-    apply_legacy_type_name_aliases(root)
     apply_type_name_defaults(root)
     return root
 
@@ -1544,12 +1418,11 @@ def extension_check(filename, extensions):
     if not filename.endswith(tuple(extensions)):
         raise ValueError(
             f"Invalid file extension: {filename!r}. "
-            f"Allowed extension are: {extensions}"
+            f"Allowed extensions are: {extensions}"
         )
     return filename
 
 def class_check(value, allowed):
-    #allowed = (Time.Object1, Time.Object2)
     if not isinstance(value, tuple(allowed)):
         allowed_names = ", ".join(cls.__qualname__ for cls in allowed)
         raise TypeError(
@@ -1654,29 +1527,3 @@ def generate(schema_file=DEFAULT_SCHEMA_FILE, output_file=DEFAULT_OUTPUT_FILE):
 
 if __name__ == "__main__":
     generate()
-
-#print(root.get_optional("geometry").get_optional("mesh_sequence").extensions)
-
-#print(root.get_required("time").get_optional("int3").type)
-#print(root._optional["ali"])
-""" 
-tree = {'children': {}, 'props': {}, 'required': [], 'optional': []}
-for entry in schema:
-    ptr = entry['pointer'].strip('/')
-    parts = ptr.split('/') if ptr else []
-    node = tree
-    for part in parts[:-1]:
-        node = node['children'].setdefault(part, {'children': {}, 'props': {}, 'required': [], 'optional': []})
-    if entry.get('type') == 'object':
-        if entry.get('required'):
-            node['required'] = entry['required']
-        if entry.get('optional'):
-            node['optional'] = entry['optional']
-    else:
-        last = parts[-1]
-        node['props'][last] = entry
- """
-
-#print(root._type)
-#print(root.get_optional("geometry")._type)
-#print(schema)

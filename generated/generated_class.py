@@ -12,12 +12,11 @@ def extension_check(filename, extensions):
     if not filename.endswith(tuple(extensions)):
         raise ValueError(
             f"Invalid file extension: {filename!r}. "
-            f"Allowed extension are: {extensions}"
+            f"Allowed extensions are: {extensions}"
         )
     return filename
 
 def class_check(value, allowed):
-    #allowed = (Time.Object1, Time.Object2)
     if not isinstance(value, tuple(allowed)):
         allowed_names = ", ".join(cls.__qualname__ for cls in allowed)
         raise TypeError(
@@ -368,7 +367,7 @@ class Root(object):
                     if type(item) not in [int, float, list, str, bool, dict]:
                         item.check_required()
             else:
-                print("Requiered variable Root.Geometry.items does not have value")
+                print("Required variable Root.Geometry.items does not have value")
             return
 
         def as_dict(self):
@@ -575,7 +574,7 @@ class Root(object):
             def check_required(self):
 
                 if self.mesh is None:
-                    print("Requiered variable Root.Geometry.Mesh.mesh does not have value")
+                    print("Required variable Root.Geometry.Mesh.mesh does not have value")
                 return
 
             def as_dict(self):
@@ -748,7 +747,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Geometry.Mesh.Volume_selection.value does not have value")
+                        print("Required variable Root.Geometry.Mesh.Volume_selection.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -827,10 +826,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Box.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Box.id does not have value")
 
                         if not self.box:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Box.box does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Box.box does not have value")
                         return
 
                     def as_dict(self):
@@ -920,13 +919,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Sphere.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Sphere.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Sphere.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Sphere.radius does not have value")
 
                         if not self.center:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Sphere.center does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Sphere.center does not have value")
                         return
 
                     def as_dict(self):
@@ -1049,16 +1048,16 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Cylinder.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Cylinder.radius does not have value")
 
                         if not self.p1:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.p1 does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Cylinder.p1 does not have value")
 
                         if not self.p2:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Cylinder.p2 does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Cylinder.p2 does not have value")
                         return
 
                     def as_dict(self):
@@ -1168,13 +1167,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Plane.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Plane.id does not have value")
 
                         if not self.point:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Plane.point does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Plane.point does not have value")
 
                         if not self.normal:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Plane.normal does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Plane.normal does not have value")
                         return
 
                     def as_dict(self):
@@ -1246,13 +1245,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Axis.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Axis.id does not have value")
 
                         if self.axis is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Axis.axis does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Axis.axis does not have value")
 
                         if self.position is None:
-                            print("Requiered variable Root.Geometry.Mesh.Volume_selection.Axis.position does not have value")
+                            print("Required variable Root.Geometry.Mesh.Volume_selection.Axis.position does not have value")
                         return
 
                     def as_dict(self):
@@ -1288,13 +1287,6 @@ class Root(object):
                         return drop_none({"id_offset": self._id_offset,})
 
 
-                Object3 = Box
-                Object4 = Sphere
-                Object5 = Cylinder
-                Object6 = Plane
-                Object7 = Axis
-                Object8 = Id_offset
-
 
             class Surface_selection(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
@@ -1320,7 +1312,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Geometry.Mesh.Surface_selection.value does not have value")
+                        print("Required variable Root.Geometry.Mesh.Surface_selection.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -1399,10 +1391,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Box.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Box.id does not have value")
 
                         if not self.box:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Box.box does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Box.box does not have value")
                         return
 
                     def as_dict(self):
@@ -1492,13 +1484,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Sphere.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Sphere.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Sphere.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Sphere.radius does not have value")
 
                         if not self.center:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Sphere.center does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Sphere.center does not have value")
                         return
 
                     def as_dict(self):
@@ -1621,16 +1613,16 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Cylinder.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Cylinder.radius does not have value")
 
                         if not self.p1:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.p1 does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Cylinder.p1 does not have value")
 
                         if not self.p2:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Cylinder.p2 does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Cylinder.p2 does not have value")
                         return
 
                     def as_dict(self):
@@ -1740,13 +1732,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Plane.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Plane.id does not have value")
 
                         if not self.point:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Plane.point does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Plane.point does not have value")
 
                         if not self.normal:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Plane.normal does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Plane.normal does not have value")
                         return
 
                     def as_dict(self):
@@ -1818,13 +1810,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Axis.id does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Axis.id does not have value")
 
                         if self.axis is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Axis.axis does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Axis.axis does not have value")
 
                         if self.position is None:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.Axis.position does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.Axis.position does not have value")
                         return
 
                     def as_dict(self):
@@ -1874,7 +1866,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Geometry.Mesh.Surface_selection.List.items does not have value")
+                            print("Required variable Root.Geometry.Mesh.Surface_selection.List.items does not have value")
                         return
 
                     def as_dict(self):
@@ -1917,21 +1909,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.threshold is None:
-                                print("Requiered variable Root.Geometry.Mesh.Surface_selection.List.Box_side.threshold does not have value")
+                                print("Required variable Root.Geometry.Mesh.Surface_selection.List.Box_side.threshold does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
 
-                    Item = Box_side
-
-
-                Object3 = Box
-                Object4 = Sphere
-                Object5 = Cylinder
-                Object6 = Plane
-                Object7 = Axis
 
 
             class Curve_selection(object):
@@ -1977,7 +1961,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Geometry.Mesh.Point_selection.value does not have value")
+                        print("Required variable Root.Geometry.Mesh.Point_selection.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -2029,7 +2013,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Geometry.Mesh.Point_selection.List.items does not have value")
+                            print("Required variable Root.Geometry.Mesh.Point_selection.List.items does not have value")
                         return
 
                     def as_dict(self):
@@ -2105,10 +2089,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Box.id does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Box.id does not have value")
 
                             if not self.box:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Box.box does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Box.box does not have value")
                             return
 
                         def as_dict(self):
@@ -2198,13 +2182,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Sphere.id does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Sphere.id does not have value")
 
                             if self.radius is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Sphere.radius does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Sphere.radius does not have value")
 
                             if not self.center:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Sphere.center does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Sphere.center does not have value")
                             return
 
                         def as_dict(self):
@@ -2327,16 +2311,16 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.id does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Cylinder.id does not have value")
 
                             if self.radius is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.radius does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Cylinder.radius does not have value")
 
                             if not self.p1:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.p1 does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Cylinder.p1 does not have value")
 
                             if not self.p2:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Cylinder.p2 does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Cylinder.p2 does not have value")
                             return
 
                         def as_dict(self):
@@ -2446,13 +2430,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Plane.id does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Plane.id does not have value")
 
                             if not self.point:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Plane.point does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Plane.point does not have value")
 
                             if not self.normal:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Plane.normal does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Plane.normal does not have value")
                             return
 
                         def as_dict(self):
@@ -2524,13 +2508,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Axis.id does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Axis.id does not have value")
 
                             if self.axis is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Axis.axis does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Axis.axis does not have value")
 
                             if self.position is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Axis.position does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Axis.position does not have value")
                             return
 
                         def as_dict(self):
@@ -2574,19 +2558,12 @@ class Root(object):
                         def check_required(self):
 
                             if self.threshold is None:
-                                print("Requiered variable Root.Geometry.Mesh.Point_selection.List.Box_side.threshold does not have value")
+                                print("Required variable Root.Geometry.Mesh.Point_selection.List.Box_side.threshold does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
-
-                    Item = Box
-                    Object2 = Sphere
-                    Object3 = Cylinder
-                    Object4 = Plane
-                    Object5 = Axis
-                    Object6 = Box_side
 
 
 
@@ -2875,7 +2852,7 @@ class Root(object):
             def check_required(self):
 
                 if self.mesh is None:
-                    print("Requiered variable Root.Geometry.Mesh_array.mesh does not have value")
+                    print("Required variable Root.Geometry.Mesh_array.mesh does not have value")
                 self.array.check_required()
                 return
 
@@ -2952,10 +2929,10 @@ class Root(object):
                 def check_required(self):
 
                     if self.offset is None:
-                        print("Requiered variable Root.Geometry.Mesh_array.Array.offset does not have value")
+                        print("Required variable Root.Geometry.Mesh_array.Array.offset does not have value")
 
                     if not self.size:
-                        print("Requiered variable Root.Geometry.Mesh_array.Array.size does not have value")
+                        print("Required variable Root.Geometry.Mesh_array.Array.size does not have value")
                     return
 
                 def as_dict(self):
@@ -3129,7 +3106,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.value does not have value")
+                        print("Required variable Root.Geometry.Mesh_array.Volume_selection.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -3208,10 +3185,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Box.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Box.id does not have value")
 
                         if not self.box:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Box.box does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Box.box does not have value")
                         return
 
                     def as_dict(self):
@@ -3301,13 +3278,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Sphere.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Sphere.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Sphere.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Sphere.radius does not have value")
 
                         if not self.center:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Sphere.center does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Sphere.center does not have value")
                         return
 
                     def as_dict(self):
@@ -3430,16 +3407,16 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.radius does not have value")
 
                         if not self.p1:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.p1 does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.p1 does not have value")
 
                         if not self.p2:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.p2 does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Cylinder.p2 does not have value")
                         return
 
                     def as_dict(self):
@@ -3549,13 +3526,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Plane.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Plane.id does not have value")
 
                         if not self.point:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Plane.point does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Plane.point does not have value")
 
                         if not self.normal:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Plane.normal does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Plane.normal does not have value")
                         return
 
                     def as_dict(self):
@@ -3627,13 +3604,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Axis.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Axis.id does not have value")
 
                         if self.axis is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Axis.axis does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Axis.axis does not have value")
 
                         if self.position is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Volume_selection.Axis.position does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Volume_selection.Axis.position does not have value")
                         return
 
                     def as_dict(self):
@@ -3669,13 +3646,6 @@ class Root(object):
                         return drop_none({"id_offset": self._id_offset,})
 
 
-                Object3 = Box
-                Object4 = Sphere
-                Object5 = Cylinder
-                Object6 = Plane
-                Object7 = Axis
-                Object8 = Id_offset
-
 
             class Surface_selection(object):
                 '''This is a polymorphic variable, assign an object from its classes to the value
@@ -3701,7 +3671,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.value does not have value")
+                        print("Required variable Root.Geometry.Mesh_array.Surface_selection.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -3780,10 +3750,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Box.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Box.id does not have value")
 
                         if not self.box:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Box.box does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Box.box does not have value")
                         return
 
                     def as_dict(self):
@@ -3873,13 +3843,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Sphere.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Sphere.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Sphere.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Sphere.radius does not have value")
 
                         if not self.center:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Sphere.center does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Sphere.center does not have value")
                         return
 
                     def as_dict(self):
@@ -4002,16 +3972,16 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.id does not have value")
 
                         if self.radius is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.radius does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.radius does not have value")
 
                         if not self.p1:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.p1 does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.p1 does not have value")
 
                         if not self.p2:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.p2 does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Cylinder.p2 does not have value")
                         return
 
                     def as_dict(self):
@@ -4121,13 +4091,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Plane.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Plane.id does not have value")
 
                         if not self.point:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Plane.point does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Plane.point does not have value")
 
                         if not self.normal:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Plane.normal does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Plane.normal does not have value")
                         return
 
                     def as_dict(self):
@@ -4199,13 +4169,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Axis.id does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Axis.id does not have value")
 
                         if self.axis is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Axis.axis does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Axis.axis does not have value")
 
                         if self.position is None:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.Axis.position does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.Axis.position does not have value")
                         return
 
                     def as_dict(self):
@@ -4255,7 +4225,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.List.items does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Surface_selection.List.items does not have value")
                         return
 
                     def as_dict(self):
@@ -4298,21 +4268,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.threshold is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Surface_selection.List.Box_side.threshold does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Surface_selection.List.Box_side.threshold does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
 
-                    Item = Box_side
-
-
-                Object3 = Box
-                Object4 = Sphere
-                Object5 = Cylinder
-                Object6 = Plane
-                Object7 = Axis
 
 
             class Curve_selection(object):
@@ -4358,7 +4320,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Geometry.Mesh_array.Point_selection.value does not have value")
+                        print("Required variable Root.Geometry.Mesh_array.Point_selection.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -4410,7 +4372,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.items does not have value")
+                            print("Required variable Root.Geometry.Mesh_array.Point_selection.List.items does not have value")
                         return
 
                     def as_dict(self):
@@ -4486,10 +4448,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Box.id does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Box.id does not have value")
 
                             if not self.box:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Box.box does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Box.box does not have value")
                             return
 
                         def as_dict(self):
@@ -4579,13 +4541,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.id does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.id does not have value")
 
                             if self.radius is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.radius does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.radius does not have value")
 
                             if not self.center:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.center does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Sphere.center does not have value")
                             return
 
                         def as_dict(self):
@@ -4708,16 +4670,16 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.id does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.id does not have value")
 
                             if self.radius is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.radius does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.radius does not have value")
 
                             if not self.p1:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.p1 does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.p1 does not have value")
 
                             if not self.p2:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.p2 does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Cylinder.p2 does not have value")
                             return
 
                         def as_dict(self):
@@ -4827,13 +4789,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Plane.id does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Plane.id does not have value")
 
                             if not self.point:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Plane.point does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Plane.point does not have value")
 
                             if not self.normal:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Plane.normal does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Plane.normal does not have value")
                             return
 
                         def as_dict(self):
@@ -4905,13 +4867,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.id is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Axis.id does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Axis.id does not have value")
 
                             if self.axis is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Axis.axis does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Axis.axis does not have value")
 
                             if self.position is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Axis.position does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Axis.position does not have value")
                             return
 
                         def as_dict(self):
@@ -4955,19 +4917,12 @@ class Root(object):
                         def check_required(self):
 
                             if self.threshold is None:
-                                print("Requiered variable Root.Geometry.Mesh_array.Point_selection.List.Box_side.threshold does not have value")
+                                print("Required variable Root.Geometry.Mesh_array.Point_selection.List.Box_side.threshold does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"threshold": self._threshold,"id_offset": self._id_offset,})
 
-
-                    Item = Box
-                    Object2 = Sphere
-                    Object3 = Cylinder
-                    Object4 = Plane
-                    Object5 = Axis
-                    Object6 = Box_side
 
 
 
@@ -5159,10 +5114,10 @@ class Root(object):
             def check_required(self):
 
                 if not self.point:
-                    print("Requiered variable Root.Geometry.Plane.point does not have value")
+                    print("Required variable Root.Geometry.Plane.point does not have value")
 
                 if not self.normal:
-                    print("Requiered variable Root.Geometry.Plane.normal does not have value")
+                    print("Required variable Root.Geometry.Plane.normal does not have value")
                 return
 
             def as_dict(self):
@@ -5235,7 +5190,7 @@ class Root(object):
             def check_required(self):
 
                 if self.height is None:
-                    print("Requiered variable Root.Geometry.Ground.height does not have value")
+                    print("Required variable Root.Geometry.Ground.height does not have value")
                 return
 
             def as_dict(self):
@@ -5398,10 +5353,10 @@ class Root(object):
             def check_required(self):
 
                 if self.mesh_sequence is None:
-                    print("Requiered variable Root.Geometry.Mesh_sequence.mesh_sequence does not have value")
+                    print("Required variable Root.Geometry.Mesh_sequence.mesh_sequence does not have value")
 
                 if self.fps is None:
-                    print("Requiered variable Root.Geometry.Mesh_sequence.fps does not have value")
+                    print("Required variable Root.Geometry.Mesh_sequence.fps does not have value")
                 return
 
             def as_dict(self):
@@ -5619,12 +5574,6 @@ class Root(object):
 
 
 
-        Item = Mesh
-        Object2 = Mesh_array
-        Object3 = Plane
-        Object4 = Ground
-        Object5 = Mesh_sequence
-
 
     class Materials(object):
         '''Material Parameters lists including ID pointing to volume selection, Young's modulus ($E$), Poisson's ratio ($\\nu$), Density ($\\rho$), or Lamé constants ($\\lambda$ and $\\mu$).
@@ -5669,7 +5618,7 @@ class Root(object):
                     if type(item) not in [int, float, list, str, bool, dict]:
                         item.check_required()
             else:
-                print("Requiered variable Root.Materials.items does not have value")
+                print("Required variable Root.Materials.items does not have value")
             return
 
         def as_dict(self):
@@ -5822,7 +5771,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                    print("Requiered variable Root.Materials.NeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
+                    print("Required variable Root.Materials.NeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -5976,7 +5925,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                    print("Requiered variable Root.Materials.IsochoricNeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
+                    print("Required variable Root.Materials.IsochoricNeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -6085,16 +6034,16 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin.type does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin.type does not have value")
 
                 if self.c1 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin.c1 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin.c1 does not have value")
 
                 if self.c2 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin.c2 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin.c2 does not have value")
 
                 if self.k is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin.k does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin.k does not have value")
                 return
 
             def as_dict(self):
@@ -6218,19 +6167,19 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3Param.type does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3Param.type does not have value")
 
                 if self.c1 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3Param.c1 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3Param.c1 does not have value")
 
                 if self.c2 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3Param.c2 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3Param.c2 does not have value")
 
                 if self.c3 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3Param.c3 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3Param.c3 does not have value")
 
                 if self.d1 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3Param.d1 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3Param.d1 does not have value")
                 return
 
             def as_dict(self):
@@ -6354,19 +6303,19 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3ParamSymbolic.type does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3ParamSymbolic.type does not have value")
 
                 if self.c1 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3ParamSymbolic.c1 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3ParamSymbolic.c1 does not have value")
 
                 if self.c2 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3ParamSymbolic.c2 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3ParamSymbolic.c2 does not have value")
 
                 if self.c3 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3ParamSymbolic.c3 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3ParamSymbolic.c3 does not have value")
 
                 if self.d1 is None:
-                    print("Requiered variable Root.Materials.MooneyRivlin3ParamSymbolic.d1 does not have value")
+                    print("Required variable Root.Materials.MooneyRivlin3ParamSymbolic.d1 does not have value")
                 return
 
             def as_dict(self):
@@ -6475,10 +6424,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.UnconstrainedOgden.type does not have value")
+                    print("Required variable Root.Materials.UnconstrainedOgden.type does not have value")
 
                 if self.alphas is None:
-                    print("Requiered variable Root.Materials.UnconstrainedOgden.alphas does not have value")
+                    print("Required variable Root.Materials.UnconstrainedOgden.alphas does not have value")
                 self.mus.check_required()
                 self.Ds.check_required()
                 return
@@ -6529,7 +6478,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.UnconstrainedOgden.Mus.items does not have value")
+                        print("Required variable Root.Materials.UnconstrainedOgden.Mus.items does not have value")
                     return
 
                 def as_dict(self):
@@ -6579,7 +6528,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.UnconstrainedOgden.Ds.items does not have value")
+                        print("Required variable Root.Materials.UnconstrainedOgden.Ds.items does not have value")
                     return
 
                 def as_dict(self):
@@ -6689,12 +6638,12 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.IncompressibleOgden.type does not have value")
+                    print("Required variable Root.Materials.IncompressibleOgden.type does not have value")
                 self.c.check_required()
                 self.m.check_required()
 
                 if self.k is None:
-                    print("Requiered variable Root.Materials.IncompressibleOgden.k does not have value")
+                    print("Required variable Root.Materials.IncompressibleOgden.k does not have value")
                 return
 
             def as_dict(self):
@@ -6724,7 +6673,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Materials.IncompressibleOgden.C.value does not have value")
+                        print("Required variable Root.Materials.IncompressibleOgden.C.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -6772,10 +6721,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.C.ValueWithUnit.value does not have value")
+                            print("Required variable Root.Materials.IncompressibleOgden.C.ValueWithUnit.value does not have value")
 
                         if self.unit is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.C.ValueWithUnit.unit does not have value")
+                            print("Required variable Root.Materials.IncompressibleOgden.C.ValueWithUnit.unit does not have value")
                         return
 
                     def as_dict(self):
@@ -6825,14 +6774,12 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.C.List.items does not have value")
+                            print("Required variable Root.Materials.IncompressibleOgden.C.List.items does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none([inline_as_dict(i) for i in self._items])
 
-
-                Object3 = ValueWithUnit
 
 
             class M(object):
@@ -6859,7 +6806,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Materials.IncompressibleOgden.M.value does not have value")
+                        print("Required variable Root.Materials.IncompressibleOgden.M.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -6907,10 +6854,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.M.ValueWithUnit.value does not have value")
+                            print("Required variable Root.Materials.IncompressibleOgden.M.ValueWithUnit.value does not have value")
 
                         if self.unit is None:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.M.ValueWithUnit.unit does not have value")
+                            print("Required variable Root.Materials.IncompressibleOgden.M.ValueWithUnit.unit does not have value")
                         return
 
                     def as_dict(self):
@@ -6960,14 +6907,12 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Materials.IncompressibleOgden.M.List.items does not have value")
+                            print("Required variable Root.Materials.IncompressibleOgden.M.List.items does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none([inline_as_dict(i) for i in self._items])
 
-
-                Object3 = ValueWithUnit
 
 
 
@@ -7118,7 +7063,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                    print("Requiered variable Root.Materials.LinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
+                    print("Required variable Root.Materials.LinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -7242,7 +7187,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
-                    print("Requiered variable Root.Materials.HookeLinearElasticity must satisfy one required field set: type, E, nu; type, elasticity_tensor")
+                    print("Required variable Root.Materials.HookeLinearElasticity must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                 return
 
             def as_dict(self):
@@ -7291,7 +7236,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.HookeLinearElasticity.Elasticity_tensor.items does not have value")
+                        print("Required variable Root.Materials.HookeLinearElasticity.Elasticity_tensor.items does not have value")
                     return
 
                 def as_dict(self):
@@ -7341,7 +7286,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.HookeLinearElasticity.Fiber_direction.items does not have value")
+                        print("Required variable Root.Materials.HookeLinearElasticity.Fiber_direction.items does not have value")
                     return
 
                 def as_dict(self):
@@ -7496,7 +7441,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
-                    print("Requiered variable Root.Materials.SaintVenant must satisfy one required field set: type, E, nu; type, elasticity_tensor")
+                    print("Required variable Root.Materials.SaintVenant must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                 return
 
             def as_dict(self):
@@ -7545,7 +7490,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.SaintVenant.Elasticity_tensor.items does not have value")
+                        print("Required variable Root.Materials.SaintVenant.Elasticity_tensor.items does not have value")
                     return
 
                 def as_dict(self):
@@ -7595,7 +7540,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.SaintVenant.Fiber_direction.items does not have value")
+                        print("Required variable Root.Materials.SaintVenant.Fiber_direction.items does not have value")
                     return
 
                 def as_dict(self):
@@ -7675,10 +7620,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.Stokes.type does not have value")
+                    print("Required variable Root.Materials.Stokes.type does not have value")
 
                 if self.viscosity is None:
-                    print("Requiered variable Root.Materials.Stokes.viscosity does not have value")
+                    print("Required variable Root.Materials.Stokes.viscosity does not have value")
                 return
 
             def as_dict(self):
@@ -7757,10 +7702,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.NavierStokes.type does not have value")
+                    print("Required variable Root.Materials.NavierStokes.type does not have value")
 
                 if self.viscosity is None:
-                    print("Requiered variable Root.Materials.NavierStokes.viscosity does not have value")
+                    print("Required variable Root.Materials.NavierStokes.viscosity does not have value")
                 return
 
             def as_dict(self):
@@ -7839,10 +7784,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.OperatorSplitting.type does not have value")
+                    print("Required variable Root.Materials.OperatorSplitting.type does not have value")
 
                 if self.viscosity is None:
-                    print("Requiered variable Root.Materials.OperatorSplitting.viscosity does not have value")
+                    print("Required variable Root.Materials.OperatorSplitting.viscosity does not have value")
                 return
 
             def as_dict(self):
@@ -7921,10 +7866,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.Electrostatics.type does not have value")
+                    print("Required variable Root.Materials.Electrostatics.type does not have value")
 
                 if self.epsilon is None:
-                    print("Requiered variable Root.Materials.Electrostatics.epsilon does not have value")
+                    print("Required variable Root.Materials.Electrostatics.epsilon does not have value")
                 return
 
             def as_dict(self):
@@ -8048,7 +7993,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                    print("Requiered variable Root.Materials.IncompressibleLinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
+                    print("Required variable Root.Materials.IncompressibleLinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -8112,7 +8057,7 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.MaterialSum.type does not have value")
+                    print("Required variable Root.Materials.MaterialSum.type does not have value")
                 return
 
             def as_dict(self):
@@ -8161,7 +8106,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.MaterialSum.Models.items does not have value")
+                        print("Required variable Root.Materials.MaterialSum.Models.items does not have value")
                     return
 
                 def as_dict(self):
@@ -8314,7 +8259,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
+                            print("Required variable Root.Materials.MaterialSum.Models.NeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -8468,7 +8413,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
+                            print("Required variable Root.Materials.MaterialSum.Models.IsochoricNeoHookean must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -8577,16 +8522,16 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin.type does not have value")
 
                         if self.c1 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin.c1 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin.c1 does not have value")
 
                         if self.c2 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin.c2 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin.c2 does not have value")
 
                         if self.k is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin.k does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin.k does not have value")
                         return
 
                     def as_dict(self):
@@ -8710,19 +8655,19 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.type does not have value")
 
                         if self.c1 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.c1 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.c1 does not have value")
 
                         if self.c2 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.c2 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.c2 does not have value")
 
                         if self.c3 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.c3 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.c3 does not have value")
 
                         if self.d1 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.d1 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3Param.d1 does not have value")
                         return
 
                     def as_dict(self):
@@ -8846,19 +8791,19 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.type does not have value")
 
                         if self.c1 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.c1 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.c1 does not have value")
 
                         if self.c2 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.c2 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.c2 does not have value")
 
                         if self.c3 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.c3 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.c3 does not have value")
 
                         if self.d1 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.d1 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MooneyRivlin3ParamSymbolic.d1 does not have value")
                         return
 
                     def as_dict(self):
@@ -8967,10 +8912,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.type does not have value")
 
                         if self.alphas is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.alphas does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.alphas does not have value")
                         self.mus.check_required()
                         self.Ds.check_required()
                         return
@@ -9021,7 +8966,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Mus.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Mus.items does not have value")
                             return
 
                         def as_dict(self):
@@ -9071,7 +9016,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Ds.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.UnconstrainedOgden.Ds.items does not have value")
                             return
 
                         def as_dict(self):
@@ -9181,12 +9126,12 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.type does not have value")
                         self.c.check_required()
                         self.m.check_required()
 
                         if self.k is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.k does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.k does not have value")
                         return
 
                     def as_dict(self):
@@ -9216,7 +9161,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.value is None:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.value does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.value does not have value")
                             else:
                                 if type(self.value) not in [int, float, list, str, bool, dict]:
                                     self.value.check_required()
@@ -9264,10 +9209,10 @@ class Root(object):
                             def check_required(self):
 
                                 if self.value is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.ValueWithUnit.value does not have value")
+                                    print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.ValueWithUnit.value does not have value")
 
                                 if self.unit is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.ValueWithUnit.unit does not have value")
+                                    print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.ValueWithUnit.unit does not have value")
                                 return
 
                             def as_dict(self):
@@ -9317,14 +9262,12 @@ class Root(object):
                                         if type(item) not in [int, float, list, str, bool, dict]:
                                             item.check_required()
                                 else:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.List.items does not have value")
+                                    print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.C.List.items does not have value")
                                 return
 
                             def as_dict(self):
                                 return drop_none([inline_as_dict(i) for i in self._items])
 
-
-                        Object3 = ValueWithUnit
 
 
                     class M(object):
@@ -9351,7 +9294,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.value is None:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.value does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.value does not have value")
                             else:
                                 if type(self.value) not in [int, float, list, str, bool, dict]:
                                     self.value.check_required()
@@ -9399,10 +9342,10 @@ class Root(object):
                             def check_required(self):
 
                                 if self.value is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.ValueWithUnit.value does not have value")
+                                    print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.ValueWithUnit.value does not have value")
 
                                 if self.unit is None:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.ValueWithUnit.unit does not have value")
+                                    print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.ValueWithUnit.unit does not have value")
                                 return
 
                             def as_dict(self):
@@ -9452,14 +9395,12 @@ class Root(object):
                                         if type(item) not in [int, float, list, str, bool, dict]:
                                             item.check_required()
                                 else:
-                                    print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.List.items does not have value")
+                                    print("Required variable Root.Materials.MaterialSum.Models.IncompressibleOgden.M.List.items does not have value")
                                 return
 
                             def as_dict(self):
                                 return drop_none([inline_as_dict(i) for i in self._items])
 
-
-                        Object3 = ValueWithUnit
 
 
 
@@ -9610,7 +9551,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.LinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
+                            print("Required variable Root.Materials.MaterialSum.Models.LinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -9734,7 +9675,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity must satisfy one required field set: type, E, nu; type, elasticity_tensor")
+                            print("Required variable Root.Materials.MaterialSum.Models.HookeLinearElasticity must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                         return
 
                     def as_dict(self):
@@ -9783,7 +9724,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.Elasticity_tensor.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.Elasticity_tensor.items does not have value")
                             return
 
                         def as_dict(self):
@@ -9833,7 +9774,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.Fiber_direction.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.HookeLinearElasticity.Fiber_direction.items does not have value")
                             return
 
                         def as_dict(self):
@@ -9988,7 +9929,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.elasticity_tensor is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant must satisfy one required field set: type, E, nu; type, elasticity_tensor")
+                            print("Required variable Root.Materials.MaterialSum.Models.SaintVenant must satisfy one required field set: type, E, nu; type, elasticity_tensor")
                         return
 
                     def as_dict(self):
@@ -10037,7 +9978,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.Elasticity_tensor.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.SaintVenant.Elasticity_tensor.items does not have value")
                             return
 
                         def as_dict(self):
@@ -10087,7 +10028,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.SaintVenant.Fiber_direction.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.SaintVenant.Fiber_direction.items does not have value")
                             return
 
                         def as_dict(self):
@@ -10167,10 +10108,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Stokes.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Stokes.type does not have value")
 
                         if self.viscosity is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Stokes.viscosity does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Stokes.viscosity does not have value")
                         return
 
                     def as_dict(self):
@@ -10249,10 +10190,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NavierStokes.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.NavierStokes.type does not have value")
 
                         if self.viscosity is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.NavierStokes.viscosity does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.NavierStokes.viscosity does not have value")
                         return
 
                     def as_dict(self):
@@ -10331,10 +10272,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.OperatorSplitting.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.OperatorSplitting.type does not have value")
 
                         if self.viscosity is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.OperatorSplitting.viscosity does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.OperatorSplitting.viscosity does not have value")
                         return
 
                     def as_dict(self):
@@ -10413,10 +10354,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Electrostatics.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Electrostatics.type does not have value")
 
                         if self.epsilon is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Electrostatics.epsilon does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Electrostatics.epsilon does not have value")
                         return
 
                     def as_dict(self):
@@ -10540,7 +10481,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
+                            print("Required variable Root.Materials.MaterialSum.Models.IncompressibleLinearElasticity must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -10602,7 +10543,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.MaterialSum.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.MaterialSum.type does not have value")
                         return
 
                     def as_dict(self):
@@ -10666,7 +10607,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Laplacian.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Laplacian.type does not have value")
                         return
 
                     def as_dict(self):
@@ -10745,10 +10686,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Helmholtz.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Helmholtz.type does not have value")
 
                         if self.k is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Helmholtz.k does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Helmholtz.k does not have value")
                         return
 
                     def as_dict(self):
@@ -10812,7 +10753,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.Bilaplacian.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.Bilaplacian.type does not have value")
                         return
 
                     def as_dict(self):
@@ -10889,7 +10830,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.AMIPS.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.AMIPS.type does not have value")
                         return
 
                     def as_dict(self):
@@ -10953,7 +10894,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.AMIPSAutodiff.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.AMIPSAutodiff.type does not have value")
                         return
 
                     def as_dict(self):
@@ -11107,7 +11048,7 @@ class Root(object):
                     def check_required(self):
 
                         if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                            print("Requiered variable Root.Materials.MaterialSum.Models.FixedCorotational must satisfy one required field set: type, E, nu; type, lambda, mu")
+                            print("Required variable Root.Materials.MaterialSum.Models.FixedCorotational must satisfy one required field set: type, E, nu; type, lambda, mu")
                         return
 
                     def as_dict(self):
@@ -11186,10 +11127,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.VolumePenalty.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.VolumePenalty.type does not have value")
 
                         if self.k is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.VolumePenalty.k does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.VolumePenalty.k does not have value")
                         return
 
                     def as_dict(self):
@@ -11298,13 +11239,13 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HGOFiber.type does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.HGOFiber.type does not have value")
 
                         if self.k1 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HGOFiber.k1 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.HGOFiber.k1 does not have value")
 
                         if self.k2 is None:
-                            print("Requiered variable Root.Materials.MaterialSum.Models.HGOFiber.k2 does not have value")
+                            print("Required variable Root.Materials.MaterialSum.Models.HGOFiber.k2 does not have value")
                         return
 
                     def as_dict(self):
@@ -11353,38 +11294,13 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Materials.MaterialSum.Models.HGOFiber.Fiber_direction.items does not have value")
+                                print("Required variable Root.Materials.MaterialSum.Models.HGOFiber.Fiber_direction.items does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none([inline_as_dict(i) for i in self._items])
 
 
-
-                Item = NeoHookean
-                Object2 = IsochoricNeoHookean
-                Object3 = MooneyRivlin
-                Object4 = MooneyRivlin3Param
-                Object5 = MooneyRivlin3ParamSymbolic
-                Object6 = UnconstrainedOgden
-                Object7 = IncompressibleOgden
-                Object8 = LinearElasticity
-                Object9 = HookeLinearElasticity
-                Object10 = SaintVenant
-                Object11 = Stokes
-                Object12 = NavierStokes
-                Object13 = OperatorSplitting
-                Object14 = Electrostatics
-                Object15 = IncompressibleLinearElasticity
-                Object16 = MaterialSum
-                Object17 = Laplacian
-                Object18 = Helmholtz
-                Object19 = Bilaplacian
-                Object20 = AMIPS
-                Object21 = AMIPSAutodiff
-                Object22 = FixedCorotational
-                Object23 = VolumePenalty
-                Object24 = HGOFiber
 
 
 
@@ -11445,7 +11361,7 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.Laplacian.type does not have value")
+                    print("Required variable Root.Materials.Laplacian.type does not have value")
                 return
 
             def as_dict(self):
@@ -11524,10 +11440,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.Helmholtz.type does not have value")
+                    print("Required variable Root.Materials.Helmholtz.type does not have value")
 
                 if self.k is None:
-                    print("Requiered variable Root.Materials.Helmholtz.k does not have value")
+                    print("Required variable Root.Materials.Helmholtz.k does not have value")
                 return
 
             def as_dict(self):
@@ -11591,7 +11507,7 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.Bilaplacian.type does not have value")
+                    print("Required variable Root.Materials.Bilaplacian.type does not have value")
                 return
 
             def as_dict(self):
@@ -11668,7 +11584,7 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.AMIPS.type does not have value")
+                    print("Required variable Root.Materials.AMIPS.type does not have value")
                 return
 
             def as_dict(self):
@@ -11732,7 +11648,7 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.AMIPSAutodiff.type does not have value")
+                    print("Required variable Root.Materials.AMIPSAutodiff.type does not have value")
                 return
 
             def as_dict(self):
@@ -11886,7 +11802,7 @@ class Root(object):
             def check_required(self):
 
                 if not ((self.type is not None and self.E is not None and self.nu is not None) or (self.type is not None and self.lambda_ is not None and self.mu is not None)):
-                    print("Requiered variable Root.Materials.FixedCorotational must satisfy one required field set: type, E, nu; type, lambda, mu")
+                    print("Required variable Root.Materials.FixedCorotational must satisfy one required field set: type, E, nu; type, lambda, mu")
                 return
 
             def as_dict(self):
@@ -11965,10 +11881,10 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.VolumePenalty.type does not have value")
+                    print("Required variable Root.Materials.VolumePenalty.type does not have value")
 
                 if self.k is None:
-                    print("Requiered variable Root.Materials.VolumePenalty.k does not have value")
+                    print("Required variable Root.Materials.VolumePenalty.k does not have value")
                 return
 
             def as_dict(self):
@@ -12077,13 +11993,13 @@ class Root(object):
             def check_required(self):
 
                 if self.type is None:
-                    print("Requiered variable Root.Materials.HGOFiber.type does not have value")
+                    print("Required variable Root.Materials.HGOFiber.type does not have value")
 
                 if self.k1 is None:
-                    print("Requiered variable Root.Materials.HGOFiber.k1 does not have value")
+                    print("Required variable Root.Materials.HGOFiber.k1 does not have value")
 
                 if self.k2 is None:
-                    print("Requiered variable Root.Materials.HGOFiber.k2 does not have value")
+                    print("Required variable Root.Materials.HGOFiber.k2 does not have value")
                 return
 
             def as_dict(self):
@@ -12132,38 +12048,13 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Materials.HGOFiber.Fiber_direction.items does not have value")
+                        print("Required variable Root.Materials.HGOFiber.Fiber_direction.items does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none([inline_as_dict(i) for i in self._items])
 
 
-
-        Item = NeoHookean
-        Object2 = IsochoricNeoHookean
-        Object3 = MooneyRivlin
-        Object4 = MooneyRivlin3Param
-        Object5 = MooneyRivlin3ParamSymbolic
-        Object6 = UnconstrainedOgden
-        Object7 = IncompressibleOgden
-        Object8 = LinearElasticity
-        Object9 = HookeLinearElasticity
-        Object10 = SaintVenant
-        Object11 = Stokes
-        Object12 = NavierStokes
-        Object13 = OperatorSplitting
-        Object14 = Electrostatics
-        Object15 = IncompressibleLinearElasticity
-        Object16 = MaterialSum
-        Object17 = Laplacian
-        Object18 = Helmholtz
-        Object19 = Bilaplacian
-        Object20 = AMIPS
-        Object21 = AMIPSAutodiff
-        Object22 = FixedCorotational
-        Object23 = VolumePenalty
-        Object24 = HGOFiber
 
 
     class Units(object):
@@ -12394,7 +12285,7 @@ class Root(object):
             def check_required(self):
 
                 if self.value is None:
-                    print("Requiered variable Root.Space.Discr_order.value does not have value")
+                    print("Required variable Root.Space.Discr_order.value does not have value")
                 else:
                     if type(self.value) not in [int, float, list, str, bool, dict]:
                         self.value.check_required()
@@ -12446,7 +12337,7 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Space.Discr_order.List.items does not have value")
+                        print("Required variable Root.Space.Discr_order.List.items does not have value")
                     return
 
                 def as_dict(self):
@@ -12491,10 +12382,10 @@ class Root(object):
                     def check_required(self):
 
                         if self.id is None:
-                            print("Requiered variable Root.Space.Discr_order.List.Item.id does not have value")
+                            print("Required variable Root.Space.Discr_order.List.Item.id does not have value")
 
                         if self.order is None:
-                            print("Requiered variable Root.Space.Discr_order.List.Item.order does not have value")
+                            print("Required variable Root.Space.Discr_order.List.Item.order does not have value")
                         return
 
                     def as_dict(self):
@@ -13204,7 +13095,7 @@ class Root(object):
         def check_required(self):
 
             if self.value is None:
-                print("Requiered variable Root.Time.value does not have value")
+                print("Required variable Root.Time.value does not have value")
             else:
                 if type(self.value) not in [int, float, list, str, bool, dict]:
                     self.value.check_required()
@@ -13291,10 +13182,10 @@ class Root(object):
             def check_required(self):
 
                 if self.tend is None:
-                    print("Requiered variable Root.Time.TendDt.tend does not have value")
+                    print("Required variable Root.Time.TendDt.tend does not have value")
 
                 if self.dt is None:
-                    print("Requiered variable Root.Time.TendDt.dt does not have value")
+                    print("Required variable Root.Time.TendDt.dt does not have value")
                 return
 
             def as_dict(self):
@@ -13324,7 +13215,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Time.TendDt.Integrator.value does not have value")
+                        print("Required variable Root.Time.TendDt.Integrator.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -13360,7 +13251,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TendDt.Integrator.ImplicitEuler.type does not have value")
+                            print("Required variable Root.Time.TendDt.Integrator.ImplicitEuler.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13407,7 +13298,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TendDt.Integrator.BDF.type does not have value")
+                            print("Required variable Root.Time.TendDt.Integrator.BDF.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13467,16 +13358,12 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TendDt.Integrator.ImplicitNewmark.type does not have value")
+                            print("Required variable Root.Time.TendDt.Integrator.ImplicitNewmark.type does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none({"type": self._type.value if self._type is not None else None,"gamma": self._gamma,"beta": self._beta,})
 
-
-                Object2 = ImplicitEuler
-                Object3 = BDF
-                Object4 = ImplicitNewmark
 
 
 
@@ -13558,10 +13445,10 @@ class Root(object):
             def check_required(self):
 
                 if self.time_steps is None:
-                    print("Requiered variable Root.Time.TimeStepsDt.time_steps does not have value")
+                    print("Required variable Root.Time.TimeStepsDt.time_steps does not have value")
 
                 if self.dt is None:
-                    print("Requiered variable Root.Time.TimeStepsDt.dt does not have value")
+                    print("Required variable Root.Time.TimeStepsDt.dt does not have value")
                 return
 
             def as_dict(self):
@@ -13591,7 +13478,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Time.TimeStepsDt.Integrator.value does not have value")
+                        print("Required variable Root.Time.TimeStepsDt.Integrator.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -13627,7 +13514,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TimeStepsDt.Integrator.ImplicitEuler.type does not have value")
+                            print("Required variable Root.Time.TimeStepsDt.Integrator.ImplicitEuler.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13674,7 +13561,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TimeStepsDt.Integrator.BDF.type does not have value")
+                            print("Required variable Root.Time.TimeStepsDt.Integrator.BDF.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13734,16 +13621,12 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TimeStepsDt.Integrator.ImplicitNewmark.type does not have value")
+                            print("Required variable Root.Time.TimeStepsDt.Integrator.ImplicitNewmark.type does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none({"type": self._type.value if self._type is not None else None,"gamma": self._gamma,"beta": self._beta,})
 
-
-                Object2 = ImplicitEuler
-                Object3 = BDF
-                Object4 = ImplicitNewmark
 
 
 
@@ -13825,10 +13708,10 @@ class Root(object):
             def check_required(self):
 
                 if self.time_steps is None:
-                    print("Requiered variable Root.Time.TimeStepsTend.time_steps does not have value")
+                    print("Required variable Root.Time.TimeStepsTend.time_steps does not have value")
 
                 if self.tend is None:
-                    print("Requiered variable Root.Time.TimeStepsTend.tend does not have value")
+                    print("Required variable Root.Time.TimeStepsTend.tend does not have value")
                 return
 
             def as_dict(self):
@@ -13858,7 +13741,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Time.TimeStepsTend.Integrator.value does not have value")
+                        print("Required variable Root.Time.TimeStepsTend.Integrator.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -13894,7 +13777,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TimeStepsTend.Integrator.ImplicitEuler.type does not have value")
+                            print("Required variable Root.Time.TimeStepsTend.Integrator.ImplicitEuler.type does not have value")
                         return
 
                     def as_dict(self):
@@ -13941,7 +13824,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TimeStepsTend.Integrator.BDF.type does not have value")
+                            print("Required variable Root.Time.TimeStepsTend.Integrator.BDF.type does not have value")
                         return
 
                     def as_dict(self):
@@ -14001,22 +13884,14 @@ class Root(object):
                     def check_required(self):
 
                         if self.type is None:
-                            print("Requiered variable Root.Time.TimeStepsTend.Integrator.ImplicitNewmark.type does not have value")
+                            print("Required variable Root.Time.TimeStepsTend.Integrator.ImplicitNewmark.type does not have value")
                         return
 
                     def as_dict(self):
                         return drop_none({"type": self._type.value if self._type is not None else None,"gamma": self._gamma,"beta": self._beta,})
 
 
-                Object2 = ImplicitEuler
-                Object3 = BDF
-                Object4 = ImplicitNewmark
 
-
-
-        Object1 = TendDt
-        Object2 = TimeStepsDt
-        Object3 = TimeStepsTend
 
 
     class Contact(object):
@@ -14283,7 +14158,7 @@ class Root(object):
             def check_required(self):
 
                 if self.value is None:
-                    print("Requiered variable Root.Contact.Collision_mesh.value does not have value")
+                    print("Required variable Root.Contact.Collision_mesh.value does not have value")
                 else:
                     if type(self.value) not in [int, float, list, str, bool, dict]:
                         self.value.check_required()
@@ -14342,10 +14217,10 @@ class Root(object):
                 def check_required(self):
 
                     if self.mesh is None:
-                        print("Requiered variable Root.Contact.Collision_mesh.FromMesh.mesh does not have value")
+                        print("Required variable Root.Contact.Collision_mesh.FromMesh.mesh does not have value")
 
                     if self.linear_map is None:
-                        print("Requiered variable Root.Contact.Collision_mesh.FromMesh.linear_map does not have value")
+                        print("Required variable Root.Contact.Collision_mesh.FromMesh.linear_map does not have value")
                     return
 
                 def as_dict(self):
@@ -14406,7 +14281,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.max_edge_length is None:
-                        print("Requiered variable Root.Contact.Collision_mesh.Generated.max_edge_length does not have value")
+                        print("Required variable Root.Contact.Collision_mesh.Generated.max_edge_length does not have value")
                     return
 
                 def as_dict(self):
@@ -14441,10 +14316,6 @@ class Root(object):
                 def as_dict(self):
                     return drop_none({"enabled": self._enabled,})
 
-
-            Object1 = FromMesh
-            Object2 = Generated
-            Object3 = Default
 
 
         class Adhesion(object):
@@ -18334,7 +18205,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Solver.Nonlinear.Solver.value does not have value")
+                        print("Required variable Root.Solver.Nonlinear.Solver.value does not have value")
                     else:
                         if type(self.value) not in [int, float, list, str, bool, dict]:
                             self.value.check_required()
@@ -18386,7 +18257,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Solver.Nonlinear.Solver.List.items does not have value")
+                            print("Required variable Root.Solver.Nonlinear.Solver.List.items does not have value")
                         return
 
                     def as_dict(self):
@@ -18432,7 +18303,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.Newton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.Newton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18479,7 +18350,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.ProjectedNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.ProjectedNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18565,7 +18436,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.RegularizedNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.RegularizedNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18651,7 +18522,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.RegularizedProjectedNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.RegularizedProjectedNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18698,7 +18569,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.DenseNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.DenseNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18745,7 +18616,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.DenseProjectedNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.DenseProjectedNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18831,7 +18702,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.DenseRegularizedNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.DenseRegularizedNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18917,7 +18788,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.DenseRegularizedProjectedNewton.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.DenseRegularizedProjectedNewton.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18951,7 +18822,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.GradientDescent.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.GradientDescent.type does not have value")
                             return
 
                         def as_dict(self):
@@ -18998,7 +18869,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.StochasticGradientDescent.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.StochasticGradientDescent.type does not have value")
                             return
 
                         def as_dict(self):
@@ -19045,7 +18916,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.LBFGS.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.LBFGS.type does not have value")
                             return
 
                         def as_dict(self):
@@ -19079,7 +18950,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.BFGS.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.BFGS.type does not have value")
                             return
 
                         def as_dict(self):
@@ -19165,7 +19036,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.ADAM.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.ADAM.type does not have value")
                             return
 
                         def as_dict(self):
@@ -19264,27 +19135,12 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Solver.Nonlinear.Solver.List.StochasticADAM.type does not have value")
+                                print("Required variable Root.Solver.Nonlinear.Solver.List.StochasticADAM.type does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"alpha": self._alpha,"beta_1": self._beta_1,"beta_2": self._beta_2,"epsilon": self._epsilon,"erase_component_probability": self._erase_component_probability,})
 
-
-                    Item = Newton
-                    Object2 = ProjectedNewton
-                    Object3 = RegularizedNewton
-                    Object4 = RegularizedProjectedNewton
-                    Object5 = DenseNewton
-                    Object6 = DenseProjectedNewton
-                    Object7 = DenseRegularizedNewton
-                    Object8 = DenseRegularizedProjectedNewton
-                    Object9 = GradientDescent
-                    Object10 = StochasticGradientDescent
-                    Object11 = LBFGS
-                    Object12 = BFGS
-                    Object13 = ADAM
-                    Object14 = StochasticADAM
 
 
 
@@ -19933,7 +19789,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Solver.Nonlinear.Box_constraints.Bounds.items does not have value")
+                            print("Required variable Root.Solver.Nonlinear.Box_constraints.Bounds.items does not have value")
                         return
 
                     def as_dict(self):
@@ -20449,7 +20305,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.value does not have value")
+                            print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.value does not have value")
                         else:
                             if type(self.value) not in [int, float, list, str, bool, dict]:
                                 self.value.check_required()
@@ -20501,7 +20357,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.items does not have value")
+                                print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.items does not have value")
                             return
 
                         def as_dict(self):
@@ -20547,7 +20403,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.Newton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.Newton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -20594,7 +20450,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.ProjectedNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.ProjectedNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -20680,7 +20536,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.RegularizedNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.RegularizedNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -20766,7 +20622,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.RegularizedProjectedNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.RegularizedProjectedNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -20813,7 +20669,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -20860,7 +20716,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseProjectedNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseProjectedNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -20946,7 +20802,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseRegularizedNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseRegularizedNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21032,7 +20888,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseRegularizedProjectedNewton.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.DenseRegularizedProjectedNewton.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21066,7 +20922,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.GradientDescent.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.GradientDescent.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21113,7 +20969,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.StochasticGradientDescent.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.StochasticGradientDescent.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21160,7 +21016,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.LBFGS.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.LBFGS.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21194,7 +21050,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.BFGS.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.BFGS.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21280,7 +21136,7 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.ADAM.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.ADAM.type does not have value")
                                 return
 
                             def as_dict(self):
@@ -21379,27 +21235,12 @@ class Root(object):
                             def check_required(self):
 
                                 if self.type is None:
-                                    print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.StochasticADAM.type does not have value")
+                                    print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Solver.List.StochasticADAM.type does not have value")
                                 return
 
                             def as_dict(self):
                                 return drop_none({"type": self._type.value if self._type is not None else None,"alpha": self._alpha,"beta_1": self._beta_1,"beta_2": self._beta_2,"epsilon": self._epsilon,"erase_component_probability": self._erase_component_probability,})
 
-
-                        Item = Newton
-                        Object2 = ProjectedNewton
-                        Object3 = RegularizedNewton
-                        Object4 = RegularizedProjectedNewton
-                        Object5 = DenseNewton
-                        Object6 = DenseProjectedNewton
-                        Object7 = DenseRegularizedNewton
-                        Object8 = DenseRegularizedProjectedNewton
-                        Object9 = GradientDescent
-                        Object10 = StochasticGradientDescent
-                        Object11 = LBFGS
-                        Object12 = BFGS
-                        Object13 = ADAM
-                        Object14 = StochasticADAM
 
 
 
@@ -22048,7 +21889,7 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Solver.Augmented_lagrangian.Nonlinear.Box_constraints.Bounds.items does not have value")
+                                print("Required variable Root.Solver.Augmented_lagrangian.Nonlinear.Box_constraints.Bounds.items does not have value")
                             return
 
                         def as_dict(self):
@@ -22354,7 +22195,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Solver.Rayleigh_damping.items does not have value")
+                    print("Required variable Root.Solver.Rayleigh_damping.items does not have value")
                 return
 
             def as_dict(self):
@@ -22415,10 +22256,10 @@ class Root(object):
                 def check_required(self):
 
                     if self.form is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.StiffnessRatio.form does not have value")
+                        print("Required variable Root.Solver.Rayleigh_damping.StiffnessRatio.form does not have value")
 
                     if self.stiffness_ratio is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.StiffnessRatio.stiffness_ratio does not have value")
+                        print("Required variable Root.Solver.Rayleigh_damping.StiffnessRatio.stiffness_ratio does not have value")
                     return
 
                 def as_dict(self):
@@ -22480,18 +22321,15 @@ class Root(object):
                 def check_required(self):
 
                     if self.form is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.Stiffness.form does not have value")
+                        print("Required variable Root.Solver.Rayleigh_damping.Stiffness.form does not have value")
 
                     if self.stiffness is None:
-                        print("Requiered variable Root.Solver.Rayleigh_damping.Stiffness.stiffness does not have value")
+                        print("Required variable Root.Solver.Rayleigh_damping.Stiffness.stiffness does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none({"form": self._form.value if self._form is not None else None,"stiffness": self._stiffness,"lagging_iterations": self._lagging_iterations,})
 
-
-            Item = StiffnessRatio
-            Object2 = Stiffness
 
 
         class Advanced(object):
@@ -22778,7 +22616,7 @@ class Root(object):
             def check_required(self):
 
                 if self.value is None:
-                    print("Requiered variable Root.Boundary_conditions.Rhs.value does not have value")
+                    print("Required variable Root.Boundary_conditions.Rhs.value does not have value")
                 else:
                     if type(self.value) not in [int, float, list, str, bool, dict]:
                         self.value.check_required()
@@ -22826,10 +22664,10 @@ class Root(object):
                 def check_required(self):
 
                     if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Rhs.ValueWithUnit.value does not have value")
+                        print("Required variable Root.Boundary_conditions.Rhs.ValueWithUnit.value does not have value")
 
                     if self.unit is None:
-                        print("Requiered variable Root.Boundary_conditions.Rhs.ValueWithUnit.unit does not have value")
+                        print("Required variable Root.Boundary_conditions.Rhs.ValueWithUnit.unit does not have value")
                     return
 
                 def as_dict(self):
@@ -22879,14 +22717,12 @@ class Root(object):
                             if type(item) not in [int, float, list, str, bool, dict]:
                                 item.check_required()
                     else:
-                        print("Requiered variable Root.Boundary_conditions.Rhs.List.items does not have value")
+                        print("Required variable Root.Boundary_conditions.Rhs.List.items does not have value")
                     return
 
                 def as_dict(self):
                     return drop_none([inline_as_dict(i) for i in self._items])
 
-
-            Object3 = ValueWithUnit
 
 
         class Dirichlet_boundary(object):
@@ -22932,7 +22768,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.items does not have value")
+                    print("Required variable Root.Boundary_conditions.Dirichlet_boundary.items does not have value")
                 return
 
             def as_dict(self):
@@ -23060,7 +22896,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.id does not have value")
+                        print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -23110,7 +22946,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Value.items does not have value")
+                            print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
@@ -23160,7 +22996,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.items does not have value")
+                            print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.items does not have value")
                         return
 
                     def as_dict(self):
@@ -23193,7 +23029,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.None_.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.None_.type does not have value")
                             return
 
                         def as_dict(self):
@@ -23227,7 +23063,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear.type does not have value")
                             return
 
                         def as_dict(self):
@@ -23287,10 +23123,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear_ramp.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear_ramp.type does not have value")
 
                             if self.to is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear_ramp.to does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Linear_ramp.to does not have value")
                             return
 
                         def as_dict(self):
@@ -23409,13 +23245,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
                             return
 
                         def as_dict(self):
@@ -23534,13 +23370,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
                             return
 
                         def as_dict(self):
@@ -23659,25 +23495,18 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Dirichlet_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
-
-                    Item = None_
-                    Object2 = Linear
-                    Object3 = Linear_ramp
-                    Object4 = Piecewise_constant
-                    Object5 = Piecewise_linear
-                    Object6 = Piecewise_cubic
 
 
 
@@ -23725,7 +23554,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Boundary_conditions.Neumann_boundary.items does not have value")
+                    print("Required variable Root.Boundary_conditions.Neumann_boundary.items does not have value")
                 return
 
             def as_dict(self):
@@ -23787,7 +23616,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.id does not have value")
+                        print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -23837,7 +23666,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Value.items does not have value")
+                            print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
@@ -23887,7 +23716,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.items does not have value")
+                            print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.items does not have value")
                         return
 
                     def as_dict(self):
@@ -23920,7 +23749,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.None_.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.None_.type does not have value")
                             return
 
                         def as_dict(self):
@@ -23954,7 +23783,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear.type does not have value")
                             return
 
                         def as_dict(self):
@@ -24014,10 +23843,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear_ramp.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear_ramp.type does not have value")
 
                             if self.to is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear_ramp.to does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Linear_ramp.to does not have value")
                             return
 
                         def as_dict(self):
@@ -24136,13 +23965,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_constant.values does not have value")
                             return
 
                         def as_dict(self):
@@ -24261,13 +24090,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_linear.values does not have value")
                             return
 
                         def as_dict(self):
@@ -24386,25 +24215,18 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Neumann_boundary.Item.Interpolation.Piecewise_cubic.values does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
-
-                    Item = None_
-                    Object2 = Linear
-                    Object3 = Linear_ramp
-                    Object4 = Piecewise_constant
-                    Object5 = Piecewise_linear
-                    Object6 = Piecewise_cubic
 
 
 
@@ -24452,7 +24274,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.items does not have value")
+                    print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.items does not have value")
                 return
 
             def as_dict(self):
@@ -24512,10 +24334,10 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.id does not have value")
+                        print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.id does not have value")
 
                     if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.value does not have value")
+                        print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.value does not have value")
                     return
 
                 def as_dict(self):
@@ -24545,7 +24367,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.value does not have value")
+                            print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.value does not have value")
                         else:
                             if type(self.value) not in [int, float, list, str, bool, dict]:
                                 self.value.check_required()
@@ -24581,7 +24403,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.None_.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.None_.type does not have value")
                             return
 
                         def as_dict(self):
@@ -24615,7 +24437,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Linear.type does not have value")
                             return
 
                         def as_dict(self):
@@ -24675,10 +24497,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Linear_ramp.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Linear_ramp.type does not have value")
 
                             if self.to is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Linear_ramp.to does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Linear_ramp.to does not have value")
                             return
 
                         def as_dict(self):
@@ -24797,13 +24619,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_constant.values does not have value")
                             return
 
                         def as_dict(self):
@@ -24922,13 +24744,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_linear.values does not have value")
                             return
 
                         def as_dict(self):
@@ -25047,25 +24869,18 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Normal_aligned_neumann_boundary.Item.None_.Piecewise_cubic.values does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
-
-                    Object1 = None_
-                    Object2 = Linear
-                    Object3 = Linear_ramp
-                    Object4 = Piecewise_constant
-                    Object5 = Piecewise_linear
-                    Object6 = Piecewise_cubic
 
 
 
@@ -25113,7 +24928,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Boundary_conditions.Pressure_boundary.items does not have value")
+                    print("Required variable Root.Boundary_conditions.Pressure_boundary.items does not have value")
                 return
 
             def as_dict(self):
@@ -25191,7 +25006,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.id does not have value")
+                        print("Required variable Root.Boundary_conditions.Pressure_boundary.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -25222,7 +25037,7 @@ class Root(object):
                     def check_required(self):
 
                         if self.value is None:
-                            print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.value does not have value")
+                            print("Required variable Root.Boundary_conditions.Pressure_boundary.Item.Value.value does not have value")
                         else:
                             if type(self.value) not in [int, float, list, str, bool, dict]:
                                 self.value.check_required()
@@ -25270,10 +25085,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.value is None:
-                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.ValueWithUnit.value does not have value")
+                                print("Required variable Root.Boundary_conditions.Pressure_boundary.Item.Value.ValueWithUnit.value does not have value")
 
                             if self.unit is None:
-                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.ValueWithUnit.unit does not have value")
+                                print("Required variable Root.Boundary_conditions.Pressure_boundary.Item.Value.ValueWithUnit.unit does not have value")
                             return
 
                         def as_dict(self):
@@ -25323,14 +25138,12 @@ class Root(object):
                                     if type(item) not in [int, float, list, str, bool, dict]:
                                         item.check_required()
                             else:
-                                print("Requiered variable Root.Boundary_conditions.Pressure_boundary.Item.Value.List.items does not have value")
+                                print("Required variable Root.Boundary_conditions.Pressure_boundary.Item.Value.List.items does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none([inline_as_dict(i) for i in self._items])
 
-
-                    Object3 = ValueWithUnit
 
 
 
@@ -25378,7 +25191,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Boundary_conditions.Pressure_cavity.items does not have value")
+                    print("Required variable Root.Boundary_conditions.Pressure_cavity.items does not have value")
                 return
 
             def as_dict(self):
@@ -25423,10 +25236,10 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Boundary_conditions.Pressure_cavity.Item.id does not have value")
+                        print("Required variable Root.Boundary_conditions.Pressure_cavity.Item.id does not have value")
 
                     if self.value is None:
-                        print("Requiered variable Root.Boundary_conditions.Pressure_cavity.Item.value does not have value")
+                        print("Required variable Root.Boundary_conditions.Pressure_cavity.Item.value does not have value")
                     return
 
                 def as_dict(self):
@@ -25477,7 +25290,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.items does not have value")
+                    print("Required variable Root.Boundary_conditions.Obstacle_displacements.items does not have value")
                 return
 
             def as_dict(self):
@@ -25539,7 +25352,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.id does not have value")
+                        print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -25589,7 +25402,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Value.items does not have value")
+                            print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
@@ -25639,7 +25452,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.items does not have value")
+                            print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.items does not have value")
                         return
 
                     def as_dict(self):
@@ -25672,7 +25485,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.None_.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.None_.type does not have value")
                             return
 
                         def as_dict(self):
@@ -25706,7 +25519,7 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear.type does not have value")
                             return
 
                         def as_dict(self):
@@ -25766,10 +25579,10 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear_ramp.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear_ramp.type does not have value")
 
                             if self.to is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear_ramp.to does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Linear_ramp.to does not have value")
                             return
 
                         def as_dict(self):
@@ -25888,13 +25701,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_constant.values does not have value")
                             return
 
                         def as_dict(self):
@@ -26013,13 +25826,13 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_linear.values does not have value")
                             return
 
                         def as_dict(self):
@@ -26138,25 +25951,18 @@ class Root(object):
                         def check_required(self):
 
                             if self.type is None:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.type does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.type does not have value")
 
                             if not self.points:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.points does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.points does not have value")
 
                             if not self.values:
-                                print("Requiered variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.values does not have value")
+                                print("Required variable Root.Boundary_conditions.Obstacle_displacements.Item.Interpolation.Piecewise_cubic.values does not have value")
                             return
 
                         def as_dict(self):
                             return drop_none({"type": self._type.value if self._type is not None else None,"points": self._points,"values": self._values,"extend": self._extend.value if self._extend is not None else None,})
 
-
-                    Item = None_
-                    Object2 = Linear
-                    Object3 = Linear_ramp
-                    Object4 = Piecewise_constant
-                    Object5 = Piecewise_linear
-                    Object6 = Piecewise_cubic
 
 
 
@@ -26419,7 +26225,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Initial_conditions.Solution.items does not have value")
+                    print("Required variable Root.Initial_conditions.Solution.items does not have value")
                 return
 
             def as_dict(self):
@@ -26464,7 +26270,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Initial_conditions.Solution.Item.id does not have value")
+                        print("Required variable Root.Initial_conditions.Solution.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -26514,7 +26320,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Initial_conditions.Solution.Item.Value.items does not have value")
+                            print("Required variable Root.Initial_conditions.Solution.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
@@ -26566,7 +26372,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Initial_conditions.Velocity.items does not have value")
+                    print("Required variable Root.Initial_conditions.Velocity.items does not have value")
                 return
 
             def as_dict(self):
@@ -26611,7 +26417,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Initial_conditions.Velocity.Item.id does not have value")
+                        print("Required variable Root.Initial_conditions.Velocity.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -26661,7 +26467,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Initial_conditions.Velocity.Item.Value.items does not have value")
+                            print("Required variable Root.Initial_conditions.Velocity.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
@@ -26713,7 +26519,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Initial_conditions.Acceleration.items does not have value")
+                    print("Required variable Root.Initial_conditions.Acceleration.items does not have value")
                 return
 
             def as_dict(self):
@@ -26758,7 +26564,7 @@ class Root(object):
                 def check_required(self):
 
                     if self.id is None:
-                        print("Requiered variable Root.Initial_conditions.Acceleration.Item.id does not have value")
+                        print("Required variable Root.Initial_conditions.Acceleration.Item.id does not have value")
                     self.value.check_required()
                     return
 
@@ -26808,7 +26614,7 @@ class Root(object):
                                 if type(item) not in [int, float, list, str, bool, dict]:
                                     item.check_required()
                         else:
-                            print("Requiered variable Root.Initial_conditions.Acceleration.Item.Value.items does not have value")
+                            print("Required variable Root.Initial_conditions.Acceleration.Item.Value.items does not have value")
                         return
 
                     def as_dict(self):
@@ -26924,7 +26730,7 @@ class Root(object):
                         if type(item) not in [int, float, list, str, bool, dict]:
                             item.check_required()
                 else:
-                    print("Requiered variable Root.Constraints.Soft.items does not have value")
+                    print("Required variable Root.Constraints.Soft.items does not have value")
                 return
 
             def as_dict(self):

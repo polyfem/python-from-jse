@@ -318,7 +318,7 @@ class GeneratorUnitTests(unittest.TestCase):
             generated,
         )
         self.assertNotIn(
-            'if self.box:\n            print("Requiered variable Root.Selection.box does not have value")',
+            'if self.box:\n            print("Required variable Root.Selection.box does not have value")',
             generated,
         )
 
@@ -723,7 +723,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 time_steps=10,
             )
 
-    def test_type_named_object_variants_keep_legacy_object_aliases(self):
+    def test_type_named_object_variants_do_not_generate_legacy_object_aliases(self):
         generator = import_generator("json_to_tree_type_name_object_aliases")
         root = generator.build_tree([
             {
@@ -768,19 +768,19 @@ class GeneratorUnitTests(unittest.TestCase):
 
         self.assertIn("class TendDt(object):", generated)
         self.assertIn("class TimeStepsDt(object):", generated)
-        self.assertIn("Object1 = TendDt", generated)
-        self.assertIn("Object2 = TimeStepsDt", generated)
+        self.assertNotIn("Object1 = TendDt", generated)
+        self.assertNotIn("Object2 = TimeStepsDt", generated)
 
         generated_module = module_from_generated_text(generated)
 
-        self.assertIs(generated_module.Root.Time.Object1, generated_module.Root.Time.TendDt)
-        self.assertIs(generated_module.Root.Time.Object2, generated_module.Root.Time.TimeStepsDt)
+        self.assertFalse(hasattr(generated_module.Root.Time, "Object1"))
+        self.assertFalse(hasattr(generated_module.Root.Time, "Object2"))
         self.assertEqual(
             {"tend": 1.0, "dt": 0.1, "t0": 0.0},
-            generated_module.Root.Time.Object1(tend=1.0, dt=0.1).as_dict(),
+            generated_module.Root.Time.TendDt(tend=1.0, dt=0.1).as_dict(),
         )
 
-    def test_type_named_list_variants_keep_legacy_item_aliases(self):
+    def test_type_named_list_variants_do_not_generate_legacy_item_aliases(self):
         generator = import_generator("json_to_tree_type_name_list_aliases")
         root = generator.build_tree([
             {
@@ -827,22 +827,16 @@ class GeneratorUnitTests(unittest.TestCase):
 
         self.assertIn("class StiffnessRatio(object):", generated)
         self.assertIn("class Stiffness(object):", generated)
-        self.assertIn("Item = StiffnessRatio", generated)
-        self.assertIn("Object2 = Stiffness", generated)
+        self.assertNotIn("Item = StiffnessRatio", generated)
+        self.assertNotIn("Object2 = Stiffness", generated)
 
         generated_module = module_from_generated_text(generated)
 
-        self.assertIs(
-            generated_module.Root.Solver.Rayleigh_damping.Item,
-            generated_module.Root.Solver.Rayleigh_damping.StiffnessRatio,
-        )
-        self.assertIs(
-            generated_module.Root.Solver.Rayleigh_damping.Object2,
-            generated_module.Root.Solver.Rayleigh_damping.Stiffness,
-        )
+        self.assertFalse(hasattr(generated_module.Root.Solver.Rayleigh_damping, "Item"))
+        self.assertFalse(hasattr(generated_module.Root.Solver.Rayleigh_damping, "Object2"))
         self.assertEqual(
             {"form": "elasticity", "stiffness_ratio": 0.25},
-            generated_module.Root.Solver.Rayleigh_damping.Item(
+            generated_module.Root.Solver.Rayleigh_damping.StiffnessRatio(
                 form="elasticity",
                 stiffness_ratio=0.25,
             ).as_dict(),

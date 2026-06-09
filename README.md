@@ -22,7 +22,6 @@ During that process it handles:
 - `type_name` and legacy `#type_name`
 - required and optional child fields
 - variant-specific field pruning
-- legacy `ObjectN` aliases for backward compatibility
 
 The output is a generated Python module containing nested classes such as `Root`, `Root.Time`, `Root.Materials`, and their variants.
 
@@ -124,13 +123,14 @@ The generated classes validate values when they are assigned. Current validation
 
 The generator supports both `type_name` and legacy `#type_name` through `entry_type_name(entry)`.
 
-When a schema object variant has a stable type name, the generated class uses that readable name. For compatibility, the generator may also create aliases such as:
+When a schema object variant has a stable type name, the generated class uses that readable name:
 
 ```python
-Object2 = Stiffness
+class Stiffness(object):
+    ...
 ```
 
-These aliases are not the same as anonymous generated classes. They should not be removed just to eliminate the text `ObjectN`.
+The current generator does not add compatibility aliases such as `Object2 = Stiffness` for named variants.
 
 The case that needs attention is:
 
