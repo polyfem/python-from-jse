@@ -522,6 +522,23 @@ class GeneratorUnitTests(unittest.TestCase):
             ).as_dict(),
         )
 
+    def test_input_spec_solver_metadata_links_declared_children(self):
+        generator = import_generator("json_to_tree_input_spec_solver_links")
+        schema_entries = generator.expand_includes(
+            __import__("json").loads(
+                (PROJECT_ROOT / "json-specs" / "input-spec.json").read_text()
+            )
+        )
+        root = generator.build_tree(schema_entries)
+
+        linear = root.get_optional("solver").get_optional("linear")
+        augmented_lagrangian = root.get_optional("solver").get_optional(
+            "augmented_lagrangian"
+        )
+
+        self.assertIn("adjoint_solver", linear._optional)
+        self.assertIn("error", augmented_lagrangian._optional)
+
     def test_child_pointer_before_parent_entry_stays_under_parent(self):
         generator = import_generator("json_to_tree_child_before_parent")
         root = generator.build_tree([

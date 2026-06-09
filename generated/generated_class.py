@@ -14586,7 +14586,7 @@ class Root(object):
             '''
             Settings for the linear solver.
             \nRequired: []
-            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']
+            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS', 'adjoint_solver']
             '''
             self._linear = type_check(value, self.Linear)
 
@@ -14625,7 +14625,7 @@ class Root(object):
             '''
             Parameters for the AL for imposing Dirichlet BCs. If the bc are not imposable, we add $w\\|u - bc\\|^2$ to the energy ($u$ is the solution at the Dirichlet nodes and $bc$ are the Dirichlet values). After convergence, we try to impose bc again. The algorithm computes E + a/2*AL^2 - lambda AL, where E is the current energy (elastic, inertia, contact, etc.) and AL is the augmented Lagrangian energy. a starts at `initial_weight` and, in case DBC cannot be imposed, we update a as `a *= scaling` until `max_weight`. See IPC additional material
             \nRequired: []
-            \nOptional: ['initial_weight', 'scaling', 'max_weight', 'eta', 'nonlinear']
+            \nOptional: ['initial_weight', 'error', 'scaling', 'max_weight', 'eta', 'nonlinear']
             '''
             self._augmented_lagrangian = type_check(value, self.Augmented_lagrangian)
 
@@ -14678,7 +14678,7 @@ class Root(object):
         class Linear(object):
             '''Settings for the linear solver.
             \nRequired: []
-            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']'''
+            \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS', 'adjoint_solver']'''
             class Solver(str, Enum):
                 EIGEN_SIMPLICIALLDLT = 'Eigen::SimplicialLDLT'
                 EIGEN_SPARSELU = 'Eigen::SparseLU'
@@ -14720,7 +14720,8 @@ class Root(object):
                 Pardiso: Optional["Root.Solver.Linear.Pardiso"] = None,
                 Hypre: Optional["Root.Solver.Linear.Hypre"] = None,
                 AMGCL: Optional["Root.Solver.Linear.AMGCL"] = None,
-                MAS: Optional["Root.Solver.Linear.MAS"] = None
+                MAS: Optional["Root.Solver.Linear.MAS"] = None,
+                adjoint_solver: Optional["Root.Solver.Linear.Adjoint_solver"] = None
             ):
                 self._enable_overwrite_solver = type_check(enable_overwrite_solver, bool) if enable_overwrite_solver is not None else None
                 self._solver = enum_check(solver, self.Solver)
@@ -14735,6 +14736,7 @@ class Root(object):
                 self._Hypre = type_check(Hypre, self.Hypre) if Hypre is not None else None
                 self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL is not None else None
                 self._MAS = type_check(MAS, self.MAS) if MAS is not None else None
+                self._adjoint_solver = type_check(adjoint_solver, self.Adjoint_solver) if adjoint_solver is not None else None
 
             @property
             def enable_overwrite_solver(self):
@@ -14899,12 +14901,25 @@ class Root(object):
                 '''
                 self._MAS = type_check(value, self.MAS)
 
+            @property
+            def adjoint_solver(self):
+                return self._adjoint_solver
+
+            @adjoint_solver.setter
+            def adjoint_solver(self, value):
+                '''
+                Settings for the linear solver.
+                \nRequired: []
+                \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']
+                '''
+                self._adjoint_solver = type_check(value, self.Adjoint_solver)
+
             def check_required(self):
 
                 return
 
             def as_dict(self):
-                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict() if self._Eigen_LeastSquaresConjugateGradient is not None else None,"Eigen::DGMRES": self._Eigen_DGMRES.as_dict() if self._Eigen_DGMRES is not None else None,"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict() if self._Eigen_ConjugateGradient is not None else None,"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict() if self._Eigen_BiCGSTAB is not None else None,"Eigen::GMRES": self._Eigen_GMRES.as_dict() if self._Eigen_GMRES is not None else None,"Eigen::MINRES": self._Eigen_MINRES.as_dict() if self._Eigen_MINRES is not None else None,"Pardiso": self._Pardiso.as_dict() if self._Pardiso is not None else None,"Hypre": self._Hypre.as_dict() if self._Hypre is not None else None,"AMGCL": self._AMGCL.as_dict() if self._AMGCL is not None else None,"MAS": self._MAS.as_dict() if self._MAS is not None else None,})
+                return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict() if self._Eigen_LeastSquaresConjugateGradient is not None else None,"Eigen::DGMRES": self._Eigen_DGMRES.as_dict() if self._Eigen_DGMRES is not None else None,"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict() if self._Eigen_ConjugateGradient is not None else None,"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict() if self._Eigen_BiCGSTAB is not None else None,"Eigen::GMRES": self._Eigen_GMRES.as_dict() if self._Eigen_GMRES is not None else None,"Eigen::MINRES": self._Eigen_MINRES.as_dict() if self._Eigen_MINRES is not None else None,"Pardiso": self._Pardiso.as_dict() if self._Pardiso is not None else None,"Hypre": self._Hypre.as_dict() if self._Hypre is not None else None,"AMGCL": self._AMGCL.as_dict() if self._AMGCL is not None else None,"MAS": self._MAS.as_dict() if self._MAS is not None else None,"adjoint_solver": self._adjoint_solver.as_dict() if self._adjoint_solver is not None else None,})
 
             class EigenLeastSquaresConjugateGradient(object):
                 '''Settings for the Eigen's Least Squares Conjugate Gradient solver.
@@ -15778,6 +15793,1112 @@ class Root(object):
 
                 def as_dict(self):
                     return drop_none({"block_dim": self._block_dim,"max_iter": self._max_iter,"relative_tolerance": self._relative_tolerance,"absolute_tolerance": self._absolute_tolerance,"lazy_partitioning": self._lazy_partitioning,"use_preconditioned_residual_norm": self._use_preconditioned_residual_norm,})
+
+
+            class Adjoint_solver(object):
+                '''Settings for the linear solver.
+                \nRequired: []
+                \nOptional: ['enable_overwrite_solver', 'solver', 'precond', 'Eigen::LeastSquaresConjugateGradient', 'Eigen::DGMRES', 'Eigen::ConjugateGradient', 'Eigen::BiCGSTAB', 'Eigen::GMRES', 'Eigen::MINRES', 'Pardiso', 'Hypre', 'AMGCL', 'MAS']'''
+                class Solver(str, Enum):
+                    EIGEN_SIMPLICIALLDLT = 'Eigen::SimplicialLDLT'
+                    EIGEN_SPARSELU = 'Eigen::SparseLU'
+                    EIGEN_CHOLMODSUPERNODALLLT = 'Eigen::CholmodSupernodalLLT'
+                    EIGEN_UMFPACKLU = 'Eigen::UmfPackLU'
+                    EIGEN_SUPERLU = 'Eigen::SuperLU'
+                    EIGEN_PARDISOLDLT = 'Eigen::PardisoLDLT'
+                    EIGEN_PARDISOLLT = 'Eigen::PardisoLLT'
+                    EIGEN_PARDISOLU = 'Eigen::PardisoLU'
+                    PARDISO = 'Pardiso'
+                    HYPRE = 'Hypre'
+                    AMGCL = 'AMGCL'
+                    EIGEN_LEASTSQUARESCONJUGATEGRADIENT = 'Eigen::LeastSquaresConjugateGradient'
+                    EIGEN_DGMRES = 'Eigen::DGMRES'
+                    EIGEN_CONJUGATEGRADIENT = 'Eigen::ConjugateGradient'
+                    EIGEN_BICGSTAB = 'Eigen::BiCGSTAB'
+                    EIGEN_GMRES = 'Eigen::GMRES'
+                    EIGEN_MINRES = 'Eigen::MINRES'
+                    MAS = 'MAS'
+
+                class Precond(str, Enum):
+                    EIGEN_IDENTITYPRECONDITIONER = 'Eigen::IdentityPreconditioner'
+                    EIGEN_DIAGONALPRECONDITIONER = 'Eigen::DiagonalPreconditioner'
+                    EIGEN_INCOMPLETECHOLESKY = 'Eigen::IncompleteCholesky'
+                    EIGEN_LEASTSQUAREDIAGONALPRECONDITIONER = 'Eigen::LeastSquareDiagonalPreconditioner'
+                    EIGEN_INCOMPLETELUT = 'Eigen::IncompleteLUT'
+
+                def __init__(
+                    self,
+                    enable_overwrite_solver: bool = False,
+                    solver: "Solver" = '',
+                    precond: "Precond" = '',
+                    Eigen_LeastSquaresConjugateGradient: Optional["Root.Solver.Linear.Adjoint_solver.EigenLeastSquaresConjugateGradient"] = None,
+                    Eigen_DGMRES: Optional["Root.Solver.Linear.Adjoint_solver.EigenDGMRES"] = None,
+                    Eigen_ConjugateGradient: Optional["Root.Solver.Linear.Adjoint_solver.EigenConjugateGradient"] = None,
+                    Eigen_BiCGSTAB: Optional["Root.Solver.Linear.Adjoint_solver.EigenBiCGSTAB"] = None,
+                    Eigen_GMRES: Optional["Root.Solver.Linear.Adjoint_solver.EigenGMRES"] = None,
+                    Eigen_MINRES: Optional["Root.Solver.Linear.Adjoint_solver.EigenMINRES"] = None,
+                    Pardiso: Optional["Root.Solver.Linear.Adjoint_solver.Pardiso"] = None,
+                    Hypre: Optional["Root.Solver.Linear.Adjoint_solver.Hypre"] = None,
+                    AMGCL: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL"] = None,
+                    MAS: Optional["Root.Solver.Linear.Adjoint_solver.MAS"] = None
+                ):
+                    self._enable_overwrite_solver = type_check(enable_overwrite_solver, bool) if enable_overwrite_solver is not None else None
+                    self._solver = enum_check(solver, self.Solver)
+                    self._precond = enum_check(precond, self.Precond)
+                    self._Eigen_LeastSquaresConjugateGradient = type_check(Eigen_LeastSquaresConjugateGradient, self.EigenLeastSquaresConjugateGradient) if Eigen_LeastSquaresConjugateGradient is not None else None
+                    self._Eigen_DGMRES = type_check(Eigen_DGMRES, self.EigenDGMRES) if Eigen_DGMRES is not None else None
+                    self._Eigen_ConjugateGradient = type_check(Eigen_ConjugateGradient, self.EigenConjugateGradient) if Eigen_ConjugateGradient is not None else None
+                    self._Eigen_BiCGSTAB = type_check(Eigen_BiCGSTAB, self.EigenBiCGSTAB) if Eigen_BiCGSTAB is not None else None
+                    self._Eigen_GMRES = type_check(Eigen_GMRES, self.EigenGMRES) if Eigen_GMRES is not None else None
+                    self._Eigen_MINRES = type_check(Eigen_MINRES, self.EigenMINRES) if Eigen_MINRES is not None else None
+                    self._Pardiso = type_check(Pardiso, self.Pardiso) if Pardiso is not None else None
+                    self._Hypre = type_check(Hypre, self.Hypre) if Hypre is not None else None
+                    self._AMGCL = type_check(AMGCL, self.AMGCL) if AMGCL is not None else None
+                    self._MAS = type_check(MAS, self.MAS) if MAS is not None else None
+
+                @property
+                def enable_overwrite_solver(self):
+                    return self._enable_overwrite_solver
+
+                @enable_overwrite_solver.setter
+                def enable_overwrite_solver(self, value):
+                    '''
+                    If solver name is not present, falls back to default
+                    '''
+                    self._enable_overwrite_solver = type_check(value, bool)
+
+                @property
+                def solver(self):
+                    return self._solver
+
+                @solver.setter
+                def solver(self, value):
+                    '''
+                    Linear solver type.
+                    '''
+                    self._solver = enum_check(value, self.Solver)
+
+                @property
+                def precond(self):
+                    return self._precond
+
+                @precond.setter
+                def precond(self, value):
+                    '''
+                    Preconditioner used if using an iterative linear solver.
+                    '''
+                    self._precond = enum_check(value, self.Precond)
+
+                @property
+                def Eigen_LeastSquaresConjugateGradient(self):
+                    return self._Eigen_LeastSquaresConjugateGradient
+
+                @Eigen_LeastSquaresConjugateGradient.setter
+                def Eigen_LeastSquaresConjugateGradient(self, value):
+                    '''
+                    Settings for the Eigen's Least Squares Conjugate Gradient solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']
+                    '''
+                    self._Eigen_LeastSquaresConjugateGradient = type_check(value, self.EigenLeastSquaresConjugateGradient)
+
+                @property
+                def Eigen_DGMRES(self):
+                    return self._Eigen_DGMRES
+
+                @Eigen_DGMRES.setter
+                def Eigen_DGMRES(self, value):
+                    '''
+                    Settings for the Eigen's DGMRES solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']
+                    '''
+                    self._Eigen_DGMRES = type_check(value, self.EigenDGMRES)
+
+                @property
+                def Eigen_ConjugateGradient(self):
+                    return self._Eigen_ConjugateGradient
+
+                @Eigen_ConjugateGradient.setter
+                def Eigen_ConjugateGradient(self, value):
+                    '''
+                    Settings for the Eigen's Conjugate Gradient solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']
+                    '''
+                    self._Eigen_ConjugateGradient = type_check(value, self.EigenConjugateGradient)
+
+                @property
+                def Eigen_BiCGSTAB(self):
+                    return self._Eigen_BiCGSTAB
+
+                @Eigen_BiCGSTAB.setter
+                def Eigen_BiCGSTAB(self, value):
+                    '''
+                    Settings for the Eigen's BiCGSTAB solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']
+                    '''
+                    self._Eigen_BiCGSTAB = type_check(value, self.EigenBiCGSTAB)
+
+                @property
+                def Eigen_GMRES(self):
+                    return self._Eigen_GMRES
+
+                @Eigen_GMRES.setter
+                def Eigen_GMRES(self, value):
+                    '''
+                    Settings for the Eigen's GMRES solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']
+                    '''
+                    self._Eigen_GMRES = type_check(value, self.EigenGMRES)
+
+                @property
+                def Eigen_MINRES(self):
+                    return self._Eigen_MINRES
+
+                @Eigen_MINRES.setter
+                def Eigen_MINRES(self, value):
+                    '''
+                    Settings for the Eigen's MINRES solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']
+                    '''
+                    self._Eigen_MINRES = type_check(value, self.EigenMINRES)
+
+                @property
+                def Pardiso(self):
+                    return self._Pardiso
+
+                @Pardiso.setter
+                def Pardiso(self, value):
+                    '''
+                    Settings for the Pardiso solver.
+                    \nRequired: []
+                    \nOptional: ['mtype']
+                    '''
+                    self._Pardiso = type_check(value, self.Pardiso)
+
+                @property
+                def Hypre(self):
+                    return self._Hypre
+
+                @Hypre.setter
+                def Hypre(self, value):
+                    '''
+                    Settings for the Hypre solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']
+                    '''
+                    self._Hypre = type_check(value, self.Hypre)
+
+                @property
+                def AMGCL(self):
+                    return self._AMGCL
+
+                @AMGCL.setter
+                def AMGCL(self, value):
+                    '''
+                    Settings for the AMGCL solver.
+                    \nRequired: []
+                    \nOptional: ['solver', 'precond']
+                    '''
+                    self._AMGCL = type_check(value, self.AMGCL)
+
+                @property
+                def MAS(self):
+                    return self._MAS
+
+                @MAS.setter
+                def MAS(self, value):
+                    '''
+                    Settings for the MAS solver.
+                    \nRequired: []
+                    \nOptional: ['block_dim', 'max_iter', 'relative_tolerance', 'absolute_tolerance', 'lazy_partitioning', 'use_preconditioned_residual_norm']
+                    '''
+                    self._MAS = type_check(value, self.MAS)
+
+                def check_required(self):
+
+                    return
+
+                def as_dict(self):
+                    return drop_none({"enable_overwrite_solver": self._enable_overwrite_solver,"solver": self._solver.value if self._solver is not None else None,"precond": self._precond.value if self._precond is not None else None,"Eigen::LeastSquaresConjugateGradient": self._Eigen_LeastSquaresConjugateGradient.as_dict() if self._Eigen_LeastSquaresConjugateGradient is not None else None,"Eigen::DGMRES": self._Eigen_DGMRES.as_dict() if self._Eigen_DGMRES is not None else None,"Eigen::ConjugateGradient": self._Eigen_ConjugateGradient.as_dict() if self._Eigen_ConjugateGradient is not None else None,"Eigen::BiCGSTAB": self._Eigen_BiCGSTAB.as_dict() if self._Eigen_BiCGSTAB is not None else None,"Eigen::GMRES": self._Eigen_GMRES.as_dict() if self._Eigen_GMRES is not None else None,"Eigen::MINRES": self._Eigen_MINRES.as_dict() if self._Eigen_MINRES is not None else None,"Pardiso": self._Pardiso.as_dict() if self._Pardiso is not None else None,"Hypre": self._Hypre.as_dict() if self._Hypre is not None else None,"AMGCL": self._AMGCL.as_dict() if self._AMGCL is not None else None,"MAS": self._MAS.as_dict() if self._MAS is not None else None,})
+
+                class EigenLeastSquaresConjugateGradient(object):
+                    '''Settings for the Eigen's Least Squares Conjugate Gradient solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        tolerance: float = 1e-12
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
+
+
+                class EigenDGMRES(object):
+                    '''Settings for the Eigen's DGMRES solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        tolerance: float = 1e-12
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
+
+
+                class EigenConjugateGradient(object):
+                    '''Settings for the Eigen's Conjugate Gradient solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        tolerance: float = 1e-12
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
+
+
+                class EigenBiCGSTAB(object):
+                    '''Settings for the Eigen's BiCGSTAB solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        tolerance: float = 1e-12
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
+
+
+                class EigenGMRES(object):
+                    '''Settings for the Eigen's GMRES solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        tolerance: float = 1e-12
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
+
+
+                class EigenMINRES(object):
+                    '''Settings for the Eigen's MINRES solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'tolerance']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        tolerance: float = 1e-12
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"tolerance": self._tolerance,})
+
+
+                class Pardiso(object):
+                    '''Settings for the Pardiso solver.
+                    \nRequired: []
+                    \nOptional: ['mtype']'''
+                    def __init__(
+                        self,
+                        mtype: int = 11
+                    ):
+                        self._mtype = type_check(mtype, int) if mtype is not None else None
+
+                    @property
+                    def mtype(self):
+                        return self._mtype
+
+                    @mtype.setter
+                    def mtype(self, value):
+                        '''
+                        Matrix type.
+                        '''
+                        self._mtype = type_check(value, int)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"mtype": self._mtype,})
+
+
+                class Hypre(object):
+                    '''Settings for the Hypre solver.
+                    \nRequired: []
+                    \nOptional: ['max_iter', 'pre_max_iter', 'tolerance', 'theta', 'nodal_coarsening', 'interp_rbms', 'dimension']'''
+                    def __init__(
+                        self,
+                        max_iter: int = 1000,
+                        pre_max_iter: int = 1,
+                        tolerance: float = 1e-10,
+                        theta: float = 0.5,
+                        nodal_coarsening: bool = False,
+                        interp_rbms: bool = False,
+                        dimension: int = 1
+                    ):
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._pre_max_iter = type_check(pre_max_iter, int) if pre_max_iter is not None else None
+                        self._tolerance = type_check(tolerance, float) if tolerance is not None else None
+                        self._theta = type_check(theta, float) if theta is not None else None
+                        self._nodal_coarsening = type_check(nodal_coarsening, bool) if nodal_coarsening is not None else None
+                        self._interp_rbms = type_check(interp_rbms, bool) if interp_rbms is not None else None
+                        self._dimension = type_check(dimension, int) if dimension is not None else None
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def pre_max_iter(self):
+                        return self._pre_max_iter
+
+                    @pre_max_iter.setter
+                    def pre_max_iter(self, value):
+                        '''
+                        Maximum number of pre iterations.
+                        '''
+                        self._pre_max_iter = type_check(value, int)
+
+                    @property
+                    def tolerance(self):
+                        return self._tolerance
+
+                    @tolerance.setter
+                    def tolerance(self, value):
+                        '''
+                        Convergence tolerance.
+                        '''
+                        self._tolerance = type_check(value, float)
+
+                    @property
+                    def theta(self):
+                        return self._theta
+
+                    @theta.setter
+                    def theta(self, value):
+                        '''
+                        Strong threshold.
+                        '''
+                        self._theta = type_check(value, float)
+
+                    @property
+                    def nodal_coarsening(self):
+                        return self._nodal_coarsening
+
+                    @nodal_coarsening.setter
+                    def nodal_coarsening(self, value):
+                        '''
+                        Whether or not to include nodal coarsening options.
+                        '''
+                        self._nodal_coarsening = type_check(value, bool)
+
+                    @property
+                    def interp_rbms(self):
+                        return self._interp_rbms
+
+                    @interp_rbms.setter
+                    def interp_rbms(self, value):
+                        '''
+                        Whether or not to interp rbms.
+                        '''
+                        self._interp_rbms = type_check(value, bool)
+
+                    @property
+                    def dimension(self):
+                        return self._dimension
+
+                    @dimension.setter
+                    def dimension(self, value):
+                        '''
+                        Dimension of problem.
+                        '''
+                        self._dimension = type_check(value, int)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"max_iter": self._max_iter,"pre_max_iter": self._pre_max_iter,"tolerance": self._tolerance,"theta": self._theta,"nodal_coarsening": self._nodal_coarsening,"interp_rbms": self._interp_rbms,"dimension": self._dimension,})
+
+
+                class AMGCL(object):
+                    '''Settings for the AMGCL solver.
+                    \nRequired: []
+                    \nOptional: ['solver', 'precond']'''
+                    def __init__(
+                        self,
+                        solver: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Solver"] = None,
+                        precond: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond"] = None
+                    ):
+                        self._solver = type_check(solver, self.Solver) if solver is not None else None
+                        self._precond = type_check(precond, self.Precond) if precond is not None else None
+
+                    @property
+                    def solver(self):
+                        return self._solver
+
+                    @solver.setter
+                    def solver(self, value):
+                        '''
+                        Solver settings for the AMGCL.
+                        \nRequired: []
+                        \nOptional: ['tol', 'maxiter', 'type']
+                        '''
+                        self._solver = type_check(value, self.Solver)
+
+                    @property
+                    def precond(self):
+                        return self._precond
+
+                    @precond.setter
+                    def precond(self, value):
+                        '''
+                        Preconditioner settings for the AMGCL.
+                        \nRequired: []
+                        \nOptional: ['relax', 'class', 'max_levels', 'direct_coarse', 'ncycle', 'coarsening']
+                        '''
+                        self._precond = type_check(value, self.Precond)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"solver": self._solver.as_dict() if self._solver is not None else None,"precond": self._precond.as_dict() if self._precond is not None else None,})
+
+                    class Solver(object):
+                        '''Solver settings for the AMGCL.
+                        \nRequired: []
+                        \nOptional: ['tol', 'maxiter', 'type']'''
+                        def __init__(
+                            self,
+                            tol: float = 1e-10,
+                            maxiter: int = 1000,
+                            type: str = 'cg'
+                        ):
+                            self._tol = type_check(tol, float) if tol is not None else None
+                            self._maxiter = type_check(maxiter, int) if maxiter is not None else None
+                            self._type = type_check(type, str) if type is not None else None
+
+                        @property
+                        def tol(self):
+                            return self._tol
+
+                        @tol.setter
+                        def tol(self, value):
+                            '''
+                            Convergence tolerance.
+                            '''
+                            self._tol = type_check(value, float)
+
+                        @property
+                        def maxiter(self):
+                            return self._maxiter
+
+                        @maxiter.setter
+                        def maxiter(self, value):
+                            '''
+                            Maximum number of iterations.
+                            '''
+                            self._maxiter = type_check(value, int)
+
+                        @property
+                        def type(self):
+                            return self._type
+
+                        @type.setter
+                        def type(self, value):
+                            '''
+                            Type of solver to use.
+                            '''
+                            self._type = type_check(value, str)
+
+                        def check_required(self):
+
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"tol": self._tol,"maxiter": self._maxiter,"type": self._type,})
+
+
+                    class Precond(object):
+                        '''Preconditioner settings for the AMGCL.
+                        \nRequired: []
+                        \nOptional: ['relax', 'class', 'max_levels', 'direct_coarse', 'ncycle', 'coarsening']'''
+                        def __init__(
+                            self,
+                            relax: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond.Relax"] = None,
+                            class_: str = 'amg',
+                            max_levels: int = 6,
+                            direct_coarse: bool = False,
+                            ncycle: int = 2,
+                            coarsening: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond.Coarsening"] = None
+                        ):
+                            self._relax = type_check(relax, self.Relax) if relax is not None else None
+                            self._class_ = type_check(class_, str) if class_ is not None else None
+                            self._max_levels = type_check(max_levels, int) if max_levels is not None else None
+                            self._direct_coarse = type_check(direct_coarse, bool) if direct_coarse is not None else None
+                            self._ncycle = type_check(ncycle, int) if ncycle is not None else None
+                            self._coarsening = type_check(coarsening, self.Coarsening) if coarsening is not None else None
+
+                        @property
+                        def relax(self):
+                            return self._relax
+
+                        @relax.setter
+                        def relax(self, value):
+                            '''
+                            Preconditioner settings for the AMGCL.
+                            \nRequired: []
+                            \nOptional: ['degree', 'type', 'power_iters', 'higher', 'lower', 'scale']
+                            '''
+                            self._relax = type_check(value, self.Relax)
+
+                        @property
+                        def class_(self):
+                            return self._class_
+
+                        @class_.setter
+                        def class_(self, value):
+                            '''
+                            Type of preconditioner to use.
+                            '''
+                            self._class_ = type_check(value, str)
+
+                        @property
+                        def max_levels(self):
+                            return self._max_levels
+
+                        @max_levels.setter
+                        def max_levels(self, value):
+                            '''
+                            Maximum number of levels.
+                            '''
+                            self._max_levels = type_check(value, int)
+
+                        @property
+                        def direct_coarse(self):
+                            return self._direct_coarse
+
+                        @direct_coarse.setter
+                        def direct_coarse(self, value):
+                            '''
+                            Use direct solver for the coarsest level.
+                            '''
+                            self._direct_coarse = type_check(value, bool)
+
+                        @property
+                        def ncycle(self):
+                            return self._ncycle
+
+                        @ncycle.setter
+                        def ncycle(self, value):
+                            '''
+                            Number of cycles.
+                            '''
+                            self._ncycle = type_check(value, int)
+
+                        @property
+                        def coarsening(self):
+                            return self._coarsening
+
+                        @coarsening.setter
+                        def coarsening(self, value):
+                            '''
+                            Coarsening parameters.
+                            \nRequired: []
+                            \nOptional: ['type', 'estimate_spectral_radius', 'relax', 'aggr']
+                            '''
+                            self._coarsening = type_check(value, self.Coarsening)
+
+                        def check_required(self):
+
+                            return
+
+                        def as_dict(self):
+                            return drop_none({"relax": self._relax.as_dict() if self._relax is not None else None,"class": self._class_,"max_levels": self._max_levels,"direct_coarse": self._direct_coarse,"ncycle": self._ncycle,"coarsening": self._coarsening.as_dict() if self._coarsening is not None else None,})
+
+                        class Relax(object):
+                            '''Preconditioner settings for the AMGCL.
+                            \nRequired: []
+                            \nOptional: ['degree', 'type', 'power_iters', 'higher', 'lower', 'scale']'''
+                            def __init__(
+                                self,
+                                degree: int = 16,
+                                type: str = 'chebyshev',
+                                power_iters: int = 100,
+                                higher: float = 2.0,
+                                lower: float = 0.008333333333,
+                                scale: bool = True
+                            ):
+                                self._degree = type_check(degree, int) if degree is not None else None
+                                self._type = type_check(type, str) if type is not None else None
+                                self._power_iters = type_check(power_iters, int) if power_iters is not None else None
+                                self._higher = type_check(higher, float) if higher is not None else None
+                                self._lower = type_check(lower, float) if lower is not None else None
+                                self._scale = type_check(scale, bool) if scale is not None else None
+
+                            @property
+                            def degree(self):
+                                return self._degree
+
+                            @degree.setter
+                            def degree(self, value):
+                                '''
+                                Degree of the polynomial.
+                                '''
+                                self._degree = type_check(value, int)
+
+                            @property
+                            def type(self):
+                                return self._type
+
+                            @type.setter
+                            def type(self, value):
+                                '''
+                                Type of relaxation to use.
+                                '''
+                                self._type = type_check(value, str)
+
+                            @property
+                            def power_iters(self):
+                                return self._power_iters
+
+                            @power_iters.setter
+                            def power_iters(self, value):
+                                '''
+                                Number of power iterations.
+                                '''
+                                self._power_iters = type_check(value, int)
+
+                            @property
+                            def higher(self):
+                                return self._higher
+
+                            @higher.setter
+                            def higher(self, value):
+                                '''
+                                Higher level relaxation.
+                                '''
+                                self._higher = type_check(value, float)
+
+                            @property
+                            def lower(self):
+                                return self._lower
+
+                            @lower.setter
+                            def lower(self, value):
+                                '''
+                                Lower level relaxation.
+                                '''
+                                self._lower = type_check(value, float)
+
+                            @property
+                            def scale(self):
+                                return self._scale
+
+                            @scale.setter
+                            def scale(self, value):
+                                '''
+                                Scale.
+                                '''
+                                self._scale = type_check(value, bool)
+
+                            def check_required(self):
+
+                                return
+
+                            def as_dict(self):
+                                return drop_none({"degree": self._degree,"type": self._type,"power_iters": self._power_iters,"higher": self._higher,"lower": self._lower,"scale": self._scale,})
+
+
+                        class Coarsening(object):
+                            '''Coarsening parameters.
+                            \nRequired: []
+                            \nOptional: ['type', 'estimate_spectral_radius', 'relax', 'aggr']'''
+                            def __init__(
+                                self,
+                                type: str = 'smoothed_aggregation',
+                                estimate_spectral_radius: bool = True,
+                                relax: float = 1.0,
+                                aggr: Optional["Root.Solver.Linear.Adjoint_solver.AMGCL.Precond.Coarsening.Aggr"] = None
+                            ):
+                                self._type = type_check(type, str) if type is not None else None
+                                self._estimate_spectral_radius = type_check(estimate_spectral_radius, bool) if estimate_spectral_radius is not None else None
+                                self._relax = type_check(relax, float) if relax is not None else None
+                                self._aggr = type_check(aggr, self.Aggr) if aggr is not None else None
+
+                            @property
+                            def type(self):
+                                return self._type
+
+                            @type.setter
+                            def type(self, value):
+                                '''
+                                Coarsening type.
+                                '''
+                                self._type = type_check(value, str)
+
+                            @property
+                            def estimate_spectral_radius(self):
+                                return self._estimate_spectral_radius
+
+                            @estimate_spectral_radius.setter
+                            def estimate_spectral_radius(self, value):
+                                '''
+                                Should the spectral radius be estimated.
+                                '''
+                                self._estimate_spectral_radius = type_check(value, bool)
+
+                            @property
+                            def relax(self):
+                                return self._relax
+
+                            @relax.setter
+                            def relax(self, value):
+                                '''
+                                Coarsening relaxation.
+                                '''
+                                self._relax = type_check(value, float)
+
+                            @property
+                            def aggr(self):
+                                return self._aggr
+
+                            @aggr.setter
+                            def aggr(self, value):
+                                '''
+                                Aggregation settings.
+                                \nRequired: []
+                                \nOptional: ['eps_strong']
+                                '''
+                                self._aggr = type_check(value, self.Aggr)
+
+                            def check_required(self):
+
+                                return
+
+                            def as_dict(self):
+                                return drop_none({"type": self._type,"estimate_spectral_radius": self._estimate_spectral_radius,"relax": self._relax,"aggr": self._aggr.as_dict() if self._aggr is not None else None,})
+
+                            class Aggr(object):
+                                '''Aggregation settings.
+                                \nRequired: []
+                                \nOptional: ['eps_strong']'''
+                                def __init__(
+                                    self,
+                                    eps_strong: float = 0.0
+                                ):
+                                    self._eps_strong = type_check(eps_strong, float) if eps_strong is not None else None
+
+                                @property
+                                def eps_strong(self):
+                                    return self._eps_strong
+
+                                @eps_strong.setter
+                                def eps_strong(self, value):
+                                    '''
+                                    Aggregation epsilon strong.
+                                    '''
+                                    self._eps_strong = type_check(value, float)
+
+                                def check_required(self):
+
+                                    return
+
+                                def as_dict(self):
+                                    return drop_none({"eps_strong": self._eps_strong,})
+
+
+
+
+
+                class MAS(object):
+                    '''Settings for the MAS solver.
+                    \nRequired: []
+                    \nOptional: ['block_dim', 'max_iter', 'relative_tolerance', 'absolute_tolerance', 'lazy_partitioning', 'use_preconditioned_residual_norm']'''
+                    def __init__(
+                        self,
+                        block_dim: int = 1,
+                        max_iter: int = 10000,
+                        relative_tolerance: float = 0.0001,
+                        absolute_tolerance: float = 1e-08,
+                        lazy_partitioning: bool = True,
+                        use_preconditioned_residual_norm: bool = False
+                    ):
+                        self._block_dim = type_check(block_dim, int) if block_dim is not None else None
+                        self._max_iter = type_check(max_iter, int) if max_iter is not None else None
+                        self._relative_tolerance = type_check(relative_tolerance, float) if relative_tolerance is not None else None
+                        self._absolute_tolerance = type_check(absolute_tolerance, float) if absolute_tolerance is not None else None
+                        self._lazy_partitioning = type_check(lazy_partitioning, bool) if lazy_partitioning is not None else None
+                        self._use_preconditioned_residual_norm = type_check(use_preconditioned_residual_norm, bool) if use_preconditioned_residual_norm is not None else None
+
+                    @property
+                    def block_dim(self):
+                        return self._block_dim
+
+                    @block_dim.setter
+                    def block_dim(self, value):
+                        '''
+                        Block size of the BSR matrix PCG sovler internally use. Choose 3 for 3d problem, 2 for 2d, etc.
+                        '''
+                        self._block_dim = type_check(value, int)
+
+                    @property
+                    def max_iter(self):
+                        return self._max_iter
+
+                    @max_iter.setter
+                    def max_iter(self, value):
+                        '''
+                        Maximum number of iterations.
+                        '''
+                        self._max_iter = type_check(value, int)
+
+                    @property
+                    def relative_tolerance(self):
+                        return self._relative_tolerance
+
+                    @relative_tolerance.setter
+                    def relative_tolerance(self, value):
+                        '''
+                        Relative convergence tolerance.
+                        '''
+                        self._relative_tolerance = type_check(value, float)
+
+                    @property
+                    def absolute_tolerance(self):
+                        return self._absolute_tolerance
+
+                    @absolute_tolerance.setter
+                    def absolute_tolerance(self, value):
+                        '''
+                        Absolute convergence tolerance.
+                        '''
+                        self._absolute_tolerance = type_check(value, float)
+
+                    @property
+                    def lazy_partitioning(self):
+                        return self._lazy_partitioning
+
+                    @lazy_partitioning.setter
+                    def lazy_partitioning(self, value):
+                        '''
+                        If true, reuse the first graph partition.
+                        '''
+                        self._lazy_partitioning = type_check(value, bool)
+
+                    @property
+                    def use_preconditioned_residual_norm(self):
+                        return self._use_preconditioned_residual_norm
+
+                    @use_preconditioned_residual_norm.setter
+                    def use_preconditioned_residual_norm(self, value):
+                        '''
+                        Use preconditioned residual norm for termination check.
+                        '''
+                        self._use_preconditioned_residual_norm = type_check(value, bool)
+
+                    def check_required(self):
+
+                        return
+
+                    def as_dict(self):
+                        return drop_none({"block_dim": self._block_dim,"max_iter": self._max_iter,"relative_tolerance": self._relative_tolerance,"absolute_tolerance": self._absolute_tolerance,"lazy_partitioning": self._lazy_partitioning,"use_preconditioned_residual_norm": self._use_preconditioned_residual_norm,})
+
 
 
 
@@ -18910,16 +20031,18 @@ class Root(object):
         class Augmented_lagrangian(object):
             '''Parameters for the AL for imposing Dirichlet BCs. If the bc are not imposable, we add $w\\|u - bc\\|^2$ to the energy ($u$ is the solution at the Dirichlet nodes and $bc$ are the Dirichlet values). After convergence, we try to impose bc again. The algorithm computes E + a/2*AL^2 - lambda AL, where E is the current energy (elastic, inertia, contact, etc.) and AL is the augmented Lagrangian energy. a starts at `initial_weight` and, in case DBC cannot be imposed, we update a as `a *= scaling` until `max_weight`. See IPC additional material
             \nRequired: []
-            \nOptional: ['initial_weight', 'scaling', 'max_weight', 'eta', 'nonlinear']'''
+            \nOptional: ['initial_weight', 'error', 'scaling', 'max_weight', 'eta', 'nonlinear']'''
             def __init__(
                 self,
                 initial_weight: float = 1000000.0,
+                error: float = 0.01,
                 scaling: float = 2.0,
                 max_weight: float = 100000000.0,
                 eta: float = 0.99,
                 nonlinear: Optional["Root.Solver.Augmented_lagrangian.Nonlinear"] = None
             ):
                 self._initial_weight = range_check(type_check(initial_weight, float), 0, None) if initial_weight is not None else None
+                self._error = range_check(type_check(error, float), 0, None) if error is not None else None
                 self._scaling = type_check(scaling, float) if scaling is not None else None
                 self._max_weight = type_check(max_weight, float) if max_weight is not None else None
                 self._eta = range_check(type_check(eta, float), 0, 1) if eta is not None else None
@@ -18935,6 +20058,17 @@ class Root(object):
                 Initial weight for AL
                 '''
                 self._initial_weight = range_check(type_check(value, float), 0, None)
+
+            @property
+            def error(self):
+                return self._error
+
+            @error.setter
+            def error(self, value):
+                '''
+                Don't stop AL unless the error is smaller than this number.
+                '''
+                self._error = range_check(type_check(value, float), 0, None)
 
             @property
             def scaling(self):
@@ -18987,7 +20121,7 @@ class Root(object):
                 return
 
             def as_dict(self):
-                return drop_none({"initial_weight": self._initial_weight,"scaling": self._scaling,"max_weight": self._max_weight,"eta": self._eta,"nonlinear": self._nonlinear.as_dict() if self._nonlinear is not None else None,})
+                return drop_none({"initial_weight": self._initial_weight,"error": self._error,"scaling": self._scaling,"max_weight": self._max_weight,"eta": self._eta,"nonlinear": self._nonlinear.as_dict() if self._nonlinear is not None else None,})
 
             class Nonlinear(object):
                 '''Settings for nonlinear solver. Interior-loop linear solver settings are defined in the solver/linear section.

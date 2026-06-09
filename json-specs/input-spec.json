@@ -1480,11 +1480,20 @@
         "spec_file": "linear-solver-spec.json"
     },
     {
+        "pointer": "/solver/linear",
+        "default": null,
+        "type": "object",
+        "optional": [
+            "adjoint_solver"
+        ]
+    },
+    {
         "pointer": "/solver/augmented_lagrangian",
         "default": null,
         "type": "object",
         "optional": [
             "initial_weight",
+            "error",
             "scaling",
             "max_weight",
             "eta",

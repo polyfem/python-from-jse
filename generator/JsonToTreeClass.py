@@ -1426,7 +1426,16 @@ def build_tree(schema_entries):
                 path.type_name = type_name
                 path.add_legacy_alias(legacy_alias)
             
-        elif path.type is not None:
+        elif (
+            path.type is not None
+            and not (
+                entry.get('type') == "object"
+                and path.type == "object"
+                and not type_name
+                and not entry.get('required')
+                and entry.get('optional')
+            )
+        ):
             if type_name and entry.get('type') == "object" and path.name == type_name and path.type == "object":
                 routing = None
                 path.type_name = type_name
