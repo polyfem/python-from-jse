@@ -1,0 +1,9 @@
+[
+  {
+    "namespace": "volume",
+    "producer": "scene.items[*].id",
+    "consumer": "output.selected_item_id",
+    "builder_api": "entity.output",
+    "status": "required"
+  }
+]

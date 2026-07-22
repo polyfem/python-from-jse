@@ -1,189 +1,156 @@
-# Python Class Generation from JSON Specification
+# python-from-jse
 
-This repository contains a JSON-specification-driven generator for Python configuration classes. It reads a JSON schema for PolyFEM-style configuration files, builds an intermediate tree representation, and generates a typed Python authoring interface that can validate inputs and serialize back to JSON-compatible dictionaries.
+`python-from-jse` is a generic JSON-spec-to-Python generator.
 
-## What The Generator Does
+It reads a JSON schema-like spec and emits:
 
-The generator is not a simple one-entry-to-one-class converter. The current pipeline is:
+- `generated/generated_class.py`: schema-faithful Python config classes
+- `generated/generated_api.py`: user-facing factory helpers
+- `generated/*_manifest.json`: manifests used by validators and optional
+  project integrations
+- `generated/schema_patch_report.json`: applied schema patch diagnostics
 
-```text
-json-specs/input-spec.json
-  -> expand_includes()
-  -> build_tree()
-  -> generated_class_text()
-  -> generated/generated_class.py
+The generator repo should define supported generation behavior, dummy/example
+config shapes, validators, and tests. Project-specific schemas and Python API
+policy belong in the consuming project.
+
+## Standalone Usage
+
+Run the default generic example from this directory:
+
+```powershell
+python tools\regenerate_and_test.py
 ```
 
-During that process it handles:
+This command:
 
-- included spec files under `json-specs/`
-- repeated pointers and polymorphic values
-- list wildcard entries such as `/materials/*`
-- `type_name` and legacy `#type_name`
-- required and optional child fields
-- variant-specific field pruning
+1. reads `examples/basic_generation/input-spec.json`;
+2. applies `examples/basic_generation/generator_overrides.json`;
+3. writes generated artifacts under `generated/`;
+4. compiles the generated Python files;
+5. runs the generator unit test suite.
 
-The output is a generated Python module containing nested classes such as `Root`, `Root.Time`, `Root.Materials`, and their variants.
+For a custom schema:
 
-## Repository Layout
+```powershell
+python tools\generate_with_overrides.py `
+  --schema-file path\to\input-spec.json `
+  --include-spec-dir path\to\linked-specs `
+  --overrides path\to\generator_overrides.json `
+  --output-file generated\generated_class.py `
+  --api-output-file generated\generated_api.py `
+  --manifest-dir generated
+```
 
-- `generator/JsonToTreeClass.py`
-  - Main generator implementation.
-  - Defines schema expansion, tree construction, class generation, and the default CLI entry point.
+`--overrides` is optional. If omitted, the generator uses the schema directly.
+`--include-spec-dir` is also optional and is only needed when the input spec
+references include files that live outside the schema file's directory.
 
-- `json-specs/input-spec.json`
-  - Default top-level input specification.
+## Standalone Repo Readiness
 
-- `json-specs/*.json`
-  - Additional specs included from the top-level schema.
+The repo is ready to be checked as a standalone generator project when this
+command works from the repo root:
+
+```powershell
+python tools\regenerate_and_test.py
+```
+
+The GitHub Actions workflow at `.github/workflows/ci.yml` runs the same command
+on push and pull requests. That check proves the generator can use the dummy
+schema in `examples/basic_generation/` to regenerate `generated/`, compile the
+generated Python files, and run the test suite without any consuming project
+checkout.
+
+Packaging metadata can be added later, after the source layout is intentionally
+converted into an installable Python package. Until then, this repo should be
+treated as a runnable generator/tool repo rather than a pip-published package.
+
+## Optional Project Config
+
+Some projects need extra config around the generated API. These inputs are
+optional and are only used when passed explicitly:
+
+```powershell
+python tools\generate_with_overrides.py `
+  --schema-file path\to\input-spec.json `
+  --api-aliases path\to\api_aliases.json `
+  --relationships path\to\id_relationships.json
+```
+
+The supported example shapes live in:
+
+- `examples/config_capabilities/api_aliases.example.json`
+- `examples/config_capabilities/schema_patches.example.json`
+- `examples/config_capabilities/id_relationships.example.json`
+
+Validator modules can be run directly after generating manifests:
+
+```powershell
+python -m validators.api_aliases
+python -m validators.id_relationships
+```
+
+By default these validators use the generic example config and `generated/`
+manifests. Consuming projects should pass their own config and manifest paths.
+
+## Generated Files
+
+Generated files are build artifacts. Do not edit them by hand:
 
 - `generated/generated_class.py`
-  - Generated Python classes.
-  - This file is overwritten when the generator is run.
+- `generated/generated_api.py`
+- `generated/*_manifest.json`
+- `generated/schema_patch_report.json`
 
-- `tests/test_generator_units.py`
-  - Unit tests for generator behavior and edge cases.
+If generated output is wrong, update the input spec, overrides, config examples,
+or generator logic, then regenerate.
 
-- `doc/generator-explanation.md`
-  - Local detailed explanation document.
-  - The `doc/` directory is currently ignored by git.
+For a direct map of standalone and custom-project tool paths, see
+`tools/README.md`.
 
-## Requirements
+## Project Integration
 
-The project uses the Python standard library only. No external dependencies are required for generation or tests.
+Consuming projects should keep their schema files, package output paths, and
+public API policy outside this generator repo. The usual pattern is:
 
-Use Python 3.10 or newer if possible. The current code and tests are run with the local Python available in this workspace.
+1. keep the real schema in the backend or project repo that owns it;
+2. keep project-specific overrides/config in the consuming project;
+3. add a small project wrapper that calls `tools/generate_with_overrides.py`
+   with explicit paths;
+4. document those project paths in the consuming project.
 
-## Generate Classes
+The generator repo only needs the dummy/example schema under
+`examples/basic_generation/` so its own tests can run without any consuming
+project checkout.
 
-From the repository root:
-
-```powershell
-python generator\JsonToTreeClass.py
-```
-
-By default this reads:
-
-```text
-json-specs/input-spec.json
-```
-
-and writes:
+## Folder Map
 
 ```text
-generated/generated_class.py
+examples/       Generic runnable examples and dummy config capability examples.
+generator/      Generator core and generic helper code.
+tools/          Generation and verification workflow CLI entry points.
+validators/     Reusable validation logic imported by tools and tests.
+tests/          Generator, generated API, builder, and validator tests.
+doc/            Local design notes and handoff documents.
 ```
 
-The output file is regenerated in place.
+## Test Map
 
-## Use The Generated Classes
-
-After generation, import `Root` from the generated module and construct configuration objects programmatically.
-
-Example:
-
-```python
-from generated.generated_class import Root
-
-config = Root()
-
-config.time = Root.Time(
-    Root.Time.TendDt(tend=1.0, dt=0.1)
-)
-
-material = Root.Materials.MooneyRivlin(
-    c1=1.0,
-    c2=1.0,
-    k=10.0,
-)
-config.materials = Root.Materials(items=[material])
-
-config.check_required()
-data = config.as_dict()
-```
-
-`data` is a JSON-compatible dictionary and can be passed to `json.dump()` or `json.dumps()`.
-
-## Validation Behavior
-
-The generated classes validate values when they are assigned. Current validation includes:
-
-- Python type checks
-- class checks for nested generated objects
-- enum checks for string `options`
-- numeric range checks
-- file extension checks
-- inline checks for small polymorphic value schemas
-
-`check_required()` recursively reports missing required values by printing messages. It does not currently raise exceptions.
-
-`as_dict()` serializes generated objects back to plain Python dictionaries and lists, dropping fields whose value is `None`.
-
-## Notes On `type_name` And `ObjectN`
-
-The generator supports both `type_name` and legacy `#type_name` through `entry_type_name(entry)`.
-
-When a schema object variant has a stable type name, the generated class uses that readable name:
-
-```python
-class Stiffness(object):
-    ...
-```
-
-The current generator does not add compatibility aliases such as `Object2 = Stiffness` for named variants.
-
-The case that needs attention is:
-
-```python
-class Object2(object):
-    ...
-```
-
-That usually means the schema or generator did not provide a stable readable name for that object variant.
-
-## Skipped Schema Sections
-
-The generator intentionally skips these pointer prefixes:
-
-```python
-SKIP_POINTER_PREFIXES = ("/preset_problem", "/tests")
-```
-
-Those sections are excluded by design in the current generator.
-
-## Run Checks
-
-Run the unit tests:
-
-```powershell
-python -m unittest tests.test_generator_units
-```
-
-Compile-check the generator, tests, and generated output:
-
-```powershell
-python -m py_compile tests\test_generator_units.py generator\JsonToTreeClass.py generated\generated_class.py
-```
-
-Search for generated `ObjectN` classes or aliases:
-
-```powershell
-rg -n "class Object[0-9]+\(object\):|Object[0-9]+ =" generated\generated_class.py
-```
-
-## Development Notes
-
-When changing the generator, prefer small regression tests in `tests/test_generator_units.py`. A minimal schema in a unit test is usually easier to debug than the full `json-specs/input-spec.json`.
-
-Good areas to test explicitly include:
-
-- include expansion
-- child pointers appearing before parent entries
-- duplicate pointer variants
-- list item variants
-- inline value schemas
-- `type_name` / `#type_name` behavior
-- required field alternatives
-- `as_dict()` output shape
-
-Avoid broad refactors unless the generator behavior is already covered by focused tests.
+- `tests/test_generator_units.py`: tree construction and generated-class
+  behavior.
+- `tests/test_generated_api.py`: generated API factories, naming, aliases, and
+  manifests.
+- `tests/test_generator_runner.py`: schema patches and generation entry points.
+- `tests/test_generator_examples.py`: generic examples remain runnable and
+  separate from project-specific config.
+- `tests/test_model_builder.py`: model/builder behavior with explicit
+  relationship maps.
+- `tests/test_validators.py`: validation for generic example config against
+  generated manifests.
+- `tests/test_id_relationship_rules.py`: loading and structure rules for the
+  generic id relationship example.
+- `tests/test_regenerate_and_test.py`: the standalone regeneration and test
+  workflow.
+- `tests/test_full_spec_smoke.py`: optional full-spec smoke coverage. It should
+  not define standalone defaults; the standalone workflow uses
+  `examples/basic_generation/`.

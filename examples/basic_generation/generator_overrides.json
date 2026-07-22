@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "schema_patches": [
+    {
+      "id": "add_output_format",
+      "op": "add_field",
+      "target": "/output",
+      "name": "format",
+      "schema": {
+        "type": "string",
+        "default": "json"
+      }
+    }
+  ],
+  "custom_api_names": [
+    {
+      "class_path": "Root.Scene.Items.SceneItem",
+      "api_custom_name": "item_definition"
+    }
+  ],
+  "skip_auto_generated_api_names": [
+    {
+      "class_path": "Root.Scene.Items.SceneItem",
+      "api_generated_name": "scene_item"
+    }
+  ]
+}

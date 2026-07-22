@@ -1,0 +1,63 @@
+[
+  {
+    "pointer": "/",
+    "type": "object",
+    "optional": [
+      "scene",
+      "output"
+    ]
+  },
+  {
+    "pointer": "/scene",
+    "type": "object",
+    "optional": [
+      "items"
+    ]
+  },
+  {
+    "pointer": "/scene/items",
+    "type": "list"
+  },
+  {
+    "pointer": "/scene/items/*",
+    "type": "object",
+    "type_name": "SceneItem",
+    "required": [
+      "name"
+    ],
+    "optional": [
+      "id",
+      "enabled"
+    ]
+  },
+  {
+    "pointer": "/scene/items/*/name",
+    "type": "string"
+  },
+  {
+    "pointer": "/scene/items/*/id",
+    "type": "int"
+  },
+  {
+    "pointer": "/scene/items/*/enabled",
+    "type": "bool",
+    "default": true
+  },
+  {
+    "pointer": "/output",
+    "type": "object",
+    "optional": [
+      "directory",
+      "selected_item_id"
+    ]
+  },
+  {
+    "pointer": "/output/directory",
+    "type": "string",
+    "default": "out"
+  },
+  {
+    "pointer": "/output/selected_item_id",
+    "type": "int"
+  }
+]

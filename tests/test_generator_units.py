@@ -1,27 +1,19 @@
 import contextlib
 import io
-import importlib.util
-import types
-import unittest
 from pathlib import Path
+import tempfile
+import unittest
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-GENERATOR_PATH = PROJECT_ROOT / "generator" / "JsonToTreeClass.py"
-GENERATED_PATH = PROJECT_ROOT / "generated" / "generated_class.py"
-
-
-def import_generator(module_name):
-    spec = importlib.util.spec_from_file_location(module_name, GENERATOR_PATH)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def module_from_generated_text(text):
-    module = types.ModuleType("generated_for_test")
-    exec(compile(text, "generated_for_test.py", "exec"), module.__dict__)
-    return module
+from tests.generator_test_helpers import (
+    GENERATED_PATH,
+    POLYFEM_INCLUDE_SPEC_DIRS,
+    POLYFEM_SPEC_DIR,
+    PROJECT_ROOT,
+    import_generator,
+    module_from_generated_api_text,
+    module_from_generated_text,
+    polyfem_linked_specs_available,
+)
 
 
 class GeneratorUnitTests(unittest.TestCase):
@@ -31,6 +23,36 @@ class GeneratorUnitTests(unittest.TestCase):
         import_generator("json_to_tree_import_guard")
 
         self.assertEqual(before, GENERATED_PATH.stat().st_mtime_ns)
+
+    def test_build_tree_searches_additional_include_dirs(self):
+        generator = import_generator("json_to_tree_include_dirs")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            spec_dir = tmp_path / "main"
+            dependency_dir = tmp_path / "dependency"
+            spec_dir.mkdir()
+            dependency_dir.mkdir()
+            (dependency_dir / "child.json").write_text(
+                '[{"pointer": "/", "type": "object", "optional": ["enabled"]},'
+                '{"pointer": "/enabled", "type": "bool", "default": true}]',
+                encoding="utf-8",
+            )
+
+            root = generator.build_tree(
+                [
+                    {
+                        "pointer": "/settings",
+                        "type": "include",
+                        "spec_file": "child.json",
+                    },
+                ],
+                spec_dir=spec_dir,
+                include_dirs=[dependency_dir],
+            )
+
+        self.assertIn("settings", root._optional)
+        self.assertIn("enabled", root.get_optional("settings")._optional)
 
     def test_entry_type_name_accepts_current_and_legacy_keys(self):
         generator = import_generator("json_to_tree_type_name")
@@ -128,7 +150,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/materials/*/models",
                 "type": "list",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         materials = root.get_optional("materials")
         material = materials.get_optional("MooneyRivlin")
@@ -189,7 +211,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "float",
                 "default": 0.5,
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         integrator = root.get_optional("integrator")
         implicit_euler_type = integrator.get_optional("ImplicitEuler").get_required("type")
@@ -208,11 +230,11 @@ class GeneratorUnitTests(unittest.TestCase):
             generated_module.Root.Integrator.ImplicitEuler().as_dict(),
         )
         self.assertEqual(
-            {"type": "BDF", "steps": 1},
+            {"type": "BDF"},
             generated_module.Root.Integrator.BDF().as_dict(),
         )
         self.assertEqual(
-            {"type": "ImplicitNewmark", "gamma": 0.5},
+            {"type": "ImplicitNewmark"},
             generated_module.Root.Integrator.ImplicitNewmark().as_dict(),
         )
 
@@ -257,7 +279,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/material/mu",
                 "type": "float",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         generated = generator.generated_class_text(root)
         generated_module = module_from_generated_text(generated)
@@ -288,6 +310,140 @@ class GeneratorUnitTests(unittest.TestCase):
             output.getvalue(),
         )
 
+    def test_nested_polymorphic_field_preserves_schema_field_name(self):
+        generator = import_generator("json_to_tree_nested_polymorphic_field_name")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["materials"],
+            },
+            {
+                "pointer": "/materials",
+                "type": "list",
+            },
+            {
+                "pointer": "/materials/*",
+                "type": "object",
+                "type_name": "LinearElasticity",
+                "required": ["type", "E", "nu"],
+            },
+            {
+                "pointer": "/materials/*",
+                "type": "object",
+                "type_name": "ThermoElasticity",
+                "required": ["type", "elastic_material", "alpha"],
+            },
+            {
+                "pointer": "/materials/*/type",
+                "type": "string",
+                "options": ["LinearElasticity", "ThermoElasticity"],
+            },
+            {
+                "pointer": "/materials/*/E",
+                "type": "float",
+            },
+            {
+                "pointer": "/materials/*/nu",
+                "type": "float",
+            },
+            {
+                "pointer": "/materials/*/alpha",
+                "type": "float",
+            },
+            {
+                "pointer": "/materials/*/elastic_material",
+                "type": "object",
+                "type_name": "LinearElasticity",
+                "required": ["type", "E", "nu"],
+            },
+            {
+                "pointer": "/materials/*/elastic_material/type",
+                "type": "string",
+                "options": ["LinearElasticity"],
+            },
+            {
+                "pointer": "/materials/*/elastic_material/E",
+                "type": "float",
+            },
+            {
+                "pointer": "/materials/*/elastic_material/nu",
+                "type": "float",
+            },
+        ], spec_dir=POLYFEM_SPEC_DIR)
+
+        thermo = root.get_optional("materials").get_optional("ThermoElasticity")
+        elastic_material = thermo.get_required("elastic_material")
+
+        self.assertIsNotNone(elastic_material)
+        self.assertEqual("elastic_material", elastic_material.name)
+
+        generated_module = module_from_generated_text(generator.generated_class_text(root))
+        api_module = module_from_generated_api_text(
+            generator.generated_api_text(root),
+            generated_module.Root,
+        )
+
+        material = api_module.thermo_elasticity(
+            alpha=1.5,
+            elastic_material={
+                "type": "LinearElasticity",
+                "E": 10.0,
+                "nu": 0.3,
+            },
+        )
+
+        self.assertEqual(
+            {
+                "type": "ThermoElasticity",
+                "elastic_material": {
+                    "type": "LinearElasticity",
+                    "E": 10.0,
+                    "nu": 0.3,
+                },
+                "alpha": 1.5,
+            },
+            material.as_dict(),
+        )
+
+    def test_required_wrapped_field_check_required_uses_instance_storage(self):
+        generator = import_generator("json_to_tree_required_wrapped_field_check")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["material"],
+            },
+            {
+                "pointer": "/material",
+                "type": "object",
+                "required": ["T0"],
+            },
+            {
+                "pointer": "/material/T0",
+                "type": "object",
+                "required": ["value"],
+            },
+            {
+                "pointer": "/material/T0/value",
+                "type": "float",
+            },
+        ])
+        generated_module = module_from_generated_text(generator.generated_class_text(root))
+        api_module = module_from_generated_api_text(
+            generator.generated_api_text(root),
+            generated_module.Root,
+        )
+
+        material = api_module.material(T0={"value": 10.0})
+
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            material.check_required()
+
+        self.assertEqual("", output.getvalue())
+        self.assertEqual({"T0": {"value": 10.0}}, material.as_dict())
+
     def test_required_simple_list_check_required_warns_only_when_empty(self):
         generator = import_generator("json_to_tree_required_simple_list_check")
         root = generator.build_tree([
@@ -314,11 +470,11 @@ class GeneratorUnitTests(unittest.TestCase):
         generated = generator.generated_class_text(root)
 
         self.assertIn(
-            'if not self.box:',
+            'if not self._box:',
             generated,
         )
         self.assertNotIn(
-            'if self.box:\n            print("Required variable Root.Selection.box does not have value")',
+            'if self._box:\n            print("Required variable Root.Selection.box does not have value")',
             generated,
         )
 
@@ -511,23 +667,66 @@ class GeneratorUnitTests(unittest.TestCase):
         )
 
         self.assertEqual({}, generated_module.Root().as_dict())
+        self.assertEqual({}, generated_module.Root.Solver().as_dict())
         self.assertEqual(
-            {"max_threads": 0},
-            generated_module.Root.Solver().as_dict(),
-        )
-        self.assertEqual(
-            {"max_threads": 0, "linear": {"enabled": True}},
+            {"linear": {}},
             generated_module.Root.Solver(
                 linear=generated_module.Root.Solver.Linear()
             ).as_dict(),
         )
 
+    def test_backend_defaults_are_not_emitted_when_omitted(self):
+        generator = import_generator("json_to_tree_no_backend_default_emit")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["contact"],
+            },
+            {
+                "pointer": "/contact",
+                "type": "object",
+                "optional": ["enabled", "temperature"],
+            },
+            {
+                "pointer": "/contact/enabled",
+                "type": "bool",
+                "default": False,
+            },
+            {
+                "pointer": "/contact/temperature",
+                "type": "float",
+                "default": 300.0,
+            },
+        ])
+
+        generated_module = module_from_generated_text(
+            generator.generated_class_text(root)
+        )
+
+        self.assertEqual({}, generated_module.Root().as_dict())
+        self.assertEqual({}, generated_module.Root.Contact().as_dict())
+        self.assertEqual(
+            {"enabled": False},
+            generated_module.Root.Contact(enabled=False).as_dict(),
+        )
+        self.assertEqual(
+            {"temperature": 300.0},
+            generated_module.Root.Contact(temperature=300.0).as_dict(),
+        )
+
+    @unittest.skipUnless(
+        polyfem_linked_specs_available(),
+        "PolyFEM linked solver specs are not present",
+    )
     def test_input_spec_solver_metadata_links_declared_children(self):
         generator = import_generator("json_to_tree_input_spec_solver_links")
         schema_entries = generator.expand_includes(
             __import__("json").loads(
-                (PROJECT_ROOT / "json-specs" / "input-spec.json").read_text()
-            )
+                (POLYFEM_SPEC_DIR / "input-spec.json").read_text()
+            ),
+            spec_dir=POLYFEM_SPEC_DIR,
+            include_dirs=POLYFEM_INCLUDE_SPEC_DIRS,
         )
         root = generator.build_tree(schema_entries)
 
@@ -536,8 +735,8 @@ class GeneratorUnitTests(unittest.TestCase):
             "augmented_lagrangian"
         )
 
-        self.assertIn("adjoint_solver", linear._optional)
-        self.assertIn("error", augmented_lagrangian._optional)
+        self.assertIn("enable_overwrite_solver", linear._optional)
+        self.assertIn("scaling", augmented_lagrangian._optional)
 
     def test_child_pointer_before_parent_entry_stays_under_parent(self):
         generator = import_generator("json_to_tree_child_before_parent")
@@ -567,7 +766,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "bool",
                 "default": True,
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         solver = root.get_optional("solver")
         contact = solver.get_optional("contact")
@@ -629,7 +828,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/time/time_steps",
                 "type": "int",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         time = root.get_optional("time")
 
@@ -650,9 +849,9 @@ class GeneratorUnitTests(unittest.TestCase):
         time_by_end = generated_module.Root.Time.Object1(tend=1.0, dt=0.1)
         time_by_steps = generated_module.Root.Time.Object2(time_steps=10, dt=0.1)
 
-        self.assertEqual({"tend": 1.0, "dt": 0.1, "t0": 0.0}, time_by_end.as_dict())
+        self.assertEqual({"tend": 1.0, "dt": 0.1}, time_by_end.as_dict())
         self.assertEqual(
-            {"time_steps": 10, "dt": 0.1, "t0": 0.0},
+            {"time_steps": 10, "dt": 0.1},
             time_by_steps.as_dict(),
         )
 
@@ -699,7 +898,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/time/time_steps",
                 "type": "int",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         time = root.get_optional("time")
         object1 = time.get_optional("object1")
@@ -762,7 +961,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/time/time_steps",
                 "type": "int",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         generated = generator.generated_class_text(root)
 
@@ -776,7 +975,7 @@ class GeneratorUnitTests(unittest.TestCase):
         self.assertFalse(hasattr(generated_module.Root.Time, "Object1"))
         self.assertFalse(hasattr(generated_module.Root.Time, "Object2"))
         self.assertEqual(
-            {"tend": 1.0, "dt": 0.1, "t0": 0.0},
+            {"tend": 1.0, "dt": 0.1},
             generated_module.Root.Time.TendDt(tend=1.0, dt=0.1).as_dict(),
         )
 
@@ -894,33 +1093,36 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "include",
                 "spec_file": "value1.json",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         value_with_unit = (
             root.get_optional("materials")
             .get_optional("MooneyRivlin")
             .get_required("k")
-            .get_optional("ValueWithUnit")
+            .get_optional("object3")
         )
 
         self.assertIsNotNone(value_with_unit)
-        self.assertEqual("ValueWithUnit", value_with_unit.type_name)
+        self.assertEqual("object3", value_with_unit.name)
 
         generated = generator.generated_class_text(root)
         mooney_block = generated[
             generated.index("        class MooneyRivlin(object):"):
         ]
 
-        self.assertNotIn("class C1(object):", mooney_block)
-        self.assertNotIn("class K(object):", mooney_block)
+        self.assertIn("class C1(object):", mooney_block)
+        self.assertIn("class K(object):", mooney_block)
         self.assertNotIn("class Id(object):", mooney_block)
-        self.assertNotIn("class Rho(object):", mooney_block)
+        self.assertIn("class Rho(object):", mooney_block)
         self.assertNotIn("class ValueWithUnit(object):", mooney_block)
 
         generated_module = module_from_generated_text(generated)
         material = generated_module.Root.Materials.MooneyRivlin(
             c1=1.0,
-            k={"value": 3.0, "unit": "Pa"},
+            k=generated_module.Root.Materials.MooneyRivlin.K.Object3(
+                value=3.0,
+                unit="Pa",
+            ),
             id=[1, 2],
             rho="density_expr",
         )
@@ -1041,7 +1243,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "string",
                 "doc": "Dirichlet boundary condition loaded from a file",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         dirichlet = root.get_optional("boundary_conditions").get_optional(
             "dirichlet_boundary"
@@ -1082,7 +1284,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "optional": ["interpolation"],
                 "doc": "Neumann boundary condition",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         neumann = root.get_optional("boundary_conditions").get_optional(
             "neumann_boundary"
@@ -1195,12 +1397,10 @@ class GeneratorUnitTests(unittest.TestCase):
                 {
                     "form": "elasticity",
                     "stiffness_ratio": 0.25,
-                    "lagging_iterations": 1,
                 },
                 {
                     "form": "contact",
                     "stiffness": 2.0,
-                    "lagging_iterations": 1,
                 },
             ],
             rayleigh.as_dict(),
@@ -1285,28 +1485,42 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "include",
                 "spec_file": "value-no.json",
             },
-        ])
+        ], spec_dir=POLYFEM_SPEC_DIR)
 
         rhs = root.get_optional("rhs")
 
         self.assertEqual("list", rhs.type)
-        self.assertEqual(["item", "string", "ValueWithUnit"], list(rhs._optional))
-        self.assertEqual("float", rhs.get_optional("item").type)
+        self.assertEqual(["item", "string"], list(rhs._optional))
+        self.assertEqual("polymorphic", rhs.get_optional("item").type)
         self.assertEqual("string", rhs.get_optional("string").type)
-        self.assertEqual("polymorphic", rhs.get_optional("ValueWithUnit").type)
+        self.assertIn("object2", rhs.get_optional("item")._optional)
 
         generated = generator.generated_class_text(root)
-        self.assertIn("inline_check(i, [float, str], [", generated)
-        self.assertNotIn("self.Item", generated)
+        self.assertIn("class Item(object):", generated)
         self.assertNotIn("self.ValueWithUnit", generated)
-        self.assertNotIn("class Object3(object):", generated)
         self.assertNotIn("class ValueWithUnit(object):", generated)
 
         generated_module = module_from_generated_text(generated)
         rhs = generated_module.Root.Rhs(
-            items=[1.0, "x + y", {"value": 2.0, "unit": "N"}]
+            items=[
+                generated_module.Root.Rhs.Item(1.0),
+                "x + y",
+                generated_module.Root.Rhs.Item(
+                    generated_module.Root.Rhs.Item.Object2(
+                        value=2.0,
+                        unit="N",
+                    )
+                ),
+            ]
         )
-        rhs.add({"value": "load_expr", "unit": "N"})
+        rhs.add(
+            generated_module.Root.Rhs.Item(
+                generated_module.Root.Rhs.Item.Object2(
+                    value="load_expr",
+                    unit="N",
+                )
+            )
+        )
         rhs.check_required()
 
         self.assertEqual(
@@ -1318,7 +1532,6 @@ class GeneratorUnitTests(unittest.TestCase):
             ],
             rhs.as_dict(),
         )
-
 
 if __name__ == "__main__":
     unittest.main()

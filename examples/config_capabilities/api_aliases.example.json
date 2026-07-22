@@ -1,0 +1,17 @@
+{
+  "api_aliases": [
+    {
+      "main_api_name": "item_definition",
+      "main_class_path": "Root.Scene.Items.SceneItem",
+      "api_generated_name": "scene_item",
+      "aliases": [
+        {
+          "alias_name": "scene_item",
+          "alias_class_path": "Root.Scene.Items.SceneItem",
+          "hide": true,
+          "reason": "The custom name describes the generated helper more clearly for this project."
+        }
+      ]
+    }
+  ]
+}

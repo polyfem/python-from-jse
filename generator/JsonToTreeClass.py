@@ -1,8 +1,20 @@
+import importlib.util
 import json
 import keyword
 from pathlib import Path
 import re
 import textwrap
+
+
+def _load_local_symbol(module_name, symbol_name):
+    module_path = Path(__file__).with_name(f"{module_name}.py")
+    spec = importlib.util.spec_from_file_location(f"_json_schema_generator_{module_name}", module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return getattr(module, symbol_name)
+
+
+expand_api_aliases = _load_local_symbol("api_aliases", "expand_api_aliases")
 
 def py_identifier(value):
     name = re.sub(r"\W+", "_", str(value)).strip("_")
@@ -286,12 +298,18 @@ class ClassGenerator(object):
         #for objects and lists with polymorphism
         if is_inline_polymorphic(node):
             allowed_expr, schemas_expr = self.inline_allowed_expr(node)
+            default = "_UNSET" if node.has_default else self.default_literal(node, "object")
             self._init_input.append(
-                f'{name}: object = {self.default_literal(node, "object")}'
+                f'{name}: object = {default}'
             )
-            self._init_body.append(
-                f'self._{name} = inline_check({name}, {allowed_expr}, {schemas_expr}) if {name} is not None else None'
-            )
+            if node.has_default:
+                self._init_body.append(
+                    f'self._{name} = None if {name} is _UNSET else inline_check({name}, {allowed_expr}, {schemas_expr}) if {name} is not None else None'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{name} = inline_check({name}, {allowed_expr}, {schemas_expr}) if {name} is not None else None'
+                )
             self._as_dict.append(
                 f'"{node.name}": inline_as_dict(self._{name}),'
             )
@@ -299,38 +317,22 @@ class ClassGenerator(object):
             self._init_input.append(
                 f'{name}: Optional["{path}"] = None'
             )
-            if node.has_default and node.default is None:
-                self._init_body.append(
-                    f'self._{name} = type_check({name}, self.{class_name}) if isinstance({name}, self.{class_name}) else self.{class_name}({name}) if {name} is not None else None'
-                )
-                self._as_dict.append(
-                    f'"{node.name}": self._{name}.as_dict() if self._{name} is not None else None,'
-                )
-            else:
-                self._init_body.append(
-                    f'self._{name} = type_check({name}, self.{class_name}) if isinstance({name}, self.{class_name}) else self.{class_name}({name}) if {name} is not None else self.{class_name}()'
-                )
-                self._as_dict.append(
-                    f'"{node.name}": self._{name}.as_dict(),'
-                )
+            self._init_body.append(
+                f'self._{name} = type_check({name}, self.{class_name}) if isinstance({name}, self.{class_name}) else self.{class_name}({name}) if {name} is not None else None'
+            )
+            self._as_dict.append(
+                f'"{node.name}": self._{name}.as_dict() if self._{name} is not None else None,'
+            )
         elif node.type == "object" or (node.type == "list" and (len(node._optional) > 1 or child.type in ("object", "polymorphic"))):
             self._init_input.append(
                 f'{name}: Optional["{path}"] = None'
             )
-            if node.has_default and node.default is None:
-                self._init_body.append(
-                    f'self._{name} = type_check({name}, self.{class_name}) if {name} is not None else None'
-                )
-                self._as_dict.append(
-                    f'"{node.name}": self._{name}.as_dict() if self._{name} is not None else None,'
-                )
-            else:
-                self._init_body.append(
-                    f'self._{name} = type_check({name}, self.{class_name}) if {name} else self.{class_name}()'
-                )
-                self._as_dict.append(
-                    f'"{node.name}": self._{name}.as_dict(),'
-                )
+            self._init_body.append(
+                f'self._{name} = type_check({name}, self.{class_name}) if {name} is not None else None'
+            )
+            self._as_dict.append(
+                f'"{node.name}": self._{name}.as_dict() if self._{name} is not None else None,'
+            )
         #for lists without polymorphism
         elif node.type == "list" and len(node._optional) == 1:
             #default = node.default if node.default else None
@@ -338,17 +340,17 @@ class ClassGenerator(object):
             child_type = child.type if child.type != "string" else "str"
             if child.type is None:
                 self._init_input.append(
-                    f'{name}: Optional[Iterable[object]] = None'
+                    f'{name}: Optional[Iterable[object]] = _UNSET'
                 )
                 self._init_body.append(
-                    f'self._{name} = [] if {name} is None else list(type_check({name}, list))'
+                    f'self._{name} = None if {name} is _UNSET else list_check({name})'
                 )
             else:
                 self._init_input.append(
-                    f'{name}: Optional[Iterable[{child_type}]] = None'
+                    f'{name}: Optional[Iterable[{child_type}]] = _UNSET'
                 )
                 self._init_body.append(
-                    f'self._{name} = [] if {name} is None else [type_check(i, {child_type}) for i in {name}]'
+                    f'self._{name} = None if {name} is _UNSET else [type_check(i, {child_type}) for i in list_check({name})]'
                 )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
@@ -356,50 +358,79 @@ class ClassGenerator(object):
         #For string with options
         elif node.type == "string" and len(node._optional) > 0:
             self.set_enum(node)
+            default = "_UNSET" if node.has_default else self.default_literal(node, python_type)
             self._init_input.append(
-                f'{name}: "{class_name}" = {self.default_literal(node, python_type)}'
+                f'{name}: "{class_name}" = {default}'
             )
-            self._init_body.append(
-                f'self._{name} = enum_check({name}, self.{class_name})'
-            )
+            if node.has_default:
+                self._init_body.append(
+                    f'self._{name} = None if {name} is _UNSET else enum_check({name}, self.{class_name})'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{name} = enum_check({name}, self.{class_name})'
+                )
             self._as_dict.append(
                 f'"{node.name}": self._{name}.value if self._{name} is not None else None,'
             )
         #For file types with extensions limit
         elif node.type == "string" and node.extensions:
             python_type = "str"
+            default = "_UNSET" if node.has_default else self.default_literal(node, python_type)
             self._init_input.append(
-                f'{name}: {python_type} = {self.default_literal(node, python_type)}'
+                f'{name}: {python_type} = {default}'
             )
-            self._init_body.append(
-                f'self._{name} = extension_check(type_check({name}, str), {node.extensions}) if {name} is not None else None'
-            )
+            if node.has_default:
+                self._init_body.append(
+                    f'self._{name} = None if {name} is _UNSET else extension_check(type_check({name}, str), {node.extensions}) if {name} is not None else None'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{name} = extension_check(type_check({name}, str), {node.extensions}) if {name} is not None else None'
+                )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
             )
         elif node.type is None:
+            default = "_UNSET" if node.has_default else self.default_literal(node, "object")
             self._init_input.append(
-                    f'{name}: object = {self.default_literal(node, "object")}'
+                    f'{name}: object = {default}'
                 )
-            self._init_body.append(
-                f'self._{name} = {name}'
-            )
+            if node.has_default:
+                self._init_body.append(
+                    f'self._{name} = None if {name} is _UNSET else {name}'
+                )
+            else:
+                self._init_body.append(
+                    f'self._{name} = {name}'
+                )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
             )
         #For other types (string, int and float)
         else :
+            default = "_UNSET" if node.has_default else self.default_literal(node, python_type)
             self._init_input.append(
-                    f'{name}: {python_type} = {self.default_literal(node, python_type)}'
+                    f'{name}: {python_type} = {default}'
                 )
-            if node.min is not None or node.max is not None:
-                self._init_body.append(
-                    f'self._{name} = range_check(type_check({name}, {python_type}), {node.min}, {node.max}) if {name} is not None else None'
-                )
+            if node.has_default:
+                if node.min is not None or node.max is not None:
+                    self._init_body.append(
+                        f'self._{name} = None if {name} is _UNSET else range_check(type_check({name}, {python_type}), {node.min}, {node.max}) if {name} is not None else None'
+                    )
+                else:
+                    self._init_body.append(
+                        f'self._{name} = None if {name} is _UNSET else type_check({name}, {python_type}) if {name} is not None else None'
+                    )
             else:
-                self._init_body.append(
-                    f'self._{name} = type_check({name}, {python_type}) if {name} is not None else None'
-                )
+                if node.min is not None or node.max is not None:
+                    self._init_body.append(
+                        f'self._{name} = range_check(type_check({name}, {python_type}), {node.min}, {node.max}) if {name} is not None else None'
+                    )
+                else:
+                    self._init_body.append(
+                        f'self._{name} = type_check({name}, {python_type}) if {name} is not None else None'
+                    )
             self._as_dict.append(
                 f'"{node.name}": self._{name},'
             )
@@ -433,6 +464,7 @@ class ClassGenerator(object):
 
     def set_check_required(self, node, path):
         name = self.field_name(node)
+        storage = f"self._{name}"
         child = node
         for value in node._optional.values():
             child = value
@@ -440,24 +472,28 @@ class ClassGenerator(object):
         if is_inline_polymorphic(node):
             self._check_required.append(
                 f"""
-        if self.{name} is None:
+        if {storage} is None:
             print("Required variable {path} does not have value")"""
                 )
         elif node.type == "object" or (node.type == "list" and (len(node._optional) > 1 or child.type == "object") or node.type == "polymorphic"):
             self._check_required.append(
-                f"self.{name}.check_required()"
+                f"""
+        if {storage} is None:
+            print("Required variable {path} does not have value")
+        else:
+            {storage}.check_required()"""
             )
         #for lists without polymorphism
         elif node.type == "list" and len(node._optional) == 1:
             self._check_required.append(
                 f"""
-        if not self.{name}:
+        if not {storage}:
             print("Required variable {path} does not have value")"""
                 )
         else :
             self._check_required.append(
                 f"""
-        if self.{name} is None:
+        if {storage} is None:
             print("Required variable {path} does not have value")"""
                 )
 
@@ -467,7 +503,7 @@ class ClassGenerator(object):
         for required_fields in required_field_sets:
             fields = [py_identifier(field) for field in required_fields]
             conditions.append(
-                "(" + " and ".join(f"self.{field} is not None" for field in fields) + ")"
+                "(" + " and ".join(f"self._{field} is not None" for field in fields) + ")"
             )
             descriptions.append(", ".join(required_fields))
 
@@ -608,10 +644,10 @@ class ClassGenerator(object):
         if node.type == "list" and len(node._optional) == 1 and child.type not in ("object", "polymorphic"):
             child_type = child.type if child.type != "string" else "str"
             if child.type is None:
-                list_assignment = f"self._{name} = list(type_check(value, list)) if value else []"
+                list_assignment = f"self._{name} = list_check(value)"
                 add_assignment = f"self._{name}.append(value)"
             else:
-                list_assignment = f"self._{name} = [type_check(i, {child_type}) for i in (type_check(value, list) if value else [])]"
+                list_assignment = f"self._{name} = [type_check(i, {child_type}) for i in list_check(value)]"
                 add_assignment = f"self._{name}.append(type_check(value, {child_type}))"
             inside_setter = f"""{list_assignment}
 
@@ -1022,9 +1058,11 @@ class JsonToTreeClass(object):
         return class_builder.generate(self.type)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-SPEC_DIR = PROJECT_ROOT / "json-specs"
+SPEC_DIR = PROJECT_ROOT / "examples" / "basic_generation"
 DEFAULT_SCHEMA_FILE = SPEC_DIR / "input-spec.json"
-DEFAULT_OUTPUT_FILE = PROJECT_ROOT / "generated" / "generated_class.py"
+DEFAULT_GENERATED_DIR = PROJECT_ROOT / "generated"
+DEFAULT_OUTPUT_FILE = DEFAULT_GENERATED_DIR / "generated_class.py"
+DEFAULT_API_OUTPUT_FILE = DEFAULT_GENERATED_DIR / "generated_api.py"
 
 SKIP_POINTER_PREFIXES = ("/preset_problem", "/tests")
 
@@ -1046,15 +1084,37 @@ def joined_pointer(base_pointer, pointer):
         return "/" + pointer.strip("/")
     return f'{base_pointer.rstrip("/")}/{pointer.strip("/")}'
 
-def load_schema(spec_file):
-    include_file = SPEC_DIR / spec_file
-    if not include_file.exists():
-        raise FileNotFoundError(f'Include spec file not found: "{include_file}"')
+def spec_search_dirs(spec_dir=None, include_dirs=None):
+    search_dirs = [Path(spec_dir) if spec_dir is not None else SPEC_DIR]
+    for include_dir in include_dirs or []:
+        include_dir = Path(include_dir)
+        if include_dir not in search_dirs:
+            search_dirs.append(include_dir)
+    return search_dirs
 
-    with open(include_file, encoding="utf-8") as f:
-        return json.load(f)
 
-def expand_includes(entries, base_pointer="/", include_stack=None):
+def load_schema(spec_file, spec_dir=None, include_dirs=None):
+    searched_paths = []
+    for include_dir in spec_search_dirs(spec_dir, include_dirs):
+        include_file = include_dir / spec_file
+        searched_paths.append(include_file)
+        if include_file.exists():
+            with open(include_file, encoding="utf-8") as f:
+                return json.load(f)
+
+    searched = ", ".join(str(path) for path in searched_paths)
+    raise FileNotFoundError(
+        f'Include spec file "{spec_file}" not found. Searched: {searched}'
+    )
+
+
+def expand_includes(
+    entries,
+    base_pointer="/",
+    include_stack=None,
+    spec_dir=None,
+    include_dirs=None,
+):
     include_stack = include_stack or []
     expanded = []
 
@@ -1071,12 +1131,18 @@ def expand_includes(entries, base_pointer="/", include_stack=None):
                 chain = " -> ".join(include_stack + [spec_file])
                 raise ValueError(f"Circular include detected: {chain}")
 
-            included_entries = load_schema(spec_file)
+            included_entries = load_schema(
+                spec_file,
+                spec_dir=spec_dir,
+                include_dirs=include_dirs,
+            )
             expanded.extend(
                 expand_includes(
                     included_entries,
                     pointer,
-                    include_stack + [spec_file]
+                    include_stack + [spec_file],
+                    spec_dir=spec_dir,
+                    include_dirs=include_dirs,
                 )
             )
             continue
@@ -1103,6 +1169,426 @@ def filtered_entry(entry):
 
 def entry_type_name(entry):
     return entry.get("type_name") or entry.get("#type_name")
+
+def py_function_name(value):
+    name = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", str(value))
+    name = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
+    return py_identifier(name.lower())
+
+def should_generate_class_for_node(node):
+    child = None
+    for value in node._optional.values():
+        child = value
+
+    return (
+        node.type == "object"
+        or (
+            node.type == "list"
+            and (
+                len(node._optional) > 1
+                or (child is not None and child.type in ("object", "polymorphic"))
+            )
+        )
+        or (node.type == "polymorphic" and not is_inline_polymorphic(node))
+    )
+
+def collect_class_tree(node, path=None):
+    path = path or ["Root"]
+    entries = [(path, node)]
+
+    for child in list(node._required.values()) + list(node._optional.values()):
+        if should_generate_class_for_node(child):
+            entries.extend(collect_class_tree(child, path + [py_class_name(child.name)]))
+
+    return entries
+
+def generated_api_name_map(class_entries):
+    paths = [path for path, _node in class_entries if path != ["Root"]]
+    paths.sort(key=lambda path: (len(path), path))
+    result = {}
+    used = set()
+
+    for path in paths:
+        parts = [py_function_name(part) for part in path[1:]]
+        for depth in range(1, len(parts) + 1):
+            name = "_".join(parts[-depth:])
+            if name not in used:
+                result[tuple(path)] = name
+                used.add(name)
+                break
+
+    return result
+
+def api_class_expr(path):
+    return ".".join(path)
+
+def default_generator_overrides():
+    return {
+        "version": 1,
+        "schema_patches": [],
+        "custom_api_names": [],
+        "skip_auto_generated_api_names": [],
+        "api_aliases": [],
+        "shortcuts": {},
+        "groups": {},
+    }
+
+def normalized_generator_overrides(overrides=None):
+    result = default_generator_overrides()
+    if overrides is None:
+        return result
+
+    version = overrides.get("version", 1)
+    if version != 1:
+        raise ValueError(f"Unsupported generator overrides version: {version!r}")
+
+    for key in result:
+        if key in overrides:
+            result[key] = overrides[key]
+
+    return result
+
+def load_generator_overrides(overrides_file=None):
+    if overrides_file is None:
+        return default_generator_overrides()
+
+    with open(overrides_file, encoding="utf-8") as f:
+        return normalized_generator_overrides(json.load(f))
+
+def patch_field_pointer(target, name):
+    target = target or "/"
+    if not target.startswith("/"):
+        raise ValueError(f"Schema patch target must be a JSON pointer: {target!r}")
+    if "/" in name:
+        raise ValueError(f"Schema patch field name must not contain '/': {name!r}")
+    return f"{target.rstrip('/')}/{name}" if target != "/" else f"/{name}"
+
+def apply_schema_patches(schema_entries, generator_overrides=None):
+    overrides = normalized_generator_overrides(generator_overrides)
+    patched = [dict(entry) for entry in schema_entries]
+    report = []
+
+    for patch in overrides["schema_patches"]:
+        patch_id = patch.get("id")
+        op = patch.get("op")
+        if op != "add_field":
+            raise ValueError(f"Unsupported schema patch op: {op!r}")
+
+        target = patch.get("target")
+        name = patch.get("name")
+        schema = dict(patch.get("schema") or {})
+        if not target or not name:
+            raise ValueError("add_field schema patch requires target and name")
+        if "type" not in schema:
+            raise ValueError("add_field schema patch requires schema.type")
+
+        pointer = patch_field_pointer(target, name)
+        entry = {"pointer": pointer}
+        entry.update(schema)
+        patched = [item for item in patched if item.get("pointer") != pointer]
+        for item in patched:
+            if item.get("pointer") != target or item.get("type") != "object":
+                continue
+            required = set(item.get("required") or [])
+            optional = list(item.get("optional") or [])
+            if name not in required and name not in optional:
+                optional.append(name)
+                item["optional"] = optional
+        patched.append(entry)
+        report.append({
+            "id": patch_id,
+            "op": op,
+            "pointer": pointer,
+            "status": "applied",
+        })
+
+    return patched, report
+
+def validate_api_function_name(name):
+    if not name or py_identifier(name) != name or keyword.iskeyword(name):
+        raise ValueError(f"Invalid API function name: {name!r}")
+    return name
+
+def class_tree_manifest(root):
+    return [
+        {
+            "class_path": api_class_expr(path),
+            "params": api_all_fields(node),
+        }
+        for path, node in collect_class_tree(root)
+    ]
+
+def generated_api_export_plan(class_entries, generator_overrides=None):
+    overrides = normalized_generator_overrides(generator_overrides)
+    api_names = generated_api_name_map(class_entries)
+    paths_by_name = {
+        api_class_expr(path): path
+        for path, _node in class_entries
+    }
+    nodes_by_name = {
+        api_class_expr(path): node
+        for path, node in class_entries
+    }
+    generated_name_by_class_path = {
+        api_class_expr(path): api_names[tuple(path)]
+        for path, _node in class_entries
+        if path != ["Root"]
+    }
+
+    api_alias_custom_names, api_alias_skip_names = expand_api_aliases(
+        overrides["api_aliases"],
+        paths_by_name,
+        generated_name_by_class_path,
+        validate_api_function_name,
+    )
+
+    skip_auto_generated_api_names = [
+        *overrides["skip_auto_generated_api_names"],
+        *api_alias_skip_names,
+    ]
+    custom_api_names = [
+        *overrides["custom_api_names"],
+        *api_alias_custom_names,
+    ]
+
+    for item in skip_auto_generated_api_names:
+        class_path = item["class_path"]
+        api_generated_name = item["api_generated_name"]
+        if class_path not in generated_name_by_class_path:
+            raise ValueError(
+                f"skip_auto_generated_api_names references unknown class_path: {class_path!r}"
+            )
+        actual_name = generated_name_by_class_path[class_path]
+        if api_generated_name != actual_name:
+            raise ValueError(
+                "skip_auto_generated_api_names api_generated_name mismatch: "
+                f"{api_generated_name!r} != {actual_name!r}"
+            )
+
+    skip_names = {
+        (
+            item["class_path"],
+            item["api_generated_name"],
+        )
+        for item in skip_auto_generated_api_names
+    }
+
+    plan = []
+    used = {"config", "unit"}
+    for path, node in class_entries:
+        if path == ["Root"]:
+            continue
+
+        class_path = api_class_expr(path)
+        api_generated_name = api_names[tuple(path)]
+        exported = (class_path, api_generated_name) not in skip_names
+        if exported:
+            used.add(api_generated_name)
+        plan.append({
+            "class_path": class_path,
+            "api_generated_name": api_generated_name,
+            "api_custom_name": None,
+            "kind": "auto",
+            "source": "generator",
+            "exported": exported,
+            "params": api_all_fields(node),
+        })
+
+    for item in custom_api_names:
+        class_path = item["class_path"]
+        if class_path not in paths_by_name:
+            raise ValueError(f"custom_api_names references unknown class_path: {class_path!r}")
+        api_custom_name = validate_api_function_name(item["api_custom_name"])
+        if api_custom_name in used:
+            raise ValueError(f"API function name already exists: {api_custom_name!r}")
+
+        path = paths_by_name[class_path]
+        node = nodes_by_name[class_path]
+        used.add(api_custom_name)
+        plan.append({
+            "class_path": class_path,
+            "api_generated_name": api_names[tuple(path)],
+            "api_custom_name": api_custom_name,
+            "kind": item.get("_kind", "custom_api_name"),
+            "source": item.get("_source", "api_config"),
+            "exported": True,
+            "params": api_all_fields(node),
+        })
+
+    return plan
+
+def generated_api_manifest(root, generator_overrides=None):
+    return generated_api_export_plan(
+        collect_class_tree(root),
+        generator_overrides,
+    )
+
+def api_required_fields(node):
+    fields = []
+    for name, child in node._required.items():
+        if name == "type" and node.type_name:
+            continue
+        if child.has_default:
+            continue
+        fields.append(name)
+    return fields
+
+def api_all_fields(node):
+    fields = []
+    for name in list(node._required) + list(node._optional):
+        if name not in fields:
+            fields.append(name)
+    return fields
+
+def api_variant_tuple(path, node):
+    return (
+        f"({api_class_expr(path)}, {node.type_name!r}, "
+        f"{tuple(api_required_fields(node))!r}, {tuple(api_all_fields(node))!r})"
+    )
+
+def generated_api_field_wrapper_text(class_entries):
+    lines = []
+
+    for path, node in class_entries:
+        wrappers = []
+        for child in list(node._required.values()) + list(node._optional.values()):
+            if not should_generate_class_for_node(child):
+                continue
+            child_path = path + [py_class_name(child.name)]
+            wrappers.append(
+                f'        "{child.name}": ({child.type!r}, {api_class_expr(child_path)}),\n'
+            )
+
+        if wrappers:
+            lines.append(f"    {api_class_expr(path)}: {{\n{''.join(wrappers)}    }},\n")
+
+    return "{\n" + "".join(lines) + "}"
+
+def generated_api_list_variants_text(class_entries):
+    lines = []
+
+    for path, node in class_entries:
+        if node.type != "list":
+            continue
+
+        variants = []
+        for child in node._optional.values():
+            if not should_generate_class_for_node(child):
+                continue
+            child_path = path + [py_class_name(child.name)]
+            variants.append(f"        {api_variant_tuple(child_path, child)},\n")
+
+        if variants:
+            lines.append(f"    {api_class_expr(path)}: (\n{''.join(variants)}    ),\n")
+
+    return "{\n" + "".join(lines) + "}"
+
+def generated_api_polymorphic_variants_text(class_entries):
+    lines = []
+
+    for path, node in class_entries:
+        if node.type != "polymorphic":
+            continue
+
+        variants = []
+        for child in node._optional.values():
+            if not should_generate_class_for_node(child):
+                continue
+            child_path = path + [py_class_name(child.name)]
+            variants.append(f"        {api_variant_tuple(child_path, child)},\n")
+
+        if variants:
+            lines.append(f"    {api_class_expr(path)}: (\n{''.join(variants)}    ),\n")
+
+    return "{\n" + "".join(lines) + "}"
+
+def generated_api_class_type_names_text(class_entries):
+    lines = []
+
+    for path, node in class_entries:
+        if not node.type_name:
+            continue
+        if "type" not in api_all_fields(node):
+            continue
+        lines.append(f"    {api_class_expr(path)}: {node.type_name!r},\n")
+
+    return "{\n" + "".join(lines) + "}"
+
+def api_shortcut_name_options(path):
+    if path == ["Root"]:
+        return []
+
+    current = py_function_name(path[-1])
+
+    if len(path) >= 4 and current == "item":
+        parent = py_function_name(path[-2])
+        if parent.endswith("_boundary"):
+            base = parent[: -len("_boundary")]
+            return [
+                base,
+                f"{py_function_name(path[-3])}_{base}",
+                "_".join(py_function_name(part) for part in path[1:]),
+            ]
+
+    if len(path) >= 4:
+        parent = py_function_name(path[-2])
+        if parent.endswith("_selection"):
+            base = parent[: -len("_selection")]
+            owner = py_function_name(path[-3])
+            return [
+                f"{base}_{current}",
+                f"{owner}_{base}_{current}",
+                "_".join(py_function_name(part) for part in path[1:]),
+            ]
+
+    if len(path) == 3 and path[1] == "Output":
+        return [
+            f"output_{current}",
+            "_".join(py_function_name(part) for part in path[1:]),
+        ]
+
+    return []
+
+def generated_api_shortcut_factories_text(class_entries, api_names, extra_used=None):
+    used = set(api_names.values()) | set(extra_used or ()) | {"config", "unit"}
+    lines = []
+
+    for path, _node in class_entries:
+        for name in api_shortcut_name_options(path):
+            if name in used:
+                continue
+            used.add(name)
+            lines.append(
+                f"""
+def {name}(*args, **kwargs):
+    return _construct({api_class_expr(path)}, *args, **kwargs)
+"""
+            )
+            break
+
+    return "".join(lines)
+
+def generated_api_field_aliases_text(class_entries):
+    lines = []
+
+    for path, node in class_entries:
+        field_names = set(node._required) | set(node._optional)
+        aliases = []
+        for child in list(node._required.values()) + list(node._optional.values()):
+            field_name = py_function_name(child.name)
+            if not field_name.endswith("_boundary"):
+                continue
+
+            alias = field_name[: -len("_boundary")]
+            if not alias or alias in field_names:
+                continue
+
+            aliases.append(f'        "{alias}": "{child.name}",\n')
+
+        if aliases:
+            lines.append(f"    {api_class_expr(path)}: {{\n{''.join(aliases)}    }},\n")
+
+    return "{\n" + "".join(lines) + "}"
 
 def mark_variant_fields(node, entry):
     fields = []
@@ -1203,9 +1689,13 @@ def apply_type_name_defaults(node, visited=None):
     for child in list(node._required.values()) + list(node._optional.values()):
         apply_type_name_defaults(child, visited)
 
-def build_tree(schema_entries):
+def build_tree(schema_entries, spec_dir=None, include_dirs=None):
     root = JsonToTreeClass("root")
-    schema = expand_includes(schema_entries)
+    schema = expand_includes(
+        schema_entries,
+        spec_dir=spec_dir,
+        include_dirs=include_dirs,
+    )
 
     schema = [
         filtered_entry(entry)
@@ -1301,6 +1791,7 @@ def build_tree(schema_entries):
             path.max = None
             path._required = {}
             path._optional = {type_name: placeholder}
+            replacement_node = path
             path = placeholder
 
         # Handle polymorphic variables.
@@ -1409,8 +1900,17 @@ from typing import Optional, Iterable
 from enum import Enum
 import json
 
+_UNSET = object()
+
 def drop_none(d):
     return {k: v for k, v in d.items() if v is not None} if type(d) == dict else d
+
+def list_check(value):
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
 
 def extension_check(filename, extensions):
     if filename in (None, ""):
@@ -1423,6 +1923,8 @@ def extension_check(filename, extensions):
     return filename
 
 def class_check(value, allowed):
+    if float in allowed and isinstance(value, int) and not isinstance(value, bool):
+        return float(value)
     if not isinstance(value, tuple(allowed)):
         allowed_names = ", ".join(cls.__qualname__ for cls in allowed)
         raise TypeError(
@@ -1436,6 +1938,9 @@ def inline_check(value, allowed, object_schemas=None):
 
     if value is None:
         return value
+
+    if float in allowed and isinstance(value, int) and not isinstance(value, bool):
+        return float(value)
 
     if allowed and isinstance(value, tuple(allowed)):
         return value
@@ -1504,24 +2009,373 @@ def range_check(value, min, max):
         raise TypeError(f"Value {value} is out of range. Expected{min_text} value{max_text}.")
 
 def type_check(variable, tp):
+    if tp is float and isinstance(variable, int) and not isinstance(variable, bool):
+        return float(variable)
     if not isinstance(variable, tp):
         raise TypeError(f"Expected type '{tp.__name__}', but got '{type(variable).__name__}'")
     return variable
 """
     return prelude + generated_class
 
-def generate(schema_file=DEFAULT_SCHEMA_FILE, output_file=DEFAULT_OUTPUT_FILE):
+def generated_api_text(root, generator_overrides=None):
+    class_entries = collect_class_tree(root)
+    api_names = generated_api_name_map(class_entries)
+    export_plan = generated_api_export_plan(class_entries, generator_overrides)
+    factory_lines = []
+
+    class_paths = {
+        api_class_expr(path): path
+        for path, _node in class_entries
+    }
+
+    for entry in export_plan:
+        if not entry["exported"]:
+            continue
+        api_name = entry["api_custom_name"] or entry["api_generated_name"]
+        path = class_paths[entry["class_path"]]
+        class_path = api_class_expr(path)
+        factory_lines.append(
+            f"""
+def {api_name}(*args, **kwargs):
+    return _construct({class_path}, *args, **kwargs)
+"""
+        )
+
+    field_wrappers_text = generated_api_field_wrapper_text(class_entries)
+    field_aliases_text = generated_api_field_aliases_text(class_entries)
+    list_variants_text = generated_api_list_variants_text(class_entries)
+    polymorphic_variants_text = generated_api_polymorphic_variants_text(class_entries)
+    class_type_names_text = generated_api_class_type_names_text(class_entries)
+    factories = "".join(factory_lines)
+    shortcut_factories = generated_api_shortcut_factories_text(
+        class_entries,
+        api_names,
+        extra_used=[
+            entry["api_custom_name"]
+            for entry in export_plan
+            if entry["api_custom_name"]
+        ],
+    )
+    return f'''"""User-friendly factories for the generated Root class.
+
+This file is generated from the same schema tree as generated_class.py.
+Factories only construct generated class objects; defaults and validation stay
+in generated_class.py.
+"""
+
+import builtins
+import importlib.util
+import sys
+from pathlib import Path
+
+try:
+    from .generated_class import Root
+except ImportError:
+    from generated_class import Root
+
+
+_MISSING_MODULE = object()
+
+
+def _load_module_from_path(module_name, module_path):
+    previous_module = sys.modules.get(module_name, _MISSING_MODULE)
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    if spec is None or spec.loader is None:
+        raise ImportError("Could not load %s from %s" % (module_name, module_path))
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception:
+        _restore_module(module_name, previous_module)
+        raise
+    return module
+
+
+def _restore_module(module_name, previous_module):
+    if previous_module is _MISSING_MODULE:
+        sys.modules.pop(module_name, None)
+    else:
+        sys.modules[module_name] = previous_module
+
+
+def _load_model_builder():
+    source_file = Path(__file__).resolve()
+    for parent in source_file.parents:
+        for generator_dir in (
+            parent / "generator",
+            parent / "python-from-jse" / "generator",
+        ):
+            model_builder_path = generator_dir / "model_builder.py"
+            if not model_builder_path.exists():
+                continue
+
+            previous_modules = {{
+                name: sys.modules.get(name, _MISSING_MODULE)
+                for name in ("id_relationships", "selection_refs")
+            }}
+            try:
+                for dependency_name in ("id_relationships", "selection_refs"):
+                    dependency_path = generator_dir / (dependency_name + ".py")
+                    if dependency_path.exists():
+                        _load_module_from_path(dependency_name, dependency_path)
+                module = _load_module_from_path(
+                    "_generated_api_model_builder",
+                    model_builder_path,
+                )
+            finally:
+                for name, previous_module in previous_modules.items():
+                    _restore_module(name, previous_module)
+
+            return module.ModelBuilder
+
+    raise ModuleNotFoundError(
+        "Could not find python-from-jse/generator/model_builder.py "
+        "from generated API file %s" % source_file
+    )
+
+
+ModelBuilder = _load_model_builder()
+
+
+class _GeneratedApiProxy:
+    def __init__(self, namespace):
+        self._namespace = namespace
+
+    def __getattr__(self, name):
+        try:
+            return self._namespace[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+
+_FIELD_WRAPPERS = {field_wrappers_text}
+_FIELD_ALIASES = {field_aliases_text}
+_LIST_VARIANTS = {list_variants_text}
+_POLYMORPHIC_VARIANTS = {polymorphic_variants_text}
+_CLASS_TYPE_NAMES = {class_type_names_text}
+
+
+def _construct(cls, *args, **kwargs):
+    if kwargs:
+        type_name = _CLASS_TYPE_NAMES.get(cls)
+        if type_name is not None and "type" not in kwargs:
+            kwargs = dict(kwargs)
+            kwargs["type"] = type_name
+        kwargs = _wrap_kwargs(cls, kwargs)
+    return cls(*args, **kwargs)
+
+
+def _wrap_kwargs(cls, kwargs):
+    values = dict(kwargs)
+
+    for alias, target in _FIELD_ALIASES.get(cls, {{}}).items():
+        if alias in values:
+            if target in values:
+                raise TypeError(f"Use either {{alias!r}} or {{target!r}}, not both")
+            values[target] = values.pop(alias)
+
+    if "items" in values and cls in _LIST_VARIANTS and isinstance(values["items"], builtins.list):
+        values["items"] = [_wrap_list_item(cls, item) for item in values["items"]]
+
+    for key, (kind, wrapper) in _FIELD_WRAPPERS.get(cls, {{}}).items():
+        if key in values:
+            values[key] = _wrap_value(values[key], kind, wrapper)
+
+    return values
+
+
+def _wrap_value(value, kind, wrapper):
+    if value is None or isinstance(value, wrapper):
+        return value
+
+    if kind == "list":
+        if isinstance(value, builtins.list):
+            return wrapper(items=[_wrap_list_item(wrapper, item) for item in value])
+        return wrapper(items=[_wrap_list_item(wrapper, value)])
+
+    if kind == "polymorphic":
+        if isinstance(value, builtins.dict):
+            variants = _POLYMORPHIC_VARIANTS.get(wrapper, ())
+            if variants:
+                return wrapper(_construct(_select_variant(value, variants), **value))
+        return wrapper(value)
+
+    if kind == "object" and isinstance(value, builtins.dict):
+        return _construct(wrapper, **value)
+
+    return value
+
+
+def _wrap_list_item(wrapper, item):
+    variants = _LIST_VARIANTS.get(wrapper, ())
+    for cls, _type_name, _required, _fields in variants:
+        if isinstance(item, cls):
+            return item
+    if not isinstance(item, builtins.dict):
+        if len(variants) == 1:
+            cls, _type_name, required, _fields = variants[0]
+            if not required:
+                return _construct(cls, item)
+        return item
+
+    return _construct(_select_variant(item, variants), **item)
+
+
+def _select_variant(data, variants):
+    if not variants:
+        raise TypeError(f"No generated variants are available for {{data!r}}")
+
+    type_value = data.get("type")
+    if type_value is not None:
+        for cls, type_name, _required, _fields in variants:
+            if type_value in (type_name, cls.__name__):
+                return cls
+
+    keys = set(data)
+    best_cls = None
+    best_score = (-1, -1)
+    for cls, _type_name, required, fields in variants:
+        required = set(required)
+        if not required.issubset(keys):
+            continue
+        score = (len(required), len(keys.intersection(fields)))
+        if score > best_score:
+            best_cls = cls
+            best_score = score
+
+    if best_cls is not None:
+        return best_cls
+
+    raise TypeError(f"Could not choose a generated variant for keys {{sorted(keys)!r}}")
+
+
+def unit(value, unit):
+    return {{"value": value, "unit": unit}}
+
+
+_CONFIG_SECTION_SHORTCUTS = {{
+    "time": {{
+        "time_tend": "tend",
+        "time_dt": "dt",
+    }},
+    "contact": {{
+        "contact_enabled": "enabled",
+        "contact_dhat": "dhat",
+    }},
+}}
+_CONFIG_SECTION_WRAPPER_NAMES = {{
+    "time": "Time",
+    "contact": "Contact",
+}}
+
+
+def _config_section_wrapper(section):
+    wrapper_name = _CONFIG_SECTION_WRAPPER_NAMES[section]
+    return getattr(Root, wrapper_name, None)
+
+
+def _expand_config_shortcuts(kwargs):
+    values = dict(kwargs)
+
+    for section, shortcuts in _CONFIG_SECTION_SHORTCUTS.items():
+        section_values = {{}}
+        used_shortcuts = []
+        for shortcut, target in shortcuts.items():
+            if shortcut in values:
+                section_values[target] = values.pop(shortcut)
+                used_shortcuts.append(shortcut)
+
+        if not section_values:
+            continue
+
+        if section in values:
+            raise TypeError(
+                f"Use either {{section!r}} or flat config shortcuts {{used_shortcuts!r}}, not both"
+            )
+
+        wrapper = _config_section_wrapper(section)
+        if wrapper is None:
+            raise TypeError(
+                f"Config shortcut section {{section!r}} is not available in this generated API"
+            )
+        if wrapper in _POLYMORPHIC_VARIANTS:
+            values[section] = _wrap_value(section_values, "polymorphic", wrapper)
+        else:
+            values[section] = _construct(wrapper, **section_values)
+
+    return values
+
+
+def config(**kwargs):
+    return _construct(Root, **_expand_config_shortcuts(kwargs))
+
+
+def model(**kwargs):
+    api_module = sys.modules.get(__name__)
+    if api_module is None:
+        api_module = _GeneratedApiProxy(globals())
+    return ModelBuilder(api_module, **kwargs)
+{factories}
+{shortcut_factories}'''
+
+def generate(
+    schema_file=DEFAULT_SCHEMA_FILE,
+    output_file=DEFAULT_OUTPUT_FILE,
+    api_output_file=DEFAULT_API_OUTPUT_FILE,
+    generator_overrides_file=None,
+    manifest_dir=None,
+    generator_overrides=None,
+    include_spec_dirs=None,
+):
     with open(schema_file, encoding="utf-8") as f:
         schema_entries = json.load(f)
 
-    root = build_tree(schema_entries)
+    if generator_overrides is None:
+        generator_overrides = load_generator_overrides(generator_overrides_file)
+    else:
+        generator_overrides = normalized_generator_overrides(generator_overrides)
+    schema_entries, schema_patch_report = apply_schema_patches(
+        schema_entries,
+        generator_overrides,
+    )
+    root = build_tree(
+        schema_entries,
+        spec_dir=Path(schema_file).parent,
+        include_dirs=include_spec_dirs,
+    )
     generated_class = generated_class_text(root)
+    generated_api = generated_api_text(root, generator_overrides)
     output_file = Path(output_file)
     output_file.parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(generated_class)
 
+    api_output_file = Path(api_output_file)
+    api_output_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(api_output_file, "w", encoding="utf-8") as f:
+        f.write(generated_api)
+
+    manifest_dir = Path(manifest_dir) if manifest_dir is not None else api_output_file.parent
+    manifest_dir.mkdir(parents=True, exist_ok=True)
+    init_file = manifest_dir / "__init__.py"
+    if not init_file.exists():
+        init_file.write_text(
+            '"""Generated Python API artifacts."""\n',
+            encoding="utf-8",
+        )
+    with open(manifest_dir / "schema_patch_report.json", "w", encoding="utf-8") as f:
+        json.dump(schema_patch_report, f, indent=2)
+        f.write("\n")
+    with open(manifest_dir / "class_tree_manifest.json", "w", encoding="utf-8") as f:
+        json.dump(class_tree_manifest(root), f, indent=2)
+        f.write("\n")
+    with open(manifest_dir / "generated_api_manifest.json", "w", encoding="utf-8") as f:
+        json.dump(generated_api_manifest(root, generator_overrides), f, indent=2)
+        f.write("\n")
+
     print(f"Generated {output_file}")
+    print(f"Generated {api_output_file}")
     return generated_class
 
 
