@@ -1,0 +1,39 @@
+[
+  {
+    "pointer": "/",
+    "type": "list",
+    "default": [],
+    "doc": "List of boundary-condition assignment pairs."
+  },
+  {
+    "pointer": "/*/id",
+    "type": "int",
+    "min": 0
+  },
+  {
+    "pointer": "/*/id",
+    "type": "string",
+    "options": [
+      "all"
+    ]
+  },
+  {
+    "pointer": "/*/value",
+    "type": "list"
+  },
+  {
+    "pointer": "/*/value/*",
+    "type": "include",
+    "spec_file": "value-no.json"
+  },
+  {
+    "pointer": "/*/interpolation",
+    "type": "list",
+    "default": []
+  },
+  {
+    "pointer": "/*/interpolation/*",
+    "type": "include",
+    "spec_file": "interpolation.json"
+  }
+]

@@ -1,7 +1,7 @@
 import unittest
 
 from tests.generator_test_helpers import (
-    POLYFEM_SPEC_DIR,
+    FIXTURE_SPEC_DIR,
     import_generator,
     module_from_generated_api_text,
     module_from_generated_text,
@@ -85,7 +85,7 @@ class GeneratedApiTests(unittest.TestCase):
                 "pointer": "/time/dt",
                 "type": "float",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
         generated_module = module_from_generated_text(generator.generated_class_text(root))
         api_module = module_from_generated_api_text(
             generator.generated_api_text(root),

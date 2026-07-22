@@ -46,6 +46,15 @@ class StandaloneRepoReadinessTests(unittest.TestCase):
         self.assertIn("python tools\\regenerate_and_test.py", readme)
         self.assertIn("Packaging metadata can be added later", readme)
 
+    def test_standalone_include_fixtures_are_inside_repo(self):
+        fixture_dir = PROJECT_ROOT / "tests" / "fixtures" / "specs"
+
+        self.assertTrue(fixture_dir.is_dir())
+        self.assertTrue(fixture_dir.is_relative_to(PROJECT_ROOT))
+        self.assertTrue((fixture_dir / "value-no.json").is_file())
+        self.assertTrue((fixture_dir / "value1.json").is_file())
+        self.assertTrue((fixture_dir / "boundary-condition.json").is_file())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 from tests.generator_test_helpers import (
+    FIXTURE_SPEC_DIR,
     GENERATED_PATH,
     POLYFEM_INCLUDE_SPEC_DIRS,
     POLYFEM_SPEC_DIR,
@@ -150,7 +151,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/materials/*/models",
                 "type": "list",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         materials = root.get_optional("materials")
         material = materials.get_optional("MooneyRivlin")
@@ -211,7 +212,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "float",
                 "default": 0.5,
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         integrator = root.get_optional("integrator")
         implicit_euler_type = integrator.get_optional("ImplicitEuler").get_required("type")
@@ -279,7 +280,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/material/mu",
                 "type": "float",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         generated = generator.generated_class_text(root)
         generated_module = module_from_generated_text(generated)
@@ -370,7 +371,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/materials/*/elastic_material/nu",
                 "type": "float",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         thermo = root.get_optional("materials").get_optional("ThermoElasticity")
         elastic_material = thermo.get_required("elastic_material")
@@ -766,7 +767,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "bool",
                 "default": True,
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         solver = root.get_optional("solver")
         contact = solver.get_optional("contact")
@@ -828,7 +829,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/time/time_steps",
                 "type": "int",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         time = root.get_optional("time")
 
@@ -898,7 +899,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/time/time_steps",
                 "type": "int",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         time = root.get_optional("time")
         object1 = time.get_optional("object1")
@@ -961,7 +962,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "pointer": "/time/time_steps",
                 "type": "int",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         generated = generator.generated_class_text(root)
 
@@ -1093,7 +1094,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "include",
                 "spec_file": "value1.json",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         value_with_unit = (
             root.get_optional("materials")
@@ -1243,7 +1244,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "string",
                 "doc": "Dirichlet boundary condition loaded from a file",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         dirichlet = root.get_optional("boundary_conditions").get_optional(
             "dirichlet_boundary"
@@ -1284,7 +1285,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "optional": ["interpolation"],
                 "doc": "Neumann boundary condition",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         neumann = root.get_optional("boundary_conditions").get_optional(
             "neumann_boundary"
@@ -1485,7 +1486,7 @@ class GeneratorUnitTests(unittest.TestCase):
                 "type": "include",
                 "spec_file": "value-no.json",
             },
-        ], spec_dir=POLYFEM_SPEC_DIR)
+        ], spec_dir=FIXTURE_SPEC_DIR)
 
         rhs = root.get_optional("rhs")
 

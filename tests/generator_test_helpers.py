@@ -10,6 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 GENERATOR_PATH = PROJECT_ROOT / "generator" / "JsonToTreeClass.py"
 GENERATED_PATH = PROJECT_ROOT / "generated" / "generated_class.py"
 RUNNER_PATH = PROJECT_ROOT / "tools" / "generate_with_overrides.py"
+FIXTURE_SPEC_DIR = PROJECT_ROOT / "tests" / "fixtures" / "specs"
 DEFAULT_POLYFEM_SPEC_DIR = PROJECT_ROOT.parent / "external" / "polyfem" / "json-specs"
 POLYFEM_SPEC_DIR = Path(os.environ.get("POLYFEM_SPEC_DIR", DEFAULT_POLYFEM_SPEC_DIR))
 FULL_SPEC_SCHEMA_FILE = POLYFEM_SPEC_DIR / "input-spec.json"

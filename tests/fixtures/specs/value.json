@@ -1,0 +1,45 @@
+[
+  {
+    "pointer": "/",
+    "type": "string",
+    "doc": "Value as an expression or file path."
+  },
+  {
+    "pointer": "/",
+    "type": "object",
+    "required": [
+      "value",
+      "unit"
+    ],
+    "doc": "Value with unit."
+  },
+  {
+    "pointer": "/",
+    "type": "object",
+    "required": [
+      "file_name",
+      "function_name"
+    ],
+    "doc": "Value from a Python function."
+  },
+  {
+    "pointer": "/unit",
+    "type": "string"
+  },
+  {
+    "pointer": "/value",
+    "type": "float"
+  },
+  {
+    "pointer": "/value",
+    "type": "string"
+  },
+  {
+    "pointer": "/file_name",
+    "type": "file"
+  },
+  {
+    "pointer": "/function_name",
+    "type": "string"
+  }
+]

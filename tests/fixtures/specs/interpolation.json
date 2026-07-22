@@ -1,0 +1,51 @@
+[
+  {
+    "pointer": "/",
+    "type": "object",
+    "type_name": "none",
+    "required": [
+      "type"
+    ],
+    "default": {
+      "type": "none"
+    }
+  },
+  {
+    "pointer": "/",
+    "type": "object",
+    "type_name": "linear",
+    "required": [
+      "type"
+    ]
+  },
+  {
+    "pointer": "/",
+    "type": "object",
+    "type_name": "linear_ramp",
+    "required": [
+      "type",
+      "to"
+    ],
+    "optional": [
+      "from"
+    ]
+  },
+  {
+    "pointer": "/type",
+    "type": "string",
+    "options": [
+      "none",
+      "linear",
+      "linear_ramp"
+    ]
+  },
+  {
+    "pointer": "/from",
+    "type": "float",
+    "default": 0
+  },
+  {
+    "pointer": "/to",
+    "type": "float"
+  }
+]
