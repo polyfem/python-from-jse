@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-from-jse"
+version = "0.1.0"
+description = "Generic JSON-spec-to-Python generator"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+python-from-jse-generate = "tools.generate_with_overrides:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["generator*", "validators*", "tools*", "examples*"]
+
+[tool.setuptools.package-data]
+examples = [
+    "basic_generation/*.json",
+    "config_capabilities/*.json",
+]

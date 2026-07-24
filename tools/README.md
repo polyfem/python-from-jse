@@ -18,6 +18,13 @@ Generated files are artifacts. Do not edit them by hand.
 
 ## Standalone `python-from-jse`
 
+Install from the repo root when you want the generator available as a local
+Python tool:
+
+```powershell
+python -m pip install -e .
+```
+
 Run from the `python-from-jse` repo root:
 
 ```powershell
@@ -44,7 +51,7 @@ output for any consuming project.
 For a custom standalone schema:
 
 ```powershell
-python tools\generate_with_overrides.py `
+python-from-jse-generate `
   --schema-file path\to\input-spec.json `
   --overrides path\to\generator_overrides.json `
   --output-file generated\generated_class.py `

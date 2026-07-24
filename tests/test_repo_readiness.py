@@ -44,7 +44,25 @@ class StandaloneRepoReadinessTests(unittest.TestCase):
         self.assertIn("## Standalone Repo Readiness", readme)
         self.assertIn(".github/workflows/ci.yml", readme)
         self.assertIn("python tools\\regenerate_and_test.py", readme)
-        self.assertIn("Packaging metadata can be added later", readme)
+        self.assertIn("python -m pip install -e .", readme)
+
+    def test_pyproject_declares_installable_generator_package(self):
+        pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+
+        self.assertIn('[build-system]', pyproject)
+        self.assertIn('build-backend = "setuptools.build_meta"', pyproject)
+        self.assertIn('[project]', pyproject)
+        self.assertIn('name = "python-from-jse"', pyproject)
+        self.assertIn('requires-python = ">=3.10"', pyproject)
+        self.assertIn('[project.scripts]', pyproject)
+        self.assertIn(
+            'python-from-jse-generate = "tools.generate_with_overrides:main"',
+            pyproject,
+        )
+        self.assertIn(
+            'include = ["generator*", "validators*", "tools*", "examples*"]',
+            pyproject,
+        )
 
     def test_standalone_include_fixtures_are_inside_repo(self):
         fixture_dir = PROJECT_ROOT / "tests" / "fixtures" / "specs"

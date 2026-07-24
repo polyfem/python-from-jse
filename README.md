@@ -16,6 +16,12 @@ policy belong in the consuming project.
 
 ## Standalone Usage
 
+Install the generator from this repository:
+
+```powershell
+python -m pip install -e .
+```
+
 Run the default generic example from this directory:
 
 ```powershell
@@ -33,7 +39,7 @@ This command:
 For a custom schema:
 
 ```powershell
-python tools\generate_with_overrides.py `
+python-from-jse-generate `
   --schema-file path\to\input-spec.json `
   --include-spec-dir path\to\linked-specs `
   --overrides path\to\generator_overrides.json `
@@ -61,9 +67,9 @@ schema in `examples/basic_generation/` to regenerate `generated/`, compile the
 generated Python files, and run the test suite without any consuming project
 checkout.
 
-Packaging metadata can be added later, after the source layout is intentionally
-converted into an installable Python package. Until then, this repo should be
-treated as a runnable generator/tool repo rather than a pip-published package.
+The repository includes minimal packaging metadata in `pyproject.toml`, so a
+consuming project can install the generator directly from the source checkout.
+The generator's own CI remains responsible for the full standalone test suite.
 
 ## Optional Project Config
 
@@ -117,7 +123,8 @@ public API policy outside this generator repo. The usual pattern is:
 2. keep project-specific overrides/config in the consuming project;
 3. add a small project wrapper that calls `tools/generate_with_overrides.py`
    with explicit paths;
-4. document those project paths in the consuming project.
+4. run project-specific generated API checks in the consuming project;
+5. document those project paths in the consuming project.
 
 The generator repo only needs the dummy/example schema under
 `examples/basic_generation/` so its own tests can run without any consuming
