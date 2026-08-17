@@ -514,6 +514,67 @@ class GeneratedApiTests(unittest.TestCase):
 
         self.assertEqual({"geometry": [{"type": "List"}]}, cfg.as_dict())
 
+    def test_generated_api_keeps_primitive_string_list_items(self):
+        generator = import_generator("json_to_tree_generated_api_string_list_items")
+        root = generator.build_tree([
+            {
+                "pointer": "/",
+                "type": "object",
+                "optional": ["boundary_conditions"],
+            },
+            {
+                "pointer": "/boundary_conditions",
+                "type": "object",
+                "optional": ["obstacle_displacements"],
+            },
+            {
+                "pointer": "/boundary_conditions/obstacle_displacements",
+                "type": "list",
+            },
+            {
+                "pointer": "/boundary_conditions/obstacle_displacements/*",
+                "type": "object",
+                "required": ["id", "value"],
+            },
+            {
+                "pointer": "/boundary_conditions/obstacle_displacements/*/id",
+                "type": "int",
+            },
+            {
+                "pointer": "/boundary_conditions/obstacle_displacements/*/value",
+                "type": "list",
+            },
+            {
+                "pointer": "/boundary_conditions/obstacle_displacements/*/value/*",
+                "type": "include",
+                "spec_file": "value-no.json",
+            },
+        ], spec_dir=FIXTURE_SPEC_DIR)
+        generated_module = module_from_generated_text(generator.generated_class_text(root))
+        api_module = module_from_generated_api_text(
+            generator.generated_api_text(root),
+            generated_module.Root,
+        )
+
+        cfg = api_module.config(
+            boundary_conditions={
+                "obstacle_displacements": [
+                    {"id": 1, "value": ["x + t", 0]},
+                ],
+            },
+        )
+
+        self.assertEqual(
+            {
+                "boundary_conditions": {
+                    "obstacle_displacements": [
+                        {"id": 1, "value": ["x + t", 0.0]},
+                    ],
+                },
+            },
+            cfg.as_dict(),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

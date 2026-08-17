@@ -71,6 +71,67 @@ class ModelBuilder:
         self._mesh_by_uuid[mesh_uuid] = mesh_object
         return BodyHandle(self, mesh_uuid, volume_ref)
 
+    def mesh_array(self, **kwargs):
+        return self._geometry_item("mesh_array", **kwargs)
+
+    def geometry_mesh(self, **kwargs):
+        return self._unbound_geometry_item("mesh", **kwargs)
+
+    def geometry_mesh_array(self, **kwargs):
+        return self._unbound_geometry_item("mesh_array", **kwargs)
+
+    def geometry_mesh_sequence(self, **kwargs):
+        return self._unbound_geometry_item("mesh_sequence", **kwargs)
+
+    def obstacle_mesh(self, **kwargs):
+        return self._obstacle_geometry_item("mesh", **kwargs)
+
+    def obstacle_mesh_array(self, **kwargs):
+        return self._obstacle_geometry_item("mesh_array", **kwargs)
+
+    def obstacle_mesh_sequence(self, **kwargs):
+        return self._obstacle_geometry_item("mesh_sequence", **kwargs)
+
+    def _obstacle_geometry_item(self, factory_name, **kwargs):
+        values = dict(kwargs)
+        values["is_obstacle"] = True
+        surface_selection = values.get("surface_selection")
+        geometry_object = getattr(self._api, factory_name)(**values)
+        self._geometry.append(geometry_object)
+        if not isinstance(surface_selection, int) or surface_selection <= 0:
+            return None
+
+        selection_ref = self._selection_pool.allocate(
+            "surface",
+            backend_id=surface_selection,
+        )
+        return SelectionHandle(self, selection_ref)
+
+    def _geometry_item(self, factory_name, **kwargs):
+        values = dict(kwargs)
+        volume_selection = values.get("volume_selection")
+        geometry_object = getattr(self._api, factory_name)(**values)
+        self._geometry.append(geometry_object)
+        if not isinstance(volume_selection, int) or volume_selection <= 0:
+            return None
+
+        mesh_uuid = str(uuid.uuid4())
+        volume_ref = self._selection_pool.allocate(
+            "volume",
+            backend_id=volume_selection,
+            mesh_uuid=mesh_uuid,
+        )
+        self._mesh_by_uuid[mesh_uuid] = geometry_object
+        return BodyHandle(self, mesh_uuid, volume_ref)
+
+    def _unbound_geometry_item(self, factory_name, **kwargs):
+        values = dict(kwargs)
+        mesh_uuid = str(uuid.uuid4())
+        geometry_object = getattr(self._api, factory_name)(**values)
+        self._geometry.append(geometry_object)
+        self._mesh_by_uuid[mesh_uuid] = geometry_object
+        return GeometryHandle(self, mesh_uuid)
+
     def geometry(self):
         return [_payload_dict(item) for item in self._geometry]
 
@@ -163,6 +224,7 @@ class ModelBuilder:
         geometry_field,
         payload,
         append,
+        geometry_payload=None,
     ):
         values = dict(payload)
         backend_id = values.pop("id", None)
@@ -180,10 +242,17 @@ class ModelBuilder:
         )
 
         if append:
-            geometry_payload = {"id": selection_ref.backend_id}
-            geometry_payload.update(values)
+            if geometry_payload is None:
+                geometry_payload = {"id": selection_ref.backend_id}
+                geometry_payload.update(values)
         else:
-            geometry_payload = selection_ref.backend_id
+            if geometry_payload is not None:
+                pass
+            elif values:
+                geometry_payload = {"id": selection_ref.backend_id}
+                geometry_payload.update(values)
+            else:
+                geometry_payload = selection_ref.backend_id
 
         self._set_mesh_selection_field(
             mesh_uuid,
@@ -239,15 +308,23 @@ class ModelBuilder:
     def has_selection_helper(self, method_name):
         return method_name in self._selection_helper_rules
 
-    def add_selection_with_helper(self, mesh_uuid, method_name, payload):
+    def add_selection_with_helper(self, mesh_uuid, method_name, payload, *, append=True):
         rule = self._selection_helper_rules[method_name]
         _validate_selection_helper_payload(method_name, payload, rule["allowed_fields"])
+        geometry_payload = None
+        if not append:
+            geometry_payload = _construct_api_class(
+                self._api,
+                rule.get("class_path"),
+                payload,
+            )
         return self._add_geometry_selection(
             mesh_uuid,
             namespace=rule["namespace"],
             geometry_field=rule["geometry_field"],
             payload=payload,
-            append=True,
+            append=append,
+            geometry_payload=geometry_payload,
         )
 
     def _consumer_section(self, section_path):
@@ -266,6 +343,50 @@ class ModelBuilder:
         if section_path in self._consumer_lists:
             return list(self._consumer_lists[section_path])
         return self._consumer_section(section_path)
+
+
+class GeometryHandle:
+    def __init__(self, model, mesh_uuid):
+        self._model = model
+        self.mesh_uuid = mesh_uuid
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(name)
+
+        selection_helper = self._dynamic_selection_helper(name)
+        if selection_helper is not None:
+            return selection_helper
+        raise AttributeError(
+            "%s has no configured selection helper %r"
+            % (self.__class__.__name__, name)
+        )
+
+    def _dynamic_selection_helper(self, name):
+        if not self._model.has_selection_helper(name):
+            return None
+
+        def add_selection(*args, **kwargs):
+            if args:
+                raise TypeError("%s accepts keyword fields only" % name)
+            append = kwargs.pop("append", True)
+            return self._model.add_selection_with_helper(
+                self.mesh_uuid,
+                name,
+                kwargs,
+                append=append,
+            )
+
+        add_selection.__name__ = name
+        return add_selection
+
+    def surface_all(self, *, id=None):
+        payload = {"id": id} if id is not None else {}
+        return self._model._add_surface_selection(
+            self.mesh_uuid,
+            payload,
+            append=False,
+        )
 
 
 class BodyHandle:
@@ -303,10 +424,12 @@ class BodyHandle:
         def add_selection(*args, **kwargs):
             if args:
                 raise TypeError("%s accepts keyword fields only" % name)
+            append = kwargs.pop("append", True)
             return self._model.add_selection_with_helper(
                 self.mesh_uuid,
                 name,
                 kwargs,
+                append=append,
             )
 
         add_selection.__name__ = name
@@ -553,6 +676,7 @@ def selection_helper_rules_from_manifest(manifest):
                 "namespace": namespace,
                 "geometry_field": geometry_field,
                 "allowed_fields": allowed_fields,
+                "class_path": rule_path,
             }
     return result
 
@@ -598,6 +722,24 @@ def _validate_selection_helper_payload(method_name, payload, allowed_fields):
             "%s got unsupported field(s): %s"
             % (method_name, ", ".join(unknown))
         )
+
+
+def _construct_api_class(api_module, class_path, payload):
+    if not class_path:
+        return None
+    root = getattr(api_module, "Root", None)
+    if root is None:
+        return None
+
+    cls = root
+    parts = class_path.split(".")
+    if not parts or parts[0] != "Root":
+        return None
+    for part in parts[1:]:
+        cls = getattr(cls, part, None)
+        if cls is None:
+            return None
+    return cls(**payload)
 
 
 def _split_builder_api(builder_api):

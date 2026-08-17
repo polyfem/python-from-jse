@@ -489,6 +489,78 @@ class ModelBuilderTests(unittest.TestCase):
             model.boundary_conditions(),
         )
 
+    def test_unbound_geometry_mesh_can_create_surface_selection_without_volume_id(self):
+        model_builder = import_from_generator(
+            MODEL_BUILDER_PATH,
+            "model_builder_unbound_geometry_selection",
+        )
+        model = model_builder.ModelBuilder(
+            FakeGeneratedApi(),
+            relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        wall = model.geometry_mesh(mesh="wall.obj")
+
+        fixed = wall.surface_all(id=3)
+        fixed.dirichlet(value=[0, 0])
+
+        self.assertEqual(
+            [
+                {
+                    "mesh": "wall.obj",
+                    "surface_selection": 3,
+                }
+            ],
+            model.geometry(),
+        )
+        self.assertEqual(
+            {
+                "dirichlet_boundary": [{"value": [0, 0], "id": 3}],
+            },
+            model.boundary_conditions(),
+        )
+
+    def test_selection_helper_can_preserve_single_object_shape(self):
+        model_builder = import_from_generator(
+            MODEL_BUILDER_PATH,
+            "model_builder_single_object_selection",
+        )
+        model = model_builder.ModelBuilder(
+            FakeGeneratedApi(),
+            relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        wall = model.mesh(mesh="wall.obj")
+
+        fixed = wall.surface_axis(
+            id=3,
+            axis="-y",
+            position=1e-05,
+            append=False,
+        )
+        fixed.dirichlet(value=[0, 0])
+
+        self.assertEqual(
+            [
+                {
+                    "mesh": "wall.obj",
+                    "volume_selection": 1,
+                    "surface_selection": {
+                        "id": 3,
+                        "axis": "-y",
+                        "position": 1e-05,
+                    },
+                }
+            ],
+            model.geometry(),
+        )
+        self.assertEqual(
+            {
+                "dirichlet_boundary": [{"value": [0, 0], "id": 3}],
+            },
+            model.boundary_conditions(),
+        )
+
     def test_matching_surface_helpers_share_id_and_dedupe_boundary_binding(self):
         model_builder = import_from_generator(
             MODEL_BUILDER_PATH,
@@ -602,6 +674,14 @@ class ModelBuilderTests(unittest.TestCase):
         ]
         selection_helper_rules = model_builder.selection_helper_rules_from_manifest(
             manifest
+        )
+        self.assertEqual(
+            "Root.Geometry.Mesh.Surface_selection.Ring",
+            selection_helper_rules["surface_ring"]["class_path"],
+        )
+        self.assertEqual(
+            "Root.Geometry.Mesh.Point_selection.List.Ring",
+            selection_helper_rules["point_ring"]["class_path"],
         )
         model = model_builder.ModelBuilder(
             FakeGeneratedApi(),

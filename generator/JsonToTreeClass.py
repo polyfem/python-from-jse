@@ -1446,6 +1446,41 @@ def api_variant_tuple(path, node):
         f"{tuple(api_required_fields(node))!r}, {tuple(api_all_fields(node))!r})"
     )
 
+def api_builtin_type_expr(type_expr):
+    return f"builtins.{type_expr}"
+
+def api_tuple_expr(items):
+    if not items:
+        return "()"
+    if len(items) == 1:
+        return f"({items[0]},)"
+    return "(" + ", ".join(items) + ")"
+
+def api_list_direct_primitive_types(node):
+    primitive_types = []
+
+    def append_type(type_name):
+        type_expr = PRIMITIVE_TYPE_EXPRESSIONS.get(type_name)
+        if type_expr is None:
+            return
+        type_expr = api_builtin_type_expr(type_expr)
+        if type_expr not in primitive_types:
+            primitive_types.append(type_expr)
+
+    for key, child in node._optional.items():
+        if is_inline_polymorphic(child):
+            for variant_key, variant in child._optional.items():
+                if variant_key in PRIMITIVE_TYPE_EXPRESSIONS:
+                    append_type(variant_key)
+                else:
+                    append_type(variant.type)
+        elif key in PRIMITIVE_TYPE_EXPRESSIONS:
+            append_type(key)
+        else:
+            append_type(child.type)
+
+    return primitive_types
+
 def generated_api_field_wrapper_text(class_entries):
     lines = []
 
@@ -1461,6 +1496,21 @@ def generated_api_field_wrapper_text(class_entries):
 
         if wrappers:
             lines.append(f"    {api_class_expr(path)}: {{\n{''.join(wrappers)}    }},\n")
+
+    return "{\n" + "".join(lines) + "}"
+
+def generated_api_list_direct_primitive_types_text(class_entries):
+    lines = []
+
+    for path, node in class_entries:
+        if node.type != "list":
+            continue
+
+        primitive_types = api_list_direct_primitive_types(node)
+        if primitive_types:
+            lines.append(
+                f"    {api_class_expr(path)}: {api_tuple_expr(primitive_types)},\n"
+            )
 
     return "{\n" + "".join(lines) + "}"
 
@@ -2043,6 +2093,7 @@ def {api_name}(*args, **kwargs):
 
     field_wrappers_text = generated_api_field_wrapper_text(class_entries)
     field_aliases_text = generated_api_field_aliases_text(class_entries)
+    list_direct_primitive_types_text = generated_api_list_direct_primitive_types_text(class_entries)
     list_variants_text = generated_api_list_variants_text(class_entries)
     polymorphic_variants_text = generated_api_polymorphic_variants_text(class_entries)
     class_type_names_text = generated_api_class_type_names_text(class_entries)
@@ -2151,6 +2202,7 @@ class _GeneratedApiProxy:
 
 _FIELD_WRAPPERS = {field_wrappers_text}
 _FIELD_ALIASES = {field_aliases_text}
+_LIST_DIRECT_PRIMITIVE_TYPES = {list_direct_primitive_types_text}
 _LIST_VARIANTS = {list_variants_text}
 _POLYMORPHIC_VARIANTS = {polymorphic_variants_text}
 _CLASS_TYPE_NAMES = {class_type_names_text}
@@ -2209,6 +2261,9 @@ def _wrap_value(value, kind, wrapper):
 
 def _wrap_list_item(wrapper, item):
     variants = _LIST_VARIANTS.get(wrapper, ())
+    direct_primitive_types = _LIST_DIRECT_PRIMITIVE_TYPES.get(wrapper, ())
+    if direct_primitive_types and isinstance(item, direct_primitive_types):
+        return item
     for cls, _type_name, _required, _fields in variants:
         if isinstance(item, cls):
             return item
