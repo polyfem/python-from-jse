@@ -52,6 +52,35 @@ python-from-jse-generate `
 `--include-spec-dir` is also optional and is only needed when the input spec
 references include files that live outside the schema file's directory.
 
+## Testing
+
+Run the full standalone check from this repository root:
+
+```bash
+python tools/regenerate_and_test.py
+```
+
+This is the same command used by CI. It regenerates the generic example
+artifacts under `generated/`, compiles `generator/JsonToTreeClass.py` and the
+generated Python files, then runs:
+
+```bash
+python -m unittest discover -s tests
+```
+
+To check packaging and the installed command-line entry point locally:
+
+```bash
+python -m pip install -e .
+python-from-jse-generate --help
+```
+
+Some optional full-spec smoke tests are skipped unless PolyFEM's full schema and
+linked solver specs are available. Those skips are expected for standalone CI;
+the generator's default standalone workflow uses only `examples/basic_generation/`.
+
+For the detailed test grouping and ownership map, see `tests/README.md`.
+
 ## Standalone Repo Readiness
 
 The repo is ready to be checked as a standalone generator project when this
@@ -61,11 +90,13 @@ command works from the repo root:
 python tools\regenerate_and_test.py
 ```
 
-The GitHub Actions workflow at `.github/workflows/ci.yml` runs the same command
-on push and pull requests. That check proves the generator can use the dummy
-schema in `examples/basic_generation/` to regenerate `generated/`, compile the
-generated Python files, and run the test suite without any consuming project
-checkout.
+The GitHub Actions workflow at `.github/workflows/ci.yml` runs on Ubuntu,
+macOS, and Windows with Python 3.10, 3.11, and 3.12. Each job installs the
+package with `python -m pip install -e .`, checks the console script with
+`python-from-jse-generate --help`, and runs the same standalone regeneration
+command. That check proves the generator can use the dummy schema in
+`examples/basic_generation/` to regenerate `generated/`, compile the generated
+Python files, and run the test suite without any consuming project checkout.
 
 The repository includes minimal packaging metadata in `pyproject.toml`, so a
 consuming project can install the generator directly from the source checkout.
@@ -142,6 +173,8 @@ doc/            Local design notes and handoff documents.
 ```
 
 ## Test Map
+
+For a more detailed grouping, see `tests/README.md`.
 
 - `tests/test_generator_units.py`: tree construction and generated-class
   behavior.

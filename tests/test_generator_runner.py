@@ -1,3 +1,9 @@
+"""Tests for the generation CLI, default paths, and config-file handling.
+
+These tests cover the standalone default schema, schema patch inputs, optional
+project config, and generated package import behavior.
+"""
+
 import contextlib
 import importlib
 import io

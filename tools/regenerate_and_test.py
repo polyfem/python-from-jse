@@ -9,21 +9,26 @@ import sys
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
+def repo_path(*parts):
+    return str(Path(*parts))
+
+
 def workflow_commands():
     return [
         [
             sys.executable,
-            "tools\\generate_with_overrides.py",
+            "-m",
+            "tools.generate_with_overrides",
             "--overrides",
-            "examples\\basic_generation\\generator_overrides.json",
+            repo_path("examples", "basic_generation", "generator_overrides.json"),
         ],
         [
             sys.executable,
             "-m",
             "py_compile",
-            "generator\\JsonToTreeClass.py",
-            "generated\\generated_class.py",
-            "generated\\generated_api.py",
+            repo_path("generator", "JsonToTreeClass.py"),
+            repo_path("generated", "generated_class.py"),
+            repo_path("generated", "generated_api.py"),
         ],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
     ]

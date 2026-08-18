@@ -1,3 +1,10 @@
+"""Tests for the standalone regenerate-and-test workflow.
+
+These tests pin the orchestration in tools/regenerate_and_test.py: regenerate
+generic artifacts, compile generated files, then run the unittest suite. They do
+not test generator internals.
+"""
+
 import contextlib
 import importlib.util
 import io
@@ -30,26 +37,23 @@ class RegenerateAndTestWorkflowTests(unittest.TestCase):
 
         self.assertEqual(0, result)
         commands = [call.args[0] for call in run_mock.call_args_list]
+        self.assertEqual([sys.executable, "-m", "tools.generate_with_overrides"], commands[0][:3])
+        self.assertEqual("--overrides", commands[0][3])
+        self.assertEqual(
+            Path("examples") / "basic_generation" / "generator_overrides.json",
+            Path(commands[0][4]),
+        )
+
+        self.assertEqual([sys.executable, "-m", "py_compile"], commands[1][:3])
         self.assertEqual(
             [
-                [
-                    sys.executable,
-                    "tools\\generate_with_overrides.py",
-                    "--overrides",
-                    "examples\\basic_generation\\generator_overrides.json",
-                ],
-                [
-                    sys.executable,
-                    "-m",
-                    "py_compile",
-                    "generator\\JsonToTreeClass.py",
-                    "generated\\generated_class.py",
-                    "generated\\generated_api.py",
-                ],
-                [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
+                Path("generator") / "JsonToTreeClass.py",
+                Path("generated") / "generated_class.py",
+                Path("generated") / "generated_api.py",
             ],
-            commands,
+            [Path(path) for path in commands[1][3:]],
         )
+        self.assertEqual([sys.executable, "-m", "unittest", "discover", "-s", "tests"], commands[2])
         self.assertTrue(all(call.kwargs["cwd"] == PROJECT_ROOT for call in run_mock.call_args_list))
 
     def test_workflow_stops_on_first_failed_step(self):

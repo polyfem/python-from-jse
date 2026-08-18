@@ -1,3 +1,9 @@
+"""Optional smoke tests against the external PolyFEM full spec.
+
+These tests run only when PolyFEM's full schema and linked spec files are
+available. The default standalone CI path is allowed to skip them.
+"""
+
 import contextlib
 import io
 import json
