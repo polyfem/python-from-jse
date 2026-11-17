@@ -27,8 +27,8 @@ class StandaloneRepoReadinessTests(unittest.TestCase):
         for python_version in ('"3.10"', '"3.11"', '"3.12"'):
             with self.subTest(python_version=python_version):
                 self.assertIn(python_version, workflow)
-        self.assertIn("actions/checkout@v4", workflow)
-        self.assertIn("actions/setup-python@v5", workflow)
+        self.assertIn("actions/checkout@v7.0.1", workflow)
+        self.assertIn("actions/setup-python@v7.0.0", workflow)
         self.assertIn("python-version: ${{ matrix.python-version }}", workflow)
         self.assertIn("python -m pip install -e .", workflow)
         self.assertIn("python-from-jse-generate --help", workflow)
