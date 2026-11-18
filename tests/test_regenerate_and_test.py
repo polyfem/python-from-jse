@@ -20,6 +20,7 @@ WORKFLOW_PATH = PROJECT_ROOT / "tools" / "regenerate_and_test.py"
 
 def import_workflow(module_name="regenerate_and_test_for_test"):
     spec = importlib.util.spec_from_file_location(module_name, WORKFLOW_PATH)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

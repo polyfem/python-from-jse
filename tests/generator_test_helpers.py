@@ -38,6 +38,7 @@ def polyfem_linked_specs_available():
 
 def import_generator(module_name):
     spec = importlib.util.spec_from_file_location(module_name, GENERATOR_PATH)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -45,6 +46,7 @@ def import_generator(module_name):
 
 def import_runner(module_name):
     spec = importlib.util.spec_from_file_location(module_name, RUNNER_PATH)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -63,7 +65,7 @@ def module_from_generated_api_text(text, root_class):
     )
     module.__package__ = ""
     generated_class = types.ModuleType("generated_class")
-    generated_class.Root = root_class
+    generated_class.__dict__["Root"] = root_class
     module.__dict__["Root"] = root_class
     with contextlib.ExitStack() as stack:
         stack.enter_context(mock.patch.dict(

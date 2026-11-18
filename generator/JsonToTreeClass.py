@@ -9,6 +9,8 @@ import textwrap
 def _load_local_symbol(module_name, symbol_name):
     module_path = Path(__file__).with_name(f"{module_name}.py")
     spec = importlib.util.spec_from_file_location(f"_json_schema_generator_{module_name}", module_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load generator module from {module_path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return getattr(module, symbol_name)
@@ -1004,6 +1006,7 @@ class JsonToTreeClass(object):
         return self, None
 
     def class_generator(self, path = "Root"):
+        assert isinstance(self.name, str)
         required_field_sets = self.required_field_sets if len(self.required_field_sets) > 1 else None
         class_builder = ClassGenerator(
             self.name,
@@ -1789,6 +1792,7 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
             except ValueError as exc:
                 raise ValueError(f'{exc}\nWhile processing pointer: {entry["pointer"]}') from exc
 
+        assert path is not None and parent is not None
         replacement_node = None
         type_name = entry_type_name(entry)
         used_list_type_name = False
@@ -1805,11 +1809,11 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
                     else:
                         path.add_optional(type_name)
                 apply_pending_fields(path, path.get_optional(type_name), entry_type)
-                path = path.get_optional(type_name)
+                path = path._optional[type_name]
                 path.type_name = type_name
             else: 
                 path.add_optional(LIST_ITEM_NAME)
-                path = path.get_optional(LIST_ITEM_NAME)
+                path = path._optional[LIST_ITEM_NAME]
 
         if (
             parts[-1] == "*"
@@ -1828,7 +1832,7 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
                 else entry_type
             )
             parent.add_optional(routing)
-            path = parent.get_optional(routing)
+            path = parent._optional[routing]
 
         if type_name and not used_list_type_name and entry_type == "object" and path.type is None:
             placeholder = path.clone(type_name)
@@ -1844,6 +1848,7 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
             replacement_node = path
             path = placeholder
 
+        assert parent is not None
         # Handle polymorphic variables.
         if path.type == "polymorphic":
             replacement_node = path
@@ -1855,7 +1860,7 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
             else:
                 routing = entry_type + str(len(path._optional) + 1)
             path.add_optional(routing)
-            path = path.get_optional(routing)
+            path = path._optional[routing]
             apply_pending_fields(polymorphic_parent, path, entry_type)
             if type_name and entry_type == "object":
                 path.type_name = type_name
@@ -1885,7 +1890,7 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
                 polymorph.add_optional(routing)
                 if not (len(parts) > 1 and parts[-2] == '*'):
                     parent.find_var_replace(polymorph.name, polymorph)
-                path = polymorph.get_optional(routing)
+                path = polymorph._optional[routing]
                 apply_pending_fields(polymorph, path, entry_type)
                 if type_name and entry_type == "object":
                     path.type_name = type_name
@@ -1896,15 +1901,15 @@ def build_tree(schema_entries, spec_dir=None, include_dirs=None):
             mark_required_field_set(path, entry)
 
         if entry.get('required'):
-            for value in entry.get('required'):
+            for value in entry['required']:
                 path.add_required(value)
 
         if entry.get('optional'):
-            for value in entry.get('optional'):
+            for value in entry['optional']:
                 path.add_optional(value)
 
         if entry.get('options'):
-            for value in entry.get('options'):
+            for value in entry['options']:
                 path.add_optional(value)
 
         doc = entry.get('doc')
@@ -2091,6 +2096,28 @@ def {api_name}(*args, **kwargs):
 """
         )
 
+    builder_methods = []
+    for path, node in class_entries:
+        if len(path) != 2:
+            continue
+        name = py_function_name(node.name)
+        builder_methods.append(f"""
+    if not hasattr(_BaseModelBuilder, {name!r}):
+        def {name}(self, **kwargs):
+            return self._set_config_section({node.name!r}, _construct({api_class_expr(path)}, **kwargs))
+""")
+    for entry in export_plan:
+        if not entry["exported"]:
+            continue
+        path = class_paths[entry["class_path"]]
+        if len(path) == 3 and path[1] == "Geometry":
+            name = entry["api_custom_name"] or entry["api_generated_name"]
+            builder_methods.append(f"""
+    def {name}(self, **kwargs):
+        return self._geometry_item({name!r}, **kwargs)
+""")
+    builder_class = "class ModelBuilder(_BaseModelBuilder):\n    pass\n" + "".join(builder_methods)
+
     field_wrappers_text = generated_api_field_wrapper_text(class_entries)
     field_aliases_text = generated_api_field_aliases_text(class_entries)
     list_direct_primitive_types_text = generated_api_list_direct_primitive_types_text(class_entries)
@@ -2115,6 +2142,7 @@ in generated_class.py.
 """
 
 import builtins
+from typing import Any
 import importlib.util
 import sys
 from pathlib import Path
@@ -2186,7 +2214,9 @@ def _load_model_builder():
     )
 
 
-ModelBuilder = _load_model_builder()
+_BaseModelBuilder = _load_model_builder()
+
+{builder_class}
 
 
 class _GeneratedApiProxy:
@@ -2209,6 +2239,9 @@ _CLASS_TYPE_NAMES = {class_type_names_text}
 
 
 def _construct(cls, *args, **kwargs):
+    if kwargs and not args and cls in _POLYMORPHIC_VARIANTS:
+        variants = _POLYMORPHIC_VARIANTS[cls]
+        return cls(_construct(_select_variant(kwargs, variants), **kwargs))
     if kwargs:
         type_name = _CLASS_TYPE_NAMES.get(cls)
         if type_name is not None and "type" not in kwargs:
@@ -2362,8 +2395,15 @@ def _expand_config_shortcuts(kwargs):
     return values
 
 
-def config(**kwargs):
-    return _construct(Root, **_expand_config_shortcuts(kwargs))
+def config(**kwargs) -> Any:
+    values = dict(kwargs)
+    if "model" in values:
+        model_builder = values.pop("model")
+        builder_config = getattr(model_builder, "config", None)
+        if not callable(builder_config):
+            raise TypeError("config(model=...) requires a model builder with config()")
+        return builder_config(**values)
+    return _construct(Root, **_expand_config_shortcuts(values))
 
 
 def model(**kwargs):
@@ -2371,6 +2411,13 @@ def model(**kwargs):
     if api_module is None:
         api_module = _GeneratedApiProxy(globals())
     return ModelBuilder(api_module, **kwargs)
+
+
+def body(*, model, **kwargs) -> Any:
+    builder_body = getattr(model, "body", None)
+    if not callable(builder_body):
+        raise TypeError("body(model=...) requires a model builder with body()")
+    return builder_body(**kwargs)
 {factories}
 {shortcut_factories}'''
 

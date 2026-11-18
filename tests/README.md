@@ -51,10 +51,22 @@ If you want to run the optional full-spec smoke tests locally, point these
 environment variables at a checkout that contains the real PolyFEM specs:
 
 ```bash
-POLYFEM_SPEC_DIR=/path/to/polyfem/json-specs
-POLYFEM_INCLUDE_SPEC_DIRS=/path/to/linked/specs
+export POLYFEM_SPEC_DIR=/path/to/polyfem/json-specs
+export POLYFEM_INCLUDE_SPEC_DIRS=/path/to/linked/specs
 python -m unittest tests.test_full_spec_smoke
 ```
+
+On PowerShell:
+
+```powershell
+$env:POLYFEM_SPEC_DIR = "C:/src/polyfem/json-specs"
+$env:POLYFEM_INCLUDE_SPEC_DIRS = "C:/src/linked/specs"
+python -m unittest tests.test_full_spec_smoke
+```
+
+The include directory must contain `linear-solver-spec.json` and
+`nonlinear-solver-spec.json`. Separate multiple include directories with `:`
+on Linux/macOS or `;` on Windows. These commands run from the generator root.
 
 Use the consuming project CI for project-specific schema parity and integration
 checks. This repository should only own generic generator behavior and generic

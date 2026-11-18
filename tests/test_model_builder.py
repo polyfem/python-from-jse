@@ -16,6 +16,7 @@ def import_from_generator(path, module_name):
     sys.path.insert(0, str(GENERATOR_DIR))
     try:
         spec = importlib.util.spec_from_file_location(module_name, path)
+        assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
@@ -24,6 +25,8 @@ def import_from_generator(path, module_name):
 
 
 class FakeGeneratedApi:
+    __file__: str
+
     def config(self, **kwargs):
         return dict(kwargs)
 
@@ -191,6 +194,103 @@ class SelectionPoolTests(unittest.TestCase):
 
 
 class ModelBuilderTests(unittest.TestCase):
+    def test_existing_geometry_rule_ids_are_reserved(self):
+        builder = import_from_generator(MODEL_BUILDER_PATH, "model_builder_reserved_ids")
+        model = builder.ModelBuilder(
+            FakeGeneratedApi(), relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        model.mesh(
+            mesh="tagged.msh",
+            volume_selection=[{"id": 4, "axis": 1, "position": 0}],
+            point_selection=[{"id": 8, "box": [[0, 0], [1, 1]]}],
+        )
+        body = model.mesh(mesh="auto.msh")
+        body.material({"type": "NeoHookean", "E": 1000, "nu": 0.3})
+        body.surface_all().dirichlet(value=[0, 0])
+        self.assertGreater(model.geometry()[1]["volume_selection"], 4)
+        self.assertGreater(model.geometry()[1]["surface_selection"], 8)
+
+    def test_repeated_selection_does_not_duplicate_geometry_rules(self):
+        builder = import_from_generator(MODEL_BUILDER_PATH, "model_builder_repeat_selection")
+        model = builder.ModelBuilder(
+            FakeGeneratedApi(), relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        body = model.mesh(mesh="part.msh")
+        first = body.surface_axis(axis=1, position=0)
+        second = body.surface_axis(axis=1, position=0)
+        self.assertEqual(first.selection_ref.backend_id, second.selection_ref.backend_id)
+        self.assertEqual(1, len(model.geometry()[0]["surface_selection"]))
+        whole_body = model.mesh(mesh="whole.msh")
+        first = whole_body.dirichlet(value=[0, 0])
+        second = whole_body.surface_all()
+        self.assertEqual(first.selection_ref.backend_id, second.selection_ref.backend_id)
+
+    def test_bind_rejects_foreign_refs_with_a_shared_pool(self):
+        builder = import_from_generator(MODEL_BUILDER_PATH, "model_builder_ref_owner")
+        pool = builder.SelectionPool()
+        models = [
+            builder.ModelBuilder(
+                FakeGeneratedApi(), relationships=POLYFEM_RELATIONSHIPS,
+                selection_helper_rules={}, selection_pool=pool,
+            )
+            for _ in range(2)
+        ]
+        foreign = models[0].mesh(mesh="foreign.msh").surface_all()
+        local = models[1].mesh(mesh="local.msh").surface_all()
+        before = models[1].config()
+        with self.assertRaisesRegex(ValueError, "this model"):
+            models[1].bind("surface.dirichlet", foreign.selection_ref, {"value": [1, 0]})
+        self.assertEqual(before, models[1].config())
+        models[1].bind("surface.dirichlet", local.selection_ref, {"value": [0, 0]})
+        self.assertEqual(
+            local.selection_ref.backend_id,
+            models[1].boundary_conditions()["dirichlet_boundary"][0]["id"],
+        )
+
+    def test_boundary_settings_persist_and_keep_the_dictionary_api(self):
+        builder = import_from_generator(MODEL_BUILDER_PATH, "model_builder_settings")
+        model = builder.ModelBuilder(
+            FakeGeneratedApi(), relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules={},
+        )
+        model.mesh(mesh="part.msh").surface_all().dirichlet(value=[0, 0])
+        boundary = model.boundary_conditions(rhs=[0, -1])
+        self.assertIsInstance(boundary, dict)
+        self.assertEqual(boundary, model.config()["boundary_conditions"])
+        self.assertEqual(model.config(), model.config(boundary_conditions=boundary))
+        self.assertEqual(1, len(model.config()["boundary_conditions"]["dirichlet_boundary"]))
+        model.boundary_conditions(rhs=[0, -2])
+        self.assertEqual([0, -2], model.config()["boundary_conditions"]["rhs"])
+
+    def test_config_does_not_save_one_time_boundary_settings(self):
+        builder = import_from_generator(MODEL_BUILDER_PATH, "model_builder_config_read")
+        model = builder.ModelBuilder(
+            FakeGeneratedApi(), relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules={},
+        )
+        before = model.config()
+        self.assertEqual([0, -1], model.config(rhs=[0, -1])["boundary_conditions"]["rhs"])
+        self.assertEqual(before, model.config())
+        self.assertEqual({}, model.boundary_conditions())
+
+    def test_boundary_conflict_does_not_replace_previous_settings(self):
+        builder = import_from_generator(MODEL_BUILDER_PATH, "model_builder_boundary_conflict")
+        relationships = [{
+            "namespace": "volume", "producer": "geometry[*].volume_selection",
+            "consumer": "boundary_conditions.rhs[*].id", "builder_api": "body.rhs",
+            "status": "required",
+        }]
+        model = builder.ModelBuilder(
+            FakeGeneratedApi(), relationships=relationships, selection_helper_rules={},
+        )
+        model.mesh(mesh="part.msh").rhs(value=[0, -1])
+        before = model.config()
+        with self.assertRaises(TypeError):
+            model.boundary_conditions(rhs=[0, -2])
+        self.assertEqual(before, model.config())
+
     def test_model_builder_loads_relationships_from_api_adjacent_manifest(self):
         model_builder = import_from_generator(
             MODEL_BUILDER_PATH,
@@ -421,7 +521,7 @@ class ModelBuilderTests(unittest.TestCase):
         )
         self.assertEqual(
             [
-                {"mesh": "sphere.msh", "volume_selection": 1},
+                {"mesh": "sphere.msh"},
                 {"mesh": "cube.msh", "volume_selection": 2},
             ],
             model.geometry(),
@@ -468,7 +568,6 @@ class ModelBuilderTests(unittest.TestCase):
             [
                 {
                     "mesh": "wall.obj",
-                    "volume_selection": 1,
                     "surface_selection": [
                         {"id": 1, "axis": 1, "position": 0.1025},
                         {"id": 2, "axis": -1, "position": -0.1025},
@@ -499,7 +598,7 @@ class ModelBuilderTests(unittest.TestCase):
             relationships=POLYFEM_RELATIONSHIPS,
             selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
         )
-        wall = model.geometry_mesh(mesh="wall.obj")
+        wall = model.mesh(mesh="wall.obj")
 
         fixed = wall.surface_all(id=3)
         fixed.dirichlet(value=[0, 0])
@@ -544,7 +643,6 @@ class ModelBuilderTests(unittest.TestCase):
             [
                 {
                     "mesh": "wall.obj",
-                    "volume_selection": 1,
                     "surface_selection": {
                         "id": 3,
                         "axis": "-y",
@@ -561,7 +659,7 @@ class ModelBuilderTests(unittest.TestCase):
             model.boundary_conditions(),
         )
 
-    def test_matching_surface_helpers_share_id_and_dedupe_boundary_binding(self):
+    def test_matching_surface_helpers_on_different_meshes_bind_independently(self):
         model_builder = import_from_generator(
             MODEL_BUILDER_PATH,
             "model_builder_matching_surface_boundary",
@@ -577,22 +675,20 @@ class ModelBuilderTests(unittest.TestCase):
         ball_fixed = ball.surface_axis(axis=1, position=0.1025)
         wall_fixed = wall.surface_axis(axis=1, position=0.1025)
         ball_fixed.dirichlet(value=[0, 0])
-        wall_fixed.dirichlet(value=[0, 0])
+        wall_fixed.dirichlet(value=[1, 0])
 
         self.assertEqual(
             [
                 {
                     "mesh": "ball.obj",
-                    "volume_selection": 1,
                     "surface_selection": [
                         {"id": 1, "axis": 1, "position": 0.1025},
                     ],
                 },
                 {
                     "mesh": "wall.obj",
-                    "volume_selection": 2,
                     "surface_selection": [
-                        {"id": 1, "axis": 1, "position": 0.1025},
+                        {"id": 2, "axis": 1, "position": 0.1025},
                     ],
                 },
             ],
@@ -600,7 +696,7 @@ class ModelBuilderTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "dirichlet_boundary": [{"value": [0, 0], "id": 1}],
+                "dirichlet_boundary": [{"value": [0, 0], "id": 1}, {"value": [1, 0], "id": 2}],
             },
             model.boundary_conditions(),
         )
@@ -626,7 +722,6 @@ class ModelBuilderTests(unittest.TestCase):
             [
                 {
                     "mesh": "body.obj",
-                    "volume_selection": 1,
                     "surface_selection": [
                         {"id": 1, "axis": 1, "position": 0.5},
                     ],
@@ -699,7 +794,6 @@ class ModelBuilderTests(unittest.TestCase):
             [
                 {
                     "mesh": "body.obj",
-                    "volume_selection": 1,
                     "surface_selection": [
                         {"id": 1, "radius": 0.01},
                     ],
@@ -852,6 +946,74 @@ class ModelBuilderTests(unittest.TestCase):
         self.assertEqual(2e-05, cfg["time_dt"])
         self.assertNotIn("output", cfg)
         self.assertNotIn("solver", cfg)
+
+    def test_body_mesh_matches_legacy_model_mesh_without_mutating_descriptor(self):
+        model_builder = import_from_generator(
+            MODEL_BUILDER_PATH,
+            "model_builder_body_mesh",
+        )
+        api = FakeGeneratedApi()
+
+        legacy_model = model_builder.ModelBuilder(
+            api,
+            relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        legacy_body = legacy_model.mesh(mesh="beam.msh")
+        legacy_body.material(api.neo_hookean(E=20.0, nu=0.45))
+        legacy_body.surface_axis(axis=1, position=0.5).dirichlet(value=[0, 0])
+        legacy_cfg = legacy_model.config(rhs=[0, 0])
+
+        new_model = model_builder.ModelBuilder(
+            api,
+            relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        mesh_descriptor = api.mesh(mesh="beam.msh")
+        body = new_model.body()
+        body.mesh(mesh_descriptor)
+        body.material(api.neo_hookean(E=20.0, nu=0.45))
+        body.surface_axis(axis=1, position=0.5).dirichlet(value=[0, 0])
+        new_model.rhs([0, 0])
+        new_cfg = new_model.config()
+
+        self.assertEqual(legacy_cfg, new_cfg)
+        self.assertEqual({"mesh": "beam.msh"}, mesh_descriptor)
+
+    def test_body_requires_mesh_before_body_or_surface_bindings(self):
+        model_builder = import_from_generator(
+            MODEL_BUILDER_PATH,
+            "model_builder_body_requires_mesh",
+        )
+        model = model_builder.ModelBuilder(
+            FakeGeneratedApi(),
+            relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+        body = model.body()
+
+        with self.assertRaisesRegex(ValueError, "body.mesh"):
+            body.material({"type": "NeoHookean", "E": 20.0, "nu": 0.45})
+        with self.assertRaisesRegex(ValueError, "body.mesh"):
+            body.surface_all(id=1)
+
+    def test_model_rhs_rejects_duplicate_config_rhs_sources(self):
+        model_builder = import_from_generator(
+            MODEL_BUILDER_PATH,
+            "model_builder_rhs_duplicate_sources",
+        )
+        model = model_builder.ModelBuilder(
+            FakeGeneratedApi(),
+            relationships=POLYFEM_RELATIONSHIPS,
+            selection_helper_rules=POLYFEM_SELECTION_HELPER_RULES,
+        )
+
+        model.rhs([0, 0])
+
+        with self.assertRaisesRegex(TypeError, "rhs"):
+            model.config(rhs=[1, 1])
+        with self.assertRaisesRegex(TypeError, "rhs"):
+            model.config(boundary_conditions={"rhs": [1, 1]})
 
     def test_model_config_preserves_explicit_solver(self):
         model_builder = import_from_generator(

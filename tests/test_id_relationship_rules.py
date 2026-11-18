@@ -16,6 +16,7 @@ RELATIONSHIP_MODULE_PATH = PROJECT_ROOT / "generator" / "id_relationships.py"
 
 def import_id_relationships(module_name="id_relationships_for_test"):
     spec = importlib.util.spec_from_file_location(module_name, RELATIONSHIP_MODULE_PATH)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

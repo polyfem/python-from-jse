@@ -133,6 +133,41 @@ class GeneratedApiTests(unittest.TestCase):
         )
 
         self.assertEqual(direct.as_dict(), via_api.as_dict())
+        self.assertEqual(
+            direct.as_dict()["time"],
+            api_module.time(tend=0.02, dt=0.01).as_dict(),
+        )
+        model = api_module.model(relationships=[])
+        self.assertIs(model.time(tend=0.02, dt=0.01), model)
+        built = model.config(geometry=via_api.geometry, materials=via_api.materials)
+        self.assertEqual(direct.as_dict(), built.as_dict())
+        with self.assertRaises(TypeError):
+            model.config(time=api_module.time(tend=0.03, dt=0.01))
+        with self.assertRaises(TypeError):
+            api_module.time(dt=0.01)
+
+
+    def test_model_geometry_methods_follow_new_spec_types(self):
+        generator = import_generator("json_to_tree_new_geometry")
+        root = generator.build_tree([
+            {"pointer": "/", "type": "object", "required": ["geometry"]},
+            {"pointer": "/geometry", "type": "list"},
+            {
+                "pointer": "/geometry/*", "type": "object", "type_name": "VoxelMesh",
+                "required": ["type", "mesh"], "optional": ["is_obstacle"],
+            },
+            {"pointer": "/geometry/*/type", "type": "string", "options": ["VoxelMesh"]},
+            {"pointer": "/geometry/*/mesh", "type": "string"},
+            {"pointer": "/geometry/*/is_obstacle", "type": "bool"},
+        ])
+        generated = module_from_generated_text(generator.generated_class_text(root))
+        api = module_from_generated_api_text(generator.generated_api_text(root), generated.Root)
+        model = api.model(relationships=[], selection_helper_rules={})
+        model.voxel_mesh(mesh="grid.mesh", is_obstacle=True)
+        self.assertEqual(
+            [api.voxel_mesh(mesh="grid.mesh", is_obstacle=True).as_dict()],
+            model.config().as_dict()["geometry"],
+        )
 
     def test_generated_api_exposes_model_builder_factory(self):
         generator = import_generator("json_to_tree_generated_api_model_builder")
@@ -214,15 +249,27 @@ class GeneratedApiTests(unittest.TestCase):
         body = model.mesh(mesh="beam.msh")
         body.material(api_module.neo_hookean(E=20.0, nu=0.45))
 
-        cfg = api_module.config(
+        explicit_cfg = api_module.config(
             geometry=model.geometry(),
             materials=model.materials(),
         )
+        cfg = api_module.config(model=model)
 
         self.assertIs(model.__class__, api_module.ModelBuilder)
+        self.assertEqual(explicit_cfg.as_dict(), cfg.as_dict())
         self.assertEqual(1, cfg.as_dict()["geometry"][0]["volume_selection"])
         self.assertEqual(1, cfg.as_dict()["materials"][0]["id"])
         self.assertNotIn("uuid", repr(cfg.as_dict()))
+
+        new_model = api_module.model(relationships=relationships)
+        new_body = api_module.body(model=new_model)
+        mesh_descriptor = api_module.mesh(mesh="beam.msh")
+        new_body.mesh(mesh_descriptor)
+        new_body.material(api_module.neo_hookean(E=20.0, nu=0.45))
+        new_cfg = api_module.config(model=new_model)
+
+        self.assertEqual(cfg.as_dict(), new_cfg.as_dict())
+        self.assertNotIn("volume_selection", mesh_descriptor.as_dict())
 
     def test_generated_api_prefers_short_name_for_shallow_collision(self):
         generator = import_generator("json_to_tree_generated_api_names")

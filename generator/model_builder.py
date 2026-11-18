@@ -1,6 +1,7 @@
 import json
 import re
 import uuid
+from copy import deepcopy
 from pathlib import Path
 
 from id_relationships import (
@@ -36,6 +37,7 @@ class ModelBuilder:
     ):
         self._api = api_module
         self._selection_pool = selection_pool or SelectionPool()
+        self._selection_refs = {}
         if relationships is None:
             relationships = load_api_adjacent_relationships(api_module)
         if relationships is None:
@@ -56,110 +58,181 @@ class ModelBuilder:
         self._mesh_by_uuid = {}
         self._consumer_lists = {}
         self._selection_backend_id_by_signature = {}
+        self._implicit_surface_meshes = set()
+        self._rhs = _MISSING
+        self._config_sections = {}
 
     def mesh(self, **kwargs):
-        values = dict(kwargs)
-        mesh_uuid = str(uuid.uuid4())
-        volume_ref = self._selection_pool.allocate(
-            "volume",
-            backend_id=values.get("volume_selection"),
-            mesh_uuid=mesh_uuid,
-        )
-        values["volume_selection"] = volume_ref.backend_id
-        mesh_object = self._api.mesh(**values)
-        self._geometry.append(mesh_object)
-        self._mesh_by_uuid[mesh_uuid] = mesh_object
-        return BodyHandle(self, mesh_uuid, volume_ref)
+        return self._geometry_item("mesh", **kwargs)
 
-    def mesh_array(self, **kwargs):
-        return self._geometry_item("mesh_array", **kwargs)
+    def body(self):
+        return BodyHandle(self)
 
-    def geometry_mesh(self, **kwargs):
-        return self._unbound_geometry_item("mesh", **kwargs)
+    def rhs(self, value):
+        if self._consumer_lists.get(("boundary_conditions", "rhs")):
+            raise TypeError("Use either model.rhs(...) or body.rhs(...), not both")
+        if self._rhs is not _MISSING:
+            raise TypeError("rhs already configured on this model")
+        self._rhs = _copy_payload(value)
+        return self
 
-    def geometry_mesh_array(self, **kwargs):
-        return self._unbound_geometry_item("mesh_array", **kwargs)
-
-    def geometry_mesh_sequence(self, **kwargs):
-        return self._unbound_geometry_item("mesh_sequence", **kwargs)
-
-    def obstacle_mesh(self, **kwargs):
-        return self._obstacle_geometry_item("mesh", **kwargs)
-
-    def obstacle_mesh_array(self, **kwargs):
-        return self._obstacle_geometry_item("mesh_array", **kwargs)
-
-    def obstacle_mesh_sequence(self, **kwargs):
-        return self._obstacle_geometry_item("mesh_sequence", **kwargs)
-
-    def _obstacle_geometry_item(self, factory_name, **kwargs):
-        values = dict(kwargs)
-        values["is_obstacle"] = True
-        surface_selection = values.get("surface_selection")
-        geometry_object = getattr(self._api, factory_name)(**values)
-        self._geometry.append(geometry_object)
-        if not isinstance(surface_selection, int) or surface_selection <= 0:
-            return None
-
-        selection_ref = self._selection_pool.allocate(
-            "surface",
-            backend_id=surface_selection,
-        )
-        return SelectionHandle(self, selection_ref)
-
-    def _geometry_item(self, factory_name, **kwargs):
-        values = dict(kwargs)
+    def _register_body_mesh(self, payload):
+        values = _payload_dict(payload)
         volume_selection = values.get("volume_selection")
+        if values.get("is_obstacle") or (
+            volume_selection is not None
+            and (not isinstance(volume_selection, int) or volume_selection <= 0)
+        ):
+            raise ValueError("body.mesh requires a deformable mesh with a single volume group")
+        body = self._geometry_item("mesh", **values)
+        assert isinstance(body, BodyHandle)
+        return body.mesh_uuid, body.volume_ref
+
+    def _geometry_item(self, factory_name, *, same_volume_as=None, **kwargs):
+        values = dict(kwargs)
+        if same_volume_as is not None:
+            if not isinstance(same_volume_as, BodyHandle) or same_volume_as._model is not self:
+                raise ValueError("same_volume_as requires a body from this model")
+            if "volume_selection" in values or values.get("is_obstacle"):
+                raise ValueError("Specify one volume group on a deformable geometry")
+            same_volume_as._require_mesh()
+            assert same_volume_as.volume_ref is not None
+            values["volume_selection"] = same_volume_as.volume_ref.backend_id
+
         geometry_object = getattr(self._api, factory_name)(**values)
+        self._reserve_geometry_ids(_payload_dict(geometry_object))
+        if same_volume_as is not None:
+            same_volume_as._bind_volume()
         self._geometry.append(geometry_object)
-        if not isinstance(volume_selection, int) or volume_selection <= 0:
-            return None
+        if values.get("is_obstacle"):
+            surface_selection = values.get("surface_selection")
+            if surface_selection is None and factory_name != "mesh_sequence":
+                return ObstacleHandle(self, geometry_object)
+            if not isinstance(surface_selection, int) or surface_selection <= 0:
+                return None
+            ref = self._allocate_selection("surface", backend_id=surface_selection)
+            return SelectionHandle(self, ref)
 
         mesh_uuid = str(uuid.uuid4())
-        volume_ref = self._selection_pool.allocate(
-            "volume",
-            backend_id=volume_selection,
-            mesh_uuid=mesh_uuid,
-        )
         self._mesh_by_uuid[mesh_uuid] = geometry_object
+        volume_selection = values.get("volume_selection")
+        if volume_selection is not None and (
+            not isinstance(volume_selection, int) or volume_selection <= 0
+        ):
+            return GeometryHandle(self, mesh_uuid)
+        # Reserve an ID, but preserve mesh tags until a body-level setting needs it.
+        volume_ref = self._allocate_selection(
+            "volume", backend_id=volume_selection, mesh_uuid=mesh_uuid,
+        )
         return BodyHandle(self, mesh_uuid, volume_ref)
 
-    def _unbound_geometry_item(self, factory_name, **kwargs):
-        values = dict(kwargs)
-        mesh_uuid = str(uuid.uuid4())
-        geometry_object = getattr(self._api, factory_name)(**values)
-        self._geometry.append(geometry_object)
-        self._mesh_by_uuid[mesh_uuid] = geometry_object
-        return GeometryHandle(self, mesh_uuid)
+    def _allocate_selection(self, namespace, **kwargs):
+        ref = self._selection_pool.allocate(namespace, **kwargs)
+        self._selection_refs[ref.uuid] = ref
+        return ref
+
+    def _reserve_geometry_ids(self, geometry):
+        """Keep automatic IDs clear of IDs already present in geometry rules."""
+        for namespace in ("volume", "surface", "point", "curve"):
+            value = geometry.get(namespace + "_selection")
+            items = value if isinstance(value, list) else [value]
+            for item in items:
+                backend_id = item.get("id") if isinstance(item, dict) else item
+                if isinstance(backend_id, int) and not isinstance(backend_id, bool) and backend_id > 0:
+                    self._allocate_selection(namespace, backend_id=backend_id)
 
     def geometry(self):
         return [_payload_dict(item) for item in self._geometry]
 
-    def materials(self):
-        return self._consumer_root_section("materials")
+    def materials(self, value=_MISSING, **kwargs):
+        """Set materials, or return the current materials when called without arguments."""
+        if value is not _MISSING or kwargs:
+            if value is not _MISSING and kwargs:
+                raise TypeError("Use a material value or keyword fields, not both")
+            if value is not _MISSING:
+                items = value if isinstance(value, list) else [value]
+                material = self._api.materials(items)
+            else:
+                material = self._api.materials(**kwargs)
+            return self._set_consumer_section("materials", material)
+        return self._model_section("materials")
 
-    def initial_conditions(self):
-        return self._consumer_root_section("initial_conditions")
+    def initial_conditions(self, **kwargs):
+        if kwargs:
+            value = self._api.initial_conditions(**kwargs)
+            return self._set_consumer_section("initial_conditions", value)
+        return self._model_section("initial_conditions")
 
-    def space(self):
-        return self._consumer_root_section("space")
+    def space(self, **kwargs):
+        if kwargs:
+            return self._set_consumer_section("space", self._api.space(**kwargs))
+        return self._model_section("space")
 
     def boundary_conditions(self, **kwargs):
-        section = dict(kwargs)
-        for key, items in self._consumer_section(("boundary_conditions",)).items():
-            if key in section and section[key]:
+        """Save keyword settings and keep the legacy dictionary return value."""
+        if kwargs:
+            self._set_consumer_section("boundary_conditions", kwargs)
+        return self._model_section("boundary_conditions")
+
+    def _set_consumer_section(self, name, value):
+        payload = value.as_dict() if hasattr(value, "as_dict") else value
+        self._model_section(name, payload)
+        return self._set_config_section(name, deepcopy(payload))
+
+    def _model_section(self, name, explicit=_MISSING):
+        """Combine explicit settings with body settings without discarding either."""
+        bound = self._consumer_root_section(name)
+        if explicit is _MISSING:
+            explicit = self._config_sections.get(name, _MISSING)
+        if explicit is _MISSING:
+            return deepcopy(bound)
+        if not bound:
+            return deepcopy(explicit)
+        if isinstance(explicit, list) and isinstance(bound, list):
+            return deepcopy(explicit + bound)
+        if not isinstance(explicit, dict) or not isinstance(bound, dict):
+            raise ValueError("%s conflicts with body settings; use per-body lists" % name)
+        section = deepcopy(explicit)
+        for key, items in bound.items():
+            if name == "boundary_conditions" and key == "rhs" and key in section:
+                raise TypeError("Use either body.rhs(...) or explicit rhs, not both")
+            if key in section and section[key] is not None:
                 if not isinstance(section[key], list):
                     raise ValueError(
-                        "boundary_conditions.%s already has a non-list value" % key
+                        "%s.%s already has a non-list value" % (name, key)
                     )
-                section[key] = list(section[key]) + list(items)
+                section[key] = section[key] + deepcopy(items)
             else:
-                section[key] = list(items)
+                section[key] = deepcopy(items)
         return section
 
+    def _set_config_section(self, name, value):
+        self._config_sections[name] = value
+        return self
+
     def config(self, **kwargs):
-        values = dict(kwargs)
+        # Older callers pass the dictionary returned by boundary_conditions().
+        if (
+            "boundary_conditions" in self._config_sections
+            and kwargs.get("boundary_conditions") is not None
+        ):
+            if _payload_dict(kwargs["boundary_conditions"]) == self.boundary_conditions():
+                kwargs.pop("boundary_conditions")
+        duplicates = self._config_sections.keys() & kwargs.keys()
+        if duplicates:
+            raise TypeError("Configuration already set on model: %s" % ", ".join(sorted(duplicates)))
+        values = dict(self._config_sections)
+        for name in self._config_consumer_sections:
+            if name in values and name != "boundary_conditions":
+                values[name] = self._model_section(name)
+        values.update(kwargs)
         rhs = values.pop("rhs", _MISSING)
+        if self._rhs is not _MISSING:
+            if rhs is not _MISSING:
+                raise TypeError(
+                    "Use either model.rhs(...) or config(rhs=...), not both"
+                )
+            rhs = self._rhs
 
         if "geometry" not in values:
             values["geometry"] = self.geometry()
@@ -188,7 +261,7 @@ class ModelBuilder:
             if payload:
                 values[section] = payload
 
-        boundary_conditions = self.boundary_conditions(**boundary_kwargs)
+        boundary_conditions = self._model_section("boundary_conditions", boundary_kwargs)
         if (
             boundary_conditions
             or explicit_boundary is not _MISSING
@@ -197,6 +270,42 @@ class ModelBuilder:
             values["boundary_conditions"] = boundary_conditions
 
         return self._api.config(**values)
+
+    def _shared_surface_id(self, id, same_as):
+        if same_as is not None:
+            if id is not None or not isinstance(same_as, SelectionHandle) or same_as._model is not self or same_as.selection_ref.namespace != "surface":
+                raise ValueError("same_as requires a surface from this model")
+            id = same_as.selection_ref.backend_id
+        return {"id": id} if id is not None else {}
+
+    def _whole_surface_method(self, mesh_uuid, name):
+        builder_api = "surface." + name
+        if not self.has_builder_api(builder_api):
+            return None
+
+        def bind_value(*args, **kwargs):
+            if mesh_uuid is None:
+                raise ValueError("body.mesh(...) must be called before configuring a boundary")
+            value = _bind_payload_from_call(builder_api, args, kwargs)
+            current = _payload_dict(self._mesh_by_uuid[mesh_uuid]).get("surface_selection")
+            if current is not None and not isinstance(current, int):
+                raise ValueError(
+                    "This mesh already has a partial or file-based surface selection. "
+                    "Apply the boundary condition to the selected surface."
+                )
+            ref = self._allocate_selection(
+                "surface",
+                backend_id=current if current is not None and current > 0 else None,
+                mesh_uuid=mesh_uuid,
+            )
+            _set_payload_field(self._mesh_by_uuid[mesh_uuid], "surface_selection", ref.backend_id)
+            surface = SelectionHandle(self, ref)
+            self.bind(builder_api, ref, value)
+            self._implicit_surface_meshes.add(mesh_uuid)
+            return surface
+
+        bind_value.__name__ = name
+        return bind_value
 
     def _add_surface_selection(self, mesh_uuid, payload, *, append=True):
         return self._add_geometry_selection(
@@ -224,35 +333,28 @@ class ModelBuilder:
         geometry_field,
         payload,
         append,
-        geometry_payload=None,
+        geometry_class=None,
     ):
         values = dict(payload)
         backend_id = values.pop("id", None)
-        signature = _selection_signature(namespace, values)
+        if backend_id is None and not append and not values:
+            current = _payload_dict(self._mesh_by_uuid[mesh_uuid]).get(geometry_field)
+            if isinstance(current, int) and current > 0:
+                backend_id = current
+        signature = (mesh_uuid, _selection_signature(namespace, values))
         if backend_id is None and signature in self._selection_backend_id_by_signature:
             backend_id = self._selection_backend_id_by_signature[signature]
-        selection_ref = self._selection_pool.allocate(
+        selection_ref = self._allocate_selection(
             namespace,
             backend_id=backend_id,
             mesh_uuid=mesh_uuid,
         )
-        self._selection_backend_id_by_signature.setdefault(
-            signature,
-            selection_ref.backend_id,
-        )
-
-        if append:
-            if geometry_payload is None:
-                geometry_payload = {"id": selection_ref.backend_id}
-                geometry_payload.update(values)
+        if append or values:
+            geometry_payload = {"id": selection_ref.backend_id, **values}
+            if geometry_class:
+                geometry_payload = _construct_api_class(self._api, geometry_class, geometry_payload) or geometry_payload
         else:
-            if geometry_payload is not None:
-                pass
-            elif values:
-                geometry_payload = {"id": selection_ref.backend_id}
-                geometry_payload.update(values)
-            else:
-                geometry_payload = selection_ref.backend_id
+            geometry_payload = selection_ref.backend_id
 
         self._set_mesh_selection_field(
             mesh_uuid,
@@ -260,9 +362,22 @@ class ModelBuilder:
             geometry_payload,
             append=append,
         )
+        self._selection_backend_id_by_signature.setdefault(
+            signature,
+            selection_ref.backend_id,
+        )
         return SelectionHandle(self, selection_ref)
 
     def _set_mesh_selection_field(self, mesh_uuid, field, payload, *, append):
+        if (
+            field == "surface_selection"
+            and mesh_uuid in self._implicit_surface_meshes
+            and (append or not isinstance(payload, int))
+        ):
+            raise ValueError(
+                "A whole-boundary condition is already bound to this mesh. "
+                "Choose the partial surface before applying its boundary condition."
+            )
         mesh_object = self._mesh_by_uuid[mesh_uuid]
         current = _payload_dict(mesh_object).get(field)
 
@@ -270,17 +385,23 @@ class ModelBuilder:
             if current is None or current == []:
                 next_value = [_copy_payload(payload)]
             elif isinstance(current, list):
+                if payload in current:
+                    return
                 next_value = list(current) + [_copy_payload(payload)]
             else:
                 raise ValueError("cannot append %s to existing non-list value" % field)
         else:
             if current is not None and current != []:
+                if isinstance(current, int) and isinstance(payload, int) and current == payload:
+                    return
                 raise ValueError("%s already exists for this mesh" % field)
             next_value = payload
 
         _set_payload_field(mesh_object, field, next_value)
 
     def bind(self, builder_api, selection_ref, value):
+        if self._selection_refs.get(selection_ref.uuid) != selection_ref:
+            raise ValueError("selection must belong to this model")
         relationship = self._relationship_for(builder_api)
         if relationship["namespace"] != selection_ref.namespace:
             raise ValueError(
@@ -292,6 +413,11 @@ class ModelBuilder:
         payload = _payload_dict(value)
         payload[id_field] = selection_ref.backend_id
         items = self._consumer_lists.setdefault(consumer_path, [])
+        if consumer_path == ("boundary_conditions", "rhs"):
+            if self._rhs is not _MISSING:
+                raise TypeError("Use either model.rhs(...) or body.rhs(...), not both")
+            if any(item[id_field] == payload[id_field] for item in items):
+                raise TypeError("rhs already configured for this body ID")
         if payload not in items:
             items.append(payload)
         return payload
@@ -310,21 +436,18 @@ class ModelBuilder:
 
     def add_selection_with_helper(self, mesh_uuid, method_name, payload, *, append=True):
         rule = self._selection_helper_rules[method_name]
+        if "same_as" in payload:
+            if rule["namespace"] != "surface":
+                raise ValueError("same_as requires a surface")
+            payload.update(self._shared_surface_id(payload.get("id"), payload.pop("same_as")))
         _validate_selection_helper_payload(method_name, payload, rule["allowed_fields"])
-        geometry_payload = None
-        if not append:
-            geometry_payload = _construct_api_class(
-                self._api,
-                rule.get("class_path"),
-                payload,
-            )
         return self._add_geometry_selection(
             mesh_uuid,
             namespace=rule["namespace"],
             geometry_field=rule["geometry_field"],
             payload=payload,
             append=append,
-            geometry_payload=geometry_payload,
+            geometry_class=None if append else rule.get("class_path"),
         )
 
     def _consumer_section(self, section_path):
@@ -354,6 +477,9 @@ class GeometryHandle:
         if name.startswith("_"):
             raise AttributeError(name)
 
+        boundary_method = self._model._whole_surface_method(self.mesh_uuid, name)
+        if boundary_method is not None:
+            return boundary_method
         selection_helper = self._dynamic_selection_helper(name)
         if selection_helper is not None:
             return selection_helper
@@ -380,8 +506,8 @@ class GeometryHandle:
         add_selection.__name__ = name
         return add_selection
 
-    def surface_all(self, *, id=None):
-        payload = {"id": id} if id is not None else {}
+    def surface_all(self, *, id=None, same_as=None):
+        payload = self._model._shared_surface_id(id, same_as)
         return self._model._add_surface_selection(
             self.mesh_uuid,
             payload,
@@ -390,10 +516,19 @@ class GeometryHandle:
 
 
 class BodyHandle:
-    def __init__(self, model, mesh_uuid, volume_ref):
+    def __init__(self, model, mesh_uuid=None, volume_ref=None):
         self._model = model
         self.mesh_uuid = mesh_uuid
         self.volume_ref = volume_ref
+
+    def mesh(self, *args, **kwargs):
+        if self.mesh_uuid is not None:
+            raise ValueError("body.mesh(...) was already configured")
+        payload = _bind_payload_from_call("body.mesh", args, kwargs)
+        mesh_uuid, volume_ref = self._model._register_body_mesh(payload)
+        self.mesh_uuid = mesh_uuid
+        self.volume_ref = volume_ref
+        return self
 
     def __getattr__(self, name):
         if name.startswith("_"):
@@ -401,6 +536,9 @@ class BodyHandle:
 
         builder_api = "body.%s" % name
         if not self._model.has_builder_api(builder_api):
+            boundary_method = self._model._whole_surface_method(self.mesh_uuid, name)
+            if boundary_method is not None:
+                return boundary_method
             selection_helper = self._dynamic_selection_helper(name)
             if selection_helper is not None:
                 return selection_helper
@@ -410,18 +548,54 @@ class BodyHandle:
             )
 
         def bind_value(*args, **kwargs):
+            self._require_mesh()
             value = _bind_payload_from_call(builder_api, args, kwargs)
+            self._bind_volume()
             self._model.bind(builder_api, self.volume_ref, value)
             return self
 
         bind_value.__name__ = name
         return bind_value
 
+    def surface_from_file(self, file, *, tag=None):
+        """Use a PolyFEM sideset. A tag is optional for a single group."""
+        self._require_mesh()
+        with Path(file).open(encoding="utf-8") as rows:
+            tags = {int(row.split()[0]) for row in rows if row.strip()}
+        if tag is None:
+            if len(tags) != 1:
+                raise ValueError("Specify a tag for a sideset with multiple boundary groups")
+            tag = next(iter(tags))
+        if tag not in tags or tag <= 0:
+            raise ValueError("Expected a positive tag from the sideset")
+        geometry = self._model._mesh_by_uuid[self.mesh_uuid]
+        current = _payload_dict(geometry).get("surface_selection")
+        payload = {"file": str(file)}
+        if current != payload:
+            selection = self._model._api.surface_selection_file(**payload)
+            self._model._set_mesh_selection_field(self.mesh_uuid, "surface_selection", selection, append=False)
+        for boundary_tag in tags:
+            if boundary_tag > 0:
+                self._model._allocate_selection("surface", backend_id=boundary_tag)
+        ref = self._model._allocate_selection("surface", backend_id=tag, mesh_uuid=self.mesh_uuid)
+        return SelectionHandle(self._model, ref)
+
+    def _bind_volume(self):
+        self._require_mesh()
+        geometry = self._model._mesh_by_uuid[self.mesh_uuid]
+        assert self.volume_ref is not None
+        _set_payload_field(geometry, "volume_selection", self.volume_ref.backend_id)
+
+    def _require_mesh(self):
+        if self.mesh_uuid is None or self.volume_ref is None:
+            raise ValueError("body.mesh(...) must be called before configuring body")
+
     def _dynamic_selection_helper(self, name):
         if not self._model.has_selection_helper(name):
             return None
 
         def add_selection(*args, **kwargs):
+            self._require_mesh()
             if args:
                 raise TypeError("%s accepts keyword fields only" % name)
             append = kwargs.pop("append", True)
@@ -435,13 +609,33 @@ class BodyHandle:
         add_selection.__name__ = name
         return add_selection
 
-    def surface_all(self, *, id=None):
-        payload = {"id": id} if id is not None else {}
+    def surface_all(self, *, id=None, same_as=None):
+        self._require_mesh()
+        payload = self._model._shared_surface_id(id, same_as)
         return self._model._add_surface_selection(
             self.mesh_uuid,
             payload,
             append=False,
         )
+
+
+class ObstacleHandle:
+    def __init__(self, model, geometry):
+        self._model = model
+        self._geometry = geometry
+        self._surface = None
+
+    def surface_all(self):
+        if self._surface is None:
+            ref = self._model._allocate_selection("surface")
+            _set_payload_field(self._geometry, "surface_selection", ref.backend_id)
+            self._surface = SelectionHandle(self._model, ref)
+        return self._surface
+
+    def __getattr__(self, name):
+        if name.startswith("_") or not self._model.has_builder_api("surface." + name):
+            raise AttributeError(name)
+        return getattr(self.surface_all(), name)
 
 
 class SelectionHandle:

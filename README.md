@@ -4,15 +4,14 @@
 
 It reads a JSON schema-like spec and emits:
 
-- `generated/generated_class.py`: schema-faithful Python config classes
-- `generated/generated_api.py`: user-facing factory helpers
+- `generated/generated_class.py`: Python configuration classes that follow the schema
+- `generated/generated_api.py`: factory functions for building configurations
 - `generated/*_manifest.json`: manifests used by validators and optional
   project integrations
 - `generated/schema_patch_report.json`: applied schema patch diagnostics
 
-The generator repo should define supported generation behavior, dummy/example
-config shapes, validators, and tests. Project-specific schemas and Python API
-policy belong in the consuming project.
+This repository contains the generator, generic examples, validators, and tests.
+Keep project-specific schemas and API settings in the project that uses it.
 
 ## Standalone Usage
 
@@ -20,6 +19,7 @@ Install the generator from this repository:
 
 ```powershell
 python -m pip install -e .
+python-from-jse-generate --help
 ```
 
 Run the default generic example from this directory:
@@ -68,39 +68,20 @@ generated Python files, then runs:
 python -m unittest discover -s tests
 ```
 
-To check packaging and the installed command-line entry point locally:
-
-```bash
-python -m pip install -e .
-python-from-jse-generate --help
-```
-
 Some optional full-spec smoke tests are skipped unless PolyFEM's full schema and
 linked solver specs are available. Those skips are expected for standalone CI;
 the generator's default standalone workflow uses only `examples/basic_generation/`.
 
-For the detailed test grouping and ownership map, see `tests/README.md`.
+See [tests/README.md](tests/README.md) for test groups and optional full-spec checks.
 
 ## Standalone Repo Readiness
 
-The repo is ready to be checked as a standalone generator project when this
-command works from the repo root:
-
-```powershell
-python tools\regenerate_and_test.py
-```
-
 The GitHub Actions workflow at `.github/workflows/ci.yml` runs on Ubuntu,
 macOS, and Windows with Python 3.10, 3.11, and 3.12. Each job installs the
-package with `python -m pip install -e .`, checks the console script with
-`python-from-jse-generate --help`, and runs the same standalone regeneration
-command. That check proves the generator can use the dummy schema in
-`examples/basic_generation/` to regenerate `generated/`, compile the generated
-Python files, and run the test suite without any consuming project checkout.
-
-The repository includes minimal packaging metadata in `pyproject.toml`, so a
-consuming project can install the generator directly from the source checkout.
-The generator's own CI remains responsible for the full standalone test suite.
+package, checks the console command, and runs the standalone check above.
+A successful run covers the bundled generic example without a consuming project
+checkout. Project-specific schema and API checks belong in the consuming project.
+An editable installation does not verify the contents of a release wheel.
 
 ## Optional Project Config
 
@@ -142,8 +123,7 @@ Generated files are build artifacts. Do not edit them by hand:
 If generated output is wrong, update the input spec, overrides, config examples,
 or generator logic, then regenerate.
 
-For a direct map of standalone and custom-project tool paths, see
-`tools/README.md`.
+See [tools/README.md](tools/README.md) for input paths and command options.
 
 ## Project Integration
 
@@ -169,28 +149,8 @@ generator/      Generator core and generic helper code.
 tools/          Generation and verification workflow CLI entry points.
 validators/     Reusable validation logic imported by tools and tests.
 tests/          Generator, generated API, builder, and validator tests.
-doc/            Local design notes and handoff documents.
 ```
 
-## Test Map
+## License
 
-For a more detailed grouping, see `tests/README.md`.
-
-- `tests/test_generator_units.py`: tree construction and generated-class
-  behavior.
-- `tests/test_generated_api.py`: generated API factories, naming, aliases, and
-  manifests.
-- `tests/test_generator_runner.py`: schema patches and generation entry points.
-- `tests/test_generator_examples.py`: generic examples remain runnable and
-  separate from project-specific config.
-- `tests/test_model_builder.py`: model/builder behavior with explicit
-  relationship maps.
-- `tests/test_validators.py`: validation for generic example config against
-  generated manifests.
-- `tests/test_id_relationship_rules.py`: loading and structure rules for the
-  generic id relationship example.
-- `tests/test_regenerate_and_test.py`: the standalone regeneration and test
-  workflow.
-- `tests/test_full_spec_smoke.py`: optional full-spec smoke coverage. It should
-  not define standalone defaults; the standalone workflow uses
-  `examples/basic_generation/`.
+This project is available under the [MIT License](LICENSE).
