@@ -54,8 +54,8 @@ class ModelBuilder:
                 class_tree_manifest_path,
             )
         self._selection_helper_rules = dict(selection_helper_rules)
-        self._geometry = []
         self._mesh_by_uuid = {}
+        self._rhs_only_volume_ids = {}
         self._consumer_lists = {}
         self._selection_backend_id_by_signature = {}
         self._implicit_surface_meshes = set()
@@ -103,7 +103,8 @@ class ModelBuilder:
         self._reserve_geometry_ids(_payload_dict(geometry_object))
         if same_volume_as is not None:
             same_volume_as._bind_volume()
-        self._geometry.append(geometry_object)
+        mesh_uuid = str(uuid.uuid4())
+        self._mesh_by_uuid[mesh_uuid] = geometry_object
         if values.get("is_obstacle"):
             surface_selection = values.get("surface_selection")
             if surface_selection is None and factory_name != "mesh_sequence":
@@ -113,8 +114,6 @@ class ModelBuilder:
             ref = self._allocate_selection("surface", backend_id=surface_selection)
             return SelectionHandle(self, ref)
 
-        mesh_uuid = str(uuid.uuid4())
-        self._mesh_by_uuid[mesh_uuid] = geometry_object
         volume_selection = values.get("volume_selection")
         if volume_selection is not None and (
             not isinstance(volume_selection, int) or volume_selection <= 0
@@ -142,7 +141,13 @@ class ModelBuilder:
                     self._allocate_selection(namespace, backend_id=backend_id)
 
     def geometry(self):
-        return [_payload_dict(item) for item in self._geometry]
+        geometry = []
+        for mesh_uuid, mesh in self._mesh_by_uuid.items():
+            item = _payload_dict(mesh)
+            if mesh_uuid in self._rhs_only_volume_ids:
+                item["volume_selection"] = self._rhs_only_volume_ids[mesh_uuid]
+            geometry.append(item)
+        return geometry
 
     def materials(self, value=_MISSING, **kwargs):
         """Set materials, or return the current materials when called without arguments."""
@@ -234,7 +239,8 @@ class ModelBuilder:
                 )
             rhs = self._rhs
 
-        if "geometry" not in values:
+        use_model_geometry = "geometry" not in values
+        if use_model_geometry:
             values["geometry"] = self.geometry()
 
         explicit_boundary = values.pop("boundary_conditions", _MISSING)
@@ -269,7 +275,73 @@ class ModelBuilder:
         ):
             values["boundary_conditions"] = boundary_conditions
 
+        if self._consumer_lists.get(("boundary_conditions", "rhs")):
+            self._export_body_rhs(values, use_model_geometry)
         return self._api.config(**values)
+
+    def _export_body_rhs(self, values, use_model_geometry):
+        loads = values["boundary_conditions"]["rhs"]
+        vector = None
+        for entry in loads:
+            value = entry.get("value")
+            if entry.keys() != {"id", "value"} or not isinstance(value, (list, tuple)):
+                return
+            if not value or not all(type(component) in (int, float) for component in value):
+                return
+            if vector is None:
+                vector = list(value)
+            elif list(value) != vector:
+                return
+
+        geometry = values["geometry"]
+        if not isinstance(geometry, (tuple, list)):
+            return
+        volume_ids = set()
+        shared_ids = set()
+        for mesh in geometry:
+            item = _payload_dict(mesh)
+            if item.get("is_obstacle"):
+                continue
+            volume_id = item.get("volume_selection")
+            if type(volume_id) is not int or volume_id <= 0:
+                return
+            if volume_id in volume_ids:
+                shared_ids.add(volume_id)
+            volume_ids.add(volume_id)
+        if volume_ids != {entry["id"] for entry in loads}:
+            return
+
+        values["boundary_conditions"]["rhs"] = vector
+        if use_model_geometry and self._rhs_only_volume_ids:
+            # Only omit tags introduced for the RHS itself. Raw config sections
+            # can also refer to these IDs without going through a body handle.
+            referenced_ids = shared_ids | self._other_volume_ids(values)
+            for mesh_uuid, item in zip(self._mesh_by_uuid, geometry):
+                if mesh_uuid in self._rhs_only_volume_ids and item["volume_selection"] not in referenced_ids:
+                    del item["volume_selection"]
+
+    def _other_volume_ids(self, values):
+        ids = set()
+        for relationship in self._relationships_by_api.values():
+            if relationship["namespace"] != "volume" or relationship["builder_api"] == "body.rhs":
+                continue
+            path, id_field = _parse_list_item_consumer(relationship["consumer"])
+            items = values
+            for key in path:
+                if hasattr(items, "as_dict"):
+                    items = items.as_dict()
+                items = items.get(key) if isinstance(items, dict) else None
+            if hasattr(items, "as_dict"):
+                items = items.as_dict()
+            for item in items if isinstance(items, list) else [items]:
+                if hasattr(item, "as_dict"):
+                    item = item.as_dict()
+                if isinstance(item, dict):
+                    labels = item.get(id_field)
+                    if not isinstance(labels, (list, tuple)):
+                        labels = [labels]
+                    ids.update(label for label in labels if type(label) is int)
+        return ids
 
     def _shared_surface_id(self, id, same_as):
         if same_as is not None:
@@ -412,12 +484,12 @@ class ModelBuilder:
         consumer_path, id_field = _parse_list_item_consumer(relationship["consumer"])
         payload = _payload_dict(value)
         payload[id_field] = selection_ref.backend_id
-        items = self._consumer_lists.setdefault(consumer_path, [])
         if consumer_path == ("boundary_conditions", "rhs"):
             if self._rhs is not _MISSING:
                 raise TypeError("Use either model.rhs(...) or body.rhs(...), not both")
-            if any(item[id_field] == payload[id_field] for item in items):
+            if any(item[id_field] == payload[id_field] for item in self._consumer_lists.get(consumer_path, ())):
                 raise TypeError("rhs already configured for this body ID")
+        items = self._consumer_lists.setdefault(consumer_path, [])
         if payload not in items:
             items.append(payload)
         return payload
@@ -550,8 +622,13 @@ class BodyHandle:
         def bind_value(*args, **kwargs):
             self._require_mesh()
             value = _bind_payload_from_call(builder_api, args, kwargs)
-            self._bind_volume()
             self._model.bind(builder_api, self.volume_ref, value)
+            if builder_api == "body.rhs":
+                mesh = self._model._mesh_by_uuid[self.mesh_uuid]
+                if "volume_selection" not in _payload_dict(mesh):
+                    self._model._rhs_only_volume_ids[self.mesh_uuid] = self.volume_ref.backend_id
+            else:
+                self._bind_volume()
             return self
 
         bind_value.__name__ = name
@@ -585,6 +662,7 @@ class BodyHandle:
         geometry = self._model._mesh_by_uuid[self.mesh_uuid]
         assert self.volume_ref is not None
         _set_payload_field(geometry, "volume_selection", self.volume_ref.backend_id)
+        self._model._rhs_only_volume_ids.pop(self.mesh_uuid, None)
 
     def _require_mesh(self):
         if self.mesh_uuid is None or self.volume_ref is None:
